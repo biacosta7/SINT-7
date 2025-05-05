@@ -16,7 +16,7 @@ typedef struct Player {
     int x;
     int y;
     int height;
-    float currentFrameTime; //acumulador de tempo
+    float frameTimer; //acumulador de tempo
 } Player;
 
 // Funções relacionadas ao jogador
