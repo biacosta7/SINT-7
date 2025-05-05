@@ -20,22 +20,42 @@ void update_player() {
     frameTimer += GetFrameTime();
     if (frameTimer >= frameTime) {
         frameTimer = 0.0f;
-        frame = (frame + 1) % 3;  // Loop de 0 a 2
+        player.frame = (player.frame + 1) % player.maxFrames;  // Loop de 0 a 2
     }
 
-    if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
-    if (IsKeyDown(KEY_LEFT)) player.position.x -= 2;
+    if(IsKeyDown(KEY_RIGHT)){
+        player.position.x += 2;
+        player.direction = 1;
+    }
+    if (IsKeyDown(KEY_LEFT)){
+        player.position.x -= 2;
+        player.direction = -1;
+    }
 }
 
 void draw_player() {
-    Rectangle source = { frame * 16, 0, 16, 16 };  // Frame original da spritesheet
-    Rectangle dest = { player.position.x, player.position.y, 16 * scale, 16 * scale };  // Escala aplicada
+    float scale = 3.0f;
+    int direction = player.direction;
+
+    Rectangle source;
+    source.y = 0;
+    source.width = 16;
+    source.height = 16;
+
+    if (direction == 1) {
+        source.x = player.frame * 16;
+    } else {
+        source.x = (player.frame + 1) * 16; // ajuste para espelhamento
+        source.width = -16; // espelha horizontalmente
+    }
+
+    Rectangle dest = { player.position.x, player.position.y, 16 * scale, 16 * scale };
     Vector2 origin = { 0, 0 };
     float rotation = 0.0f;
 
     DrawTexturePro(player.sprite, source, dest, origin, rotation, WHITE);
-
 }
+
 
 void free_player_resources() {
     UnloadTexture(player.sprite);
