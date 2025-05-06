@@ -13,6 +13,8 @@ void init_player() {
     player.position = (Vector2){ 100, 100 };
     player.sprite = LoadTexture("assets/branquinho-fofinho/idle.png");
     player.vida = 3;
+
+    player.maxFrames = 3; 
 }
 
 void update_player() {
