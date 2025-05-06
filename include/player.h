@@ -19,6 +19,8 @@ typedef struct Player {
     float frameTimer; //acumulador de tempo
 } Player;
 
+extern Player player; // <- Isso torna a variável visível fora do player.c
+
 // Funções relacionadas ao jogador
 void init_player();
 void update_player();

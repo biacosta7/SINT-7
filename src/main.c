@@ -15,13 +15,16 @@ int main(){
     while (!WindowShouldClose()) {
         update_player();
 
+
         BeginDrawing();
         ClearBackground(BLACK);
+        DrawBackground(player.position);
         draw_player();
         EndDrawing();
     }
 
     free_player_resources();
+    UnloadGraphics();  
     CloseWindow();
     return 0;
 }

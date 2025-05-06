@@ -1,9 +1,10 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-void load_textures();
-void draw_parallax_background();
-void draw_ui();
-void unload_textures();
+#include "raylib.h"
 
-#endif // GRAPHICS_H
+void InitGraphics();
+void UnloadGraphics();
+void DrawBackground(Vector2 playerPosition);
+
+#endif
