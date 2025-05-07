@@ -1,7 +1,7 @@
 #include "player.h"
 #include <stdbool.h>
 
-static Player player;  // Variável global interna ao módulo player.c
+Player player; 
 
 static int frame = 0;
 static float frameTime = 0.1f;
@@ -10,7 +10,7 @@ float scale = 4.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
 
 
 void init_player() {
-    player.position = (Vector2){ 100, 100 };
+    player.position = (Vector2){ 100, 190 };
     player.sprite = LoadTexture("assets/branquinho-fofinho/idle.png");
     player.vida = 3;
 
