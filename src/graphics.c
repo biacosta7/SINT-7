@@ -3,9 +3,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-
-
-#define SECTOR_COUNT 8
+#define SECTOR_COUNT 2
 #define SECTOR_WIDTH 900
 #define SECTOR_HEIGHT 512
 #define SCREEN_WIDTH 900

@@ -12,7 +12,7 @@ float scale = 4.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
 
 
 void init_player() {
-    player.position = (Vector2){ 100, 190 };
+    player.position = (Vector2){ 100, 410 };
     player.sprite = LoadTexture("assets/branquinho-fofinho/idle.png");
     player.vida = 3;
 
