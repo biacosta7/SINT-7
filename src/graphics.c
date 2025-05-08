@@ -1,26 +1,51 @@
 #include "graphics.h"
 #include "raylib.h"
-#include "player.h"
+#include "stdlib.h"
+#include "stdio.h"
 
-#define SCREEN_WIDTH 800
+
+
+#define SECTOR_COUNT 8
+#define SECTOR_WIDTH 900
+#define SECTOR_HEIGHT 512
+#define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 512
 
-// Variáveis globais ou estáticas para o fundo
-static Texture2D background;
+Texture2D bgSectors[SECTOR_COUNT];
+float cameraX = 0.0f;
 
 void InitGraphics() {
-    background = LoadTexture("assets/testemap.png");
-    if (background.id == 0) {
-        TraceLog(LOG_ERROR, "Erro ao carregar o fundo");
+    for (int i = 0; i < SECTOR_COUNT; i++) {
+        char path[64];
+        sprintf(path, "assets/setores/bg%d.png", i);
+
+        Image bgImage = LoadImage(path);
+        ImageResize(&bgImage, SECTOR_WIDTH, SECTOR_HEIGHT);
+        bgSectors[i] = LoadTextureFromImage(bgImage);
+        UnloadImage(bgImage);
     }
 }
 
+void UpdateCameraMove(float playerX) {
+    cameraX = playerX - SCREEN_WIDTH / 2;
+    if (cameraX < 0) cameraX = 0;
 
-void UnloadGraphics() {
-    UnloadTexture(background);
+    float maxCamera = (SECTOR_WIDTH * SECTOR_COUNT) - SCREEN_WIDTH;
+    if (cameraX > maxCamera) cameraX = maxCamera;
 }
 
 void DrawBackground() {
-    DrawTexture(background, SCREEN_WIDTH/2 - 32000/2, SCREEN_HEIGHT/2 - 1350/2, WHITE);
+    for (int i = 0; i < SECTOR_COUNT; i++) {
+        int sectorX = i * SECTOR_WIDTH;
+
+        if (sectorX + SECTOR_WIDTH > cameraX && sectorX < cameraX + SCREEN_WIDTH) {
+            DrawTexture(bgSectors[i], sectorX - cameraX, 0, WHITE);
+        }
+    }
 }
 
+void UnloadGraphics() {
+    for (int i = 0; i < SECTOR_COUNT; i++) {
+        UnloadTexture(bgSectors[i]);
+    }
+}

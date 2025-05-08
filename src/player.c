@@ -2,6 +2,8 @@
 #include <stdbool.h>
 
 Player player; 
+extern float cameraX;  // Adicione no topo de player.c
+
 
 static int frame = 0;
 static float frameTime = 0.1f;
@@ -34,29 +36,20 @@ void update_player() {
         player.direction = -1;
     }
 }
-
 void draw_player() {
-    float scale = 3.0f;
-    int direction = player.direction;
-
-    Rectangle source;
-    source.y = 0;
-    source.width = 16;
-    source.height = 16;
-
-    if (direction == 1) {
-        source.x = player.frame * 16;
-    } else {
-        source.x = (player.frame + 1) * 16; // ajuste para espelhamento
-        source.width = -16; // espelha horizontalmente
-    }
-
-    Rectangle dest = { player.position.x, player.position.y, 16 * scale, 16 * scale };
+    Rectangle source = { player.frame * 16, 0, 16, 16 };
+    Rectangle dest = {
+        player.position.x,
+        player.position.y,
+        16 * scale,
+        16 * scale
+    };
     Vector2 origin = { 0, 0 };
     float rotation = 0.0f;
 
     DrawTexturePro(player.sprite, source, dest, origin, rotation, WHITE);
 }
+
 
 
 void free_player_resources() {

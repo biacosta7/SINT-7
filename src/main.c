@@ -1,50 +1,67 @@
 #include "raylib.h"
-#include "game.h"
 #include "player.h"
-#include "graphics.h"
-#include "puzzles.h"
 #include "utils.h"
+#include "graphics.h"
 #include <stdbool.h>
 
-int main(){
-    InitWindow(900, 515, "SINT-7");
-    SetTargetFPS(60);
+extern Camera2D camera; 
 
+int main() {
+    
+    InitWindow(900, 512, "SINT-7");
+    SetTargetFPS(60);
+    
     init_player();
     InitGraphics();
+    InitCamera();
+
+    Vector2 offset = { 0,0 };
+
     Image bgImage = LoadImage("assets/setores/setor1.png");
     ImageResize(&bgImage, 900, bgImage.height); // Só ajusta altura
     Texture2D background = LoadTextureFromImage(bgImage);
     UnloadImage(bgImage);
-
-    float cameraX = 0.0f;
-    const float scrollSpeed = 2.0f;  // ajuste como quiser
+    
 
     while (!WindowShouldClose()) {
+        // Atualiza movimentação do jogador
+        if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
+        if (IsKeyDown(KEY_LEFT))  player.position.x -= 2;
+
+        offset.x += GetFrameTime() * 100;
+        offset.y -= GetFrameTime() * 100;
+
+        camera.target = (Vector2){ player.position.x + player.width/2, player.position.y + player.height/2 };
+
         BeginDrawing();
-        ClearBackground(BLACK);
+            ClearBackground(BLACK);
 
-        if (IsKeyDown(KEY_RIGHT)) cameraX += scrollSpeed;
-        if (IsKeyDown(KEY_LEFT))  cameraX -= scrollSpeed;
+            BeginMode2D(camera);
+                // Desenhe aqui o mundo, incluindo o player e o cenário
+                
+                //DrawTexture(background, 0, 0, BLACK);
+                DrawRectangleV(player.position, (Vector2){player.width, player.height}, BLUE);
 
-        if (cameraX < 0) cameraX = 0;
-        if (cameraX > background.width - GetScreenWidth())
-            cameraX = background.width - GetScreenWidth();
+                update_player();
+                draw_player();
 
-        Rectangle source = { cameraX, 0, GetScreenWidth(), background.height };
-        Rectangle dest = { 0, 0, GetScreenWidth(), GetScreenHeight() };
+                
+            EndMode2D();
+            DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
+            DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
 
-        DrawTexturePro(background, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
 
-        //DrawBackground();
-        draw_player();
-        update_player();
+            DrawText("HUD ou UI fora da camera", 10, 10, 20, WHITE);
+        
         EndDrawing();
+
+
+          // o draw_player já deve descontar cameraX
+
+        //EndDrawing();
     }
 
     UnloadGraphics();
-    UnloadImage(bgImage);
-
     free_player_resources();
     CloseWindow();
     return 0;

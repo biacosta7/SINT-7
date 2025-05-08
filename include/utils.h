@@ -8,5 +8,6 @@ float lerp(float a, float b, float t);
 void delay_ms(int ms);
 void log_debug(const char *msg);
 bool check_collision(Rectangle a, Rectangle b);
+void InitCamera();
 
 #endif // UTILS_H
