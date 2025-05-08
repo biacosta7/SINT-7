@@ -11,7 +11,8 @@ float scale = 4.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
 
 void init_player() {
     player.position = (Vector2){ 100, 100 };
-    player.sprite = LoadTexture("assets/branquinho-fofinho/idle.png");
+    player.idleTexture = LoadTexture("assets/edu/idle.png");
+    player.walkTexture = LoadTexture("assets/edu/walk.png");
     player.vida = 3;
 
     player.maxFrames = 3; 
@@ -26,16 +27,31 @@ void update_player() {
     }
 
     if(IsKeyDown(KEY_RIGHT)){
+        player.state = WALK;
         player.position.x += 2;
         player.direction = 1;
     }
-    if (IsKeyDown(KEY_LEFT)){
+    else if (IsKeyDown(KEY_LEFT)){
+        player.state = WALK;
         player.position.x -= 2;
         player.direction = -1;
+    }
+    else{
+        player.state = IDLE;    
     }
 }
 
 void draw_player() {
+    Texture2D texture;
+    switch(player.state){
+        case WALK:
+            texture = player.walkTexture;
+            break;
+        case IDLE:
+        default:
+            texture = player.idleTexture;
+            break;
+    }
     float scale = 3.0f;
     int direction = player.direction;
 
@@ -55,10 +71,10 @@ void draw_player() {
     Vector2 origin = { 0, 0 };
     float rotation = 0.0f;
 
-    DrawTexturePro(player.sprite, source, dest, origin, rotation, WHITE);
+    DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 }
 
 
 void free_player_resources() {
-    UnloadTexture(player.sprite);
+    UnloadTexture(player.idleTexture);
 }
