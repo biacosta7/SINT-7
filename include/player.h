@@ -3,10 +3,16 @@
 
 #include "raylib.h"  // Necessário se usar tipos da Raylib, como Texture2D
 
+typedef enum {
+    IDLE,
+    WALK
+} PersonagemState;
 // Estrutura do jogador
 typedef struct Player {
     Vector2 position;
-    Texture2D sprite;
+    Texture2D idleTexture;
+    Texture2D walkTexture;
+    PersonagemState state;
     int frame; //frame atual da animacao
     float frameTime; //tempo do frame
     int vida;
