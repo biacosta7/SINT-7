@@ -20,17 +20,16 @@ int main() {
         if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
         if (IsKeyDown(KEY_LEFT))  player.position.x -= 2;
 
-        update_player();
-        UpdateCameraMove(player.position.x);
-
-        camera.target = (Vector2){ player.position.x + player.width/2, SCREEN_HEIGHT / 2.0f };
+        update_player(); // Atualiza jogador
+        UpdateCameraPosition(); // Atualiza camera.target.x se necessário
+        UpdateCameraMove(); // Atualiza cameraX baseado na nova camera
 
         BeginDrawing();
             ClearBackground(BLACK);
 
             BeginMode2D(camera);
-                DrawBackground();  // <<--- DESENHA OS SETORES
-                draw_player();     // <<--- DESENHA O PLAYER
+                DrawBackground();  // DESENHA OS SETORES
+                draw_player();     // DESENHA O PLAYER
             EndMode2D();
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);

@@ -6,7 +6,7 @@
 void InitGraphics();
 void UnloadGraphics();
 void DrawBackground();
-void UpdateCameraMove(float playerX);
+void UpdateCameraMove();
 
 extern float cameraX;
 

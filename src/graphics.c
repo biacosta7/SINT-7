@@ -11,6 +11,7 @@
 
 Texture2D bgSectors[SECTOR_COUNT];
 float cameraX = 0.0f;
+extern Camera2D camera; 
 
 void InitGraphics() {
     for (int i = 0; i < SECTOR_COUNT; i++) {
@@ -24,20 +25,29 @@ void InitGraphics() {
     }
 }
 
-void UpdateCameraMove(float playerX) {
-    cameraX = playerX - SCREEN_WIDTH / 2;
+void UpdateCameraMove() {
+    cameraX = camera.target.x - SCREEN_WIDTH / 2;
+
+    
+
     if (cameraX < 0) cameraX = 0;
 
     float maxCamera = (SECTOR_WIDTH * SECTOR_COUNT) - SCREEN_WIDTH;
     if (cameraX > maxCamera) cameraX = maxCamera;
+
+    printf("cameraX: %f\n", cameraX);
 }
+
 
 void DrawBackground() {
     for (int i = 0; i < SECTOR_COUNT; i++) {
         int sectorX = i * SECTOR_WIDTH;
+        printf("sectorX: %d\n", sectorX);
 
         if (sectorX + SECTOR_WIDTH > cameraX && sectorX < cameraX + SCREEN_WIDTH) {
-            DrawTexture(bgSectors[i], sectorX - cameraX, 0, WHITE);
+            
+            DrawTexture(bgSectors[i], sectorX, 0, WHITE);
+
         }
     }
 }
