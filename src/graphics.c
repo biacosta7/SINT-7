@@ -28,14 +28,17 @@ void InitGraphics() {
 void UpdateCameraMove() {
     cameraX = camera.target.x - SCREEN_WIDTH / 2;
 
-    
-
     if (cameraX < 0) cameraX = 0;
 
     float maxCamera = (SECTOR_WIDTH * SECTOR_COUNT) - SCREEN_WIDTH;
     if (cameraX > maxCamera) cameraX = maxCamera;
 
-    printf("cameraX: %f\n", cameraX);
+    if (camera.target.x > 630){ // && não desbloqueou a fase 2 (fazer a mesma condicional p/outras fases, pode ser um loop de verificacao) - fase 1 limite : player.position.x = 1368 | camera.target.x = 678 | player pode andar até 1400 na primeira fase se a segunda nao tiver desbloqueada 
+        cameraX = 630 - SCREEN_WIDTH / 2;
+    }
+
+    printf("cameraX: %f | camera.target.x: %f\n", cameraX, camera.target.x);
+    
 }
 
 
@@ -44,10 +47,12 @@ void DrawBackground() {
         int sectorX = i * SECTOR_WIDTH;
         printf("sectorX: %d\n", sectorX);
 
-        if (sectorX + SECTOR_WIDTH > cameraX && sectorX < cameraX + SCREEN_WIDTH) {
-            
-            DrawTexture(bgSectors[i], sectorX, 0, WHITE);
+        int preloadMargin = 100;  // margem de pré-carregamento
 
+        if (sectorX + SECTOR_WIDTH > cameraX - preloadMargin &&
+            sectorX < cameraX + SCREEN_WIDTH + preloadMargin)
+        {
+            DrawTexture(bgSectors[i], sectorX - cameraX, 0, WHITE);
         }
     }
 }

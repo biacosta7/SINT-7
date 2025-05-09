@@ -32,16 +32,27 @@ void update_player() {
         player.state = WALK;
         player.position.x += 2;
         player.direction = 1;
+
+        if (player.position.x > 1430){ // && não desbloqueou a fase 2 (fazer a mesma condicional p/outras fases, pode ser um loop de verificacao)
+            player.position.x = 1430;
+        }
+
     }
     else if (IsKeyDown(KEY_LEFT)){
         player.state = WALK;
         player.position.x -= 2;
         player.direction = -1;
+
+        if (player.position.x < 200){
+            player.position.x = 200;
+        }
+        
     }
     else{
         player.state = IDLE;    
     }
 }
+
 void draw_player() {
     Texture2D texture;
     switch(player.state){
@@ -53,7 +64,6 @@ void draw_player() {
             texture = player.idleTexture;
             break;
     }
-    float scale = 3.0f;
     int direction = player.direction;
 
     Rectangle source;
