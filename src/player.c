@@ -8,7 +8,7 @@ extern float cameraX;  // Adicione no topo de player.c
 static int frame = 0;
 static float frameTime = 0.1f;
 static float frameTimer = 0.0f;
-float scale = 5.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
+float scale = 5.0f;  // Aumenta 5x (de 16x16 para 64x64 pixels)
 
 
 void init_player() {
