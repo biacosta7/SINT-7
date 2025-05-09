@@ -1,16 +1,18 @@
 #include "player.h"
 #include <stdbool.h>
 
-static Player player;  // Variável global interna ao módulo player.c
+Player player; 
+extern float cameraX;  // Adicione no topo de player.c
+
 
 static int frame = 0;
 static float frameTime = 0.1f;
 static float frameTimer = 0.0f;
-float scale = 4.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
+float scale = 5.0f;  // Aumenta 4x (de 16x16 para 64x64 pixels)
 
 
 void init_player() {
-    player.position = (Vector2){ 100, 100 };
+    player.position = (Vector2){ 200, 398 };
     player.idleTexture = LoadTexture("assets/edu/idle.png");
     player.walkTexture = LoadTexture("assets/edu/walk.png");
     player.vida = 3;
@@ -40,7 +42,6 @@ void update_player() {
         player.state = IDLE;    
     }
 }
-
 void draw_player() {
     Texture2D texture;
     switch(player.state){
@@ -73,6 +74,7 @@ void draw_player() {
 
     DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
 }
+
 
 
 void free_player_resources() {
