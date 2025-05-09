@@ -1,1 +1,18 @@
-.DS*
+# Ignorar arquivos executáveis
+programa
+teste
+test
+main
+jogo
+sint7
+*.out
+*.exe
+
+# Ignorar arquivos objeto e intermediários da compilação
+*.o
+*.obj
+
+# Outros
+.DS_Store
+*.DS_Store
+.vscode
