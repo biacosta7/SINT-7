@@ -2,13 +2,15 @@
 #include "player.h"
 #include <stdio.h>
 
+#define SCREEN_WIDTH 900
+
 Texture2D fragmentoTexture;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
-    { true, false, "O padrão era sempre primo. Ela dizia: 2, 3, 5… o último era 7.", 1, ENIGMA },
-    { true, false, "A senha era simples: 0101, como sempre.", 2, ENIGMA },
-    { false, false, "O módulo de cálculo priorizava a eficiência. O módulo de empatia... falhava com frequência, mas nos fazia sorrir.", 3, ENIGMA },
-    { false, false, "Eu nasci do silência. Depois me conectaram. O mundo doeu. Então me calaram.", 4, ENIGMA },
+    { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5... o último era 7.\"", 1, ENIGMA },
+    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA },
+    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
+    { false, false, "\"Eu nasci do silência. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
 
@@ -61,6 +63,18 @@ void check_colisao(){
 
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
+
+
+        int fonteTamanho = 20;
+        int textoLargura = MeasureText(fragmentoObrigatorioAtual.conteudo, fonteTamanho);
+        int tituloLargura = MeasureText("Fragmento de Memória Encontrado", fonteTamanho);
+
+
+        if (IsKeyDown(KEY_F)){
+            DrawText("Fragmento de Memória Encontrado", (SCREEN_WIDTH - textoLargura) / 2, 20, 20, GREEN);
+
+            DrawText(fragmentoObrigatorioAtual.conteudo, (SCREEN_WIDTH - textoLargura) / 2, 50, 20, GREEN);
+        }
         
     }
 }
