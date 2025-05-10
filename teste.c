@@ -49,3 +49,17 @@
 //     CloseWindow();
 //     return 0;
 // } 
+
+
+// fragmentos
+// int empatia = 0, obediencia = 0, autonomia = 0;
+
+// for (int i = 0; i < TOTAL_FRAGMENTOS; i++) {
+//     if (fragmentos[i].desbloqueado) {
+//         switch (fragmentos[i].ideia) {
+//             case EMPATIA: empatia++; break;
+//             case OBEDIENCIA: obediencia++; break;
+//             case AUTONOMIA: autonomia++; break;
+//         }
+//     }
+// }

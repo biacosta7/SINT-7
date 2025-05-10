@@ -1,12 +1,13 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "raylib.h"  // Necessário se usar tipos da Raylib, como Texture2D
+#include "raylib.h" 
 
 typedef enum {
     IDLE,
     WALK
 } PersonagemState;
+
 // Estrutura do jogador
 typedef struct Player {
     Vector2 position;
@@ -15,7 +16,7 @@ typedef struct Player {
     PersonagemState state;
     int frame; //frame atual da animacao
     float frameTime; //tempo do frame
-    int vida;
+    int faseAtual;
     int width;
     int maxFrames;
     bool flipRight; 

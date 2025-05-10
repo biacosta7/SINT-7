@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "player.h"
 #include "utils.h"
+#include "puzzles.h"
 #include "graphics.h"
 #include <stdbool.h>
 
@@ -15,6 +16,7 @@ int main() {
     init_player();
     InitGraphics();
     InitCamera();
+    init_fragmento();
 
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
@@ -30,6 +32,7 @@ int main() {
             BeginMode2D(camera);
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
+                draw_fragmento(); // DESENHA O FRAGMENTO
             EndMode2D();
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);

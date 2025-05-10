@@ -2,20 +2,18 @@
 #include <stdbool.h>
 
 Player player; 
-extern float cameraX;  // Adicione no topo de player.c
-
+extern float cameraX; 
 
 static int frame = 0;
 static float frameTime = 0.1f;
 static float frameTimer = 0.0f;
 float scale = 5.0f;  // Aumenta 5x (de 16x16 para 64x64 pixels)
 
-
 void init_player() {
     player.position = (Vector2){ 200, 398 };
     player.idleTexture = LoadTexture("assets/edu/idle.png");
     player.walkTexture = LoadTexture("assets/edu/walk.png");
-    player.vida = 3;
+    player.faseAtual = 1;
 
     player.maxFrames = 3; 
 }
