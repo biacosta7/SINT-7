@@ -28,7 +28,6 @@ int main() {
 
         BeginDrawing();
             ClearBackground(BLACK);
-            
 
             BeginMode2D(camera);
                 DrawBackground();  // DESENHA OS SETORES

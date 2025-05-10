@@ -70,7 +70,7 @@ void check_colisao(){
         int tituloLargura = MeasureText("Fragmento de Memória Encontrado", fonteTamanho);
 
 
-        if (IsKeyDown(KEY_F)){
+        if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
             DrawText("Fragmento de Memória Encontrado", (SCREEN_WIDTH - textoLargura) / 2, 20, 20, GREEN);
 
             DrawText(fragmentoObrigatorioAtual.conteudo, (SCREEN_WIDTH - textoLargura) / 2, 50, 20, GREEN);
