@@ -4,12 +4,14 @@
 #include "puzzles.h"
 #include "graphics.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 extern Camera2D camera; 
 #define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 512
 
 int main() {
+    NodeFragmento *fragmentosColetados = NULL;
     InitWindow(900, 512, "SINT-7");
     SetTargetFPS(60);
     

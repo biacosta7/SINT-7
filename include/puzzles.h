@@ -30,8 +30,17 @@ typedef struct FragmentoMemoria{
 
 FragmentoMemoria fragmentoObrigatorioAtual;
 
+typedef struct NodeFragmento {
+    FragmentoMemoria fragmento;
+    struct NodeFragmento *next;
+} NodeFragmento;
+
+extern NodeFragmento *fragmentosColetados;
+
 #define TOTAL_FRAGMENTOS_OBRIGATORIOS 4 // mudar depois
 #define QUANT_FASES 4 // mudar depois
 extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
 
+void adicionar_fragmento(FragmentoMemoria frag);
+void printar_fragmentos();
 #endif // PUZZLES_H
