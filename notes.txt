@@ -1,3 +1,5 @@
 Para compilar:
 
 gcc src/*.c -Iinclude -o sint7 -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
+gcc src/*.c -Iinclude -I/opt/homebrew/include -L/opt/homebrew/lib -o jogo -lraylib -lm -ldl -lpthread

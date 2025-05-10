@@ -1,10 +1,11 @@
 #include "puzzles.h"
 #include "player.h"
 #include <stdio.h>
-
+#include <stdlib.h>
 #define SCREEN_WIDTH 900
 
 Texture2D fragmentoTexture;
+NodeFragmento *fragmentosColetados = NULL;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5... o último era 7.\"", 1, ENIGMA },
@@ -40,6 +41,39 @@ void draw_fragmento(){
     }
 }
 
+void adicionar_fragmento(FragmentoMemoria novoFragmento) {
+    NodeFragmento *novo = (NodeFragmento *)malloc(sizeof(NodeFragmento));
+    if (!novo) return; // Falha de alocação
+
+    novo->fragmento = novoFragmento;
+    novo->next = fragmentosColetados;
+    fragmentosColetados = novo;
+}
+#include <stdio.h> // para printf
+
+void printar_fragmentos() {
+    NodeFragmento *atual = fragmentosColetados;
+    int i = 1;
+    
+    if (!atual) {
+        printf("Nenhum fragmento coletado.\n");
+        return;
+    }
+
+    printf("Fragmentos coletados:\n");
+    while (atual != NULL) {
+        printf("Fragmento %d:\n", i++);
+        printf("  Conteúdo: %s\n", atual->fragmento.conteudo);
+        printf("  Fase: %d\n", atual->fragmento.fase);
+        printf("  Obrigatório: %s\n", atual->fragmento.ehObrigatorio ? "Sim" : "Não");
+        printf("  Foi coletado: %s\n", atual->fragmento.foiColetado ? "Sim" : "Não");
+        printf("  Posição: (%.2f, %.2f)\n", atual->fragmento.x, atual->fragmento.y);
+        printf("----------------------------------\n");
+
+        atual = atual->next;
+    }
+}
+
 void check_colisao(){
     // HITBOX DO PLAYER
     Rectangle playerHitbox = {
@@ -72,8 +106,12 @@ void check_colisao(){
 
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
             DrawText("Fragmento de Memória Encontrado", (SCREEN_WIDTH - textoLargura) / 2, 20, 20, GREEN);
-
             DrawText(fragmentoObrigatorioAtual.conteudo, (SCREEN_WIDTH - textoLargura) / 2, 50, 20, GREEN);
+            if(!fragmentoObrigatorioAtual.foiColetado){
+                fragmentoObrigatorioAtual.foiColetado = true;
+                adicionar_fragmento(fragmentoObrigatorioAtual);
+                printar_fragmentos();
+            }
         }
         
     }
