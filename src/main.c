@@ -33,11 +33,12 @@ int main() {
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento(); // DESENHA O FRAGMENTO
+                check_colisao();
             EndMode2D();
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
-            DrawText("HUD ou UI fora da camera", 10, 10, 20, WHITE);
+            DrawText("SINT-7", 10, 10, 20, WHITE);
         EndDrawing();
     }
 

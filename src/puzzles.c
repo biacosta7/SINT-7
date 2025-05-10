@@ -1,5 +1,6 @@
 #include "puzzles.h"
 #include "player.h"
+#include <stdio.h>
 
 Texture2D fragmentoTexture;
 
@@ -19,6 +20,8 @@ void init_fragmento(){
     for (int i = 0; i<QUANT_FASES; i++){
         if(player.faseAtual == i+1){
             fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
+            fragmentoObrigatorioAtual.x = 550;
+            fragmentoObrigatorioAtual.y = 350;
             //TO-DO: trocar imagens (texturas) para diferentes imagens (pode fazer uma lista com as texturas)
             break;
         }
@@ -32,6 +35,33 @@ void draw_fragmento(){
         Vector2 position = {550, 350};
         float scale = 3.0f;
         DrawTextureEx(fragmentoTexture, position, 0.0f, scale, WHITE);
+    }
+}
+
+void check_colisao(){
+    // HITBOX DO PLAYER
+    Rectangle playerHitbox = {
+        player.position.x,
+        player.position.y,
+        16 * 5,  // mesmo scale do draw_player
+        16 * 5
+    };
+
+    // HITBOX DO FRAGMENTO
+    Rectangle fragmentoHitbox = {
+        fragmentoObrigatorioAtual.x,
+        fragmentoObrigatorioAtual.y,
+        32, //width
+        60 //height
+    };
+
+    //para ver onde ta a caixa de colisao:
+    // DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+
+    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
+        DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
+        
     }
 }
 

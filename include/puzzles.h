@@ -13,6 +13,7 @@ void end_puzzle();
 void init_fragmento();
 void draw_fragmento();
 void unload_fragmento();
+void check_colisao();
 
 enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
 
@@ -22,6 +23,8 @@ typedef struct FragmentoMemoria{
     char *conteudo;
     int fase; // a qual fase ele pertence
     enum Sentimento sentimento;
+    float x;
+    float y;
 } FragmentoMemoria;
 
 FragmentoMemoria fragmentoObrigatorioAtual;
