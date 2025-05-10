@@ -25,6 +25,7 @@ typedef struct FragmentoMemoria{
     enum Sentimento sentimento;
     float x;
     float y;
+    Texture2D texture;
 } FragmentoMemoria;
 
 FragmentoMemoria fragmentoObrigatorioAtual;
