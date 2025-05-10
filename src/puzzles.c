@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #define SCREEN_WIDTH 900
 
-Texture2D fragmentoTexture bgfragmentoTexture;
+Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
