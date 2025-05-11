@@ -21,6 +21,8 @@ int main() {
     InitCamera();
     init_fase();
 
+    Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
+
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
         if (IsKeyDown(KEY_LEFT))  player.position.x -= 2;
@@ -37,8 +39,20 @@ int main() {
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
                 char interacao = check_colisoes(); // Chamar apenas uma vez
+
+            int btnX = 50;
+            int btnY = 50;
+            float scale = 0.1f;
+            DrawTextureEx(botaoTexture, (Vector2){btnX, btnY}, 0.0f, scale, WHITE);
+
             EndMode2D();
-            
+            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                Vector2 mouse = GetMousePosition();
+                if (mouse.x >= btnX && mouse.x <= btnX + botaoTexture.width &&
+                    mouse.y >= btnY && mouse.y <= btnY + botaoTexture.height) {
+                    printf("Botão Menu clicado!\n");
+                }
+            }
 
             if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
             else if(interacao == 'f') draw_fragmento(fragmentoObrigatorioAtual.fase);
