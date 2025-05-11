@@ -38,6 +38,10 @@ int main() {
                 draw_fragmento(); // DESENHA O FRAGMENTO
                 check_colisoes();
             EndMode2D();
+            
+
+            if(check_colisoes() == 'p') draw_puzzle(puzzleAtual.fase);
+
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);

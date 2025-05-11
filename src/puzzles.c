@@ -82,7 +82,7 @@ void printar_fragmentos() {
     }
 }
 
-void check_colisao_fragmento(Rectangle playerHitbox){
+bool check_colisao_fragmento(Rectangle playerHitbox){
 
     // HITBOX DO FRAGMENTO
     Rectangle fragmentoHitbox = {
@@ -117,14 +117,16 @@ void check_colisao_fragmento(Rectangle playerHitbox){
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
+            return true;
         }
         
     }
+    return false;
 
 }
 
 
-void check_colisao_puzzle(Rectangle playerHitbox){
+bool check_colisao_puzzle(Rectangle playerHitbox){
     // Hitbox do puzzle
     Rectangle puzzleHitbox = {
         puzzleAtual.x,
@@ -132,30 +134,24 @@ void check_colisao_puzzle(Rectangle playerHitbox){
         72, //width
         130 //height
     };
+    
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
-        DrawText("(F) para interagir", puzzleAtual.x - 80, puzzleAtual.y - 30, 20, GREEN);
-
-        int fonteTamanho = 20;
-        int perguntaLargura = MeasureText(puzzleAtual.pergunta, fonteTamanho);
+        DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
 
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
-            Vector2 position = {SCREEN_WIDTH / 2 - 42 / 2, 20};
-            float scale = 20.0f;
-
-            if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
-                DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
-            }
             
             if(!puzzleAtual.foiSolucionado){
                 puzzleAtual.foiSolucionado = true;
             }
+
+            return true;
         }
-        
     }
+    return false;
 }
 
-void check_colisoes(){
+char check_colisoes(){
     // HITBOX DO PLAYER
     Rectangle playerHitbox = {
         player.position.x,
@@ -163,9 +159,112 @@ void check_colisoes(){
         16 * 5,  // mesmo scale do draw_player
         16 * 5
     };
-    check_colisao_fragmento(playerHitbox);
-    check_colisao_puzzle(playerHitbox);
+    bool fragmento = check_colisao_fragmento(playerHitbox);
+    bool puzzle = check_colisao_puzzle(playerHitbox);
+
+    if (fragmento) return 'f';
+    if (puzzle) return 'p';
+    return 'z';
 }
+
+
+void draw_puzzle(int puzzle){
+    float scale = 18.0f;
+    float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
+    Vector2 position = {
+        SCREEN_WIDTH / 2.0f - textureWidth / 2.0f,
+        20
+    };
+
+    if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
+        DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+        if (puzzleAtual.fase == 1) puzzle_1();
+    }
+    puzzle_1();
+}
+
+// puzzles
+
+void puzzle_1() {
+    static int input[4] = { -1, -1, -1, -1 };
+    static int inputIndex = 0;
+    static bool success = false;
+    static bool error = false;
+
+    const int respostaCorreta[4] = { 2, 3, 5, 7 };
+
+    int buttonSize = 50;
+    int padding = 10;
+    int startX = 100;
+    int startY = 100;
+
+    // Desenha os botões de 0 a 9
+    for (int i = 0; i < 10; i++) {
+        int row = i / 5;
+        int col = i % 5;
+
+        Rectangle button = {
+            startX + col * (buttonSize + padding),
+            startY + row * (buttonSize + padding),
+            buttonSize,
+            buttonSize
+        };
+
+        DrawRectangleRec(button, LIGHTGRAY);
+        DrawText(TextFormat("%d", i),
+                 button.x + buttonSize / 2 - 5,
+                 button.y + buttonSize / 2 - 10,
+                 20, BLACK);
+
+        // Clique no botão
+        if (CheckCollisionPointRec(GetMousePosition(), button) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            if (inputIndex < 4) {
+                input[inputIndex++] = i;
+                success = false;
+                error = false;
+
+                if (inputIndex == 4) {
+                    // Verifica sequência
+                    bool match = true;
+                    for (int j = 0; j < 4; j++) {
+                        if (input[j] != respostaCorreta[j]) {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match) success = true;
+                    else error = true;
+                }
+            }
+        }
+    }
+
+    // Mostra entrada atual
+    DrawText("Entrada:", startX, startY + 130, 20, BLACK);
+    for (int i = 0; i < inputIndex; i++) {
+        DrawText(TextFormat("%d", input[i]), startX + 80 + i * 20, startY + 130, 20, DARKBLUE);
+    }
+
+    // Mensagem de resultado
+    if (success) {
+        DrawText("Correto!", startX, startY + 170, 20, GREEN);
+    } else if (error) {
+        DrawText("Incorreto!", startX, startY + 170, 20, RED);
+    }
+
+    // Botão de reset
+    Rectangle resetBtn = { startX, startY + 210, 100, 30 };
+    DrawRectangleRec(resetBtn, GRAY);
+    DrawText("Resetar", resetBtn.x + 10, resetBtn.y + 5, 20, WHITE);
+
+    if (CheckCollisionPointRec(GetMousePosition(), resetBtn) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        inputIndex = 0;
+        for (int i = 0; i < 4; i++) input[i] = -1;
+        success = false;
+        error = false;
+    }
+}
+
 
 void unload_fragmento() {
     UnloadTexture(fragmentoTexture);

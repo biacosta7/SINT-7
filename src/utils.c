@@ -4,8 +4,7 @@
 #include "config.h"
 
 float cameraX = 0.0f;
-Camera2D camera;  
-
+ 
 void InitCamera(){
     camera = (Camera2D){ 0 };
     camera.target = (Vector2){ player.position.x + player.width/2, player.position.y + player.height/2 };
