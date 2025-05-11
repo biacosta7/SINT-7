@@ -6,17 +6,19 @@
 
 void init_puzzle(int fase);
 void update_puzzle();
-void draw_puzzle();
+void draw_puzzle(int puzzle);
 void start_memory_fragment(int id);
 bool is_puzzle_solved();
 void end_puzzle();
+void puzzle_1();
 
 void init_fragmento(int fase);
-void draw_fragmento();
+void draw_fragmento(int fragmento);
+void draw_fragmento_trigger();
 void unload_fragmento();
-void check_colisoes();
-void check_colisao_fragmento(Rectangle playerHitbox);
-void check_colisao_puzzle(Rectangle playerHitbox);
+char check_colisoes();
+bool check_colisao_fragmento(Rectangle playerHitbox);
+bool check_colisao_puzzle(Rectangle playerHitbox);
 
 enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
 
@@ -29,6 +31,7 @@ typedef struct FragmentoMemoria{
     float x;
     float y;
     Texture2D texture;
+    Texture2D trigger;
 } FragmentoMemoria;
 
 typedef struct Puzzle{

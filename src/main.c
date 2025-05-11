@@ -35,9 +35,14 @@ int main() {
             BeginMode2D(camera);
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
-                draw_fragmento(); // DESENHA O FRAGMENTO
-                check_colisoes();
+                draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
+                char interacao = check_colisoes(); // Chamar apenas uma vez
             EndMode2D();
+            
+
+            if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
+            else if(interacao == 'f') draw_fragmento(fragmentoObrigatorioAtual.fase);
+
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
