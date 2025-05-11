@@ -9,10 +9,11 @@ void init_fase(){
         if(player.faseAtual == i+1){
             faseAtual.numero = player.faseAtual;
             faseAtual.foiConcluida = false;
-            faseAtual.fragmentosObrigatorio = fragmentosObrigatorios[i];
+            faseAtual.fragmentoObrigatorio = fragmentosObrigatorios[i];
             faseAtual.puzzle = puzzles[i];
 
             init_fragmento(faseAtual.numero);
+            init_puzzle(faseAtual.numero);
 
             break;
         }

@@ -12,7 +12,7 @@ FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     // TO-DO: adicionar o resto dos enigmas
 };
 
-Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { // alterar quant 
+Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
     { false, NULL, NULL, 2, 0, 0 },
     { false, NULL, NULL, 3, 0, 0 },
@@ -22,7 +22,7 @@ Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { // alterar quant
 
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
 
-void init_fragmento(int fase){ //tbm inicializa puzzles. TO-DO: alterar nome
+void init_fragmento(int fase){
     fragmentoTexture = LoadTexture("assets/fragmentos/Random Device 2.png");
     bgfragmentoTexture = LoadTexture("assets/fragmentos/background-frag.png");
     
@@ -30,13 +30,20 @@ void init_fragmento(int fase){ //tbm inicializa puzzles. TO-DO: alterar nome
     char path[64];
     sprintf(path, "assets/fragmentos/background-frag/00%d.png", fase);
     fragmentoObrigatorioAtual.texture = LoadTexture(path);
+    
+}
 
-    puzzleAtual = puzzles[fase-1]; //init puzzle
+void init_puzzle(int fase){
+    puzzleAtual = puzzles[fase-1];
+    if(fase == 1 || fase == 2){
+        puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
+    }
+    
 }
 
 void draw_fragmento(){
     if (fragmentoObrigatorioAtual.fase == 1){
-        Vector2 position = {550, 350};
+        Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
         float scale = 3.0f;
         DrawTextureEx(fragmentoTexture, position, 0.0f, scale, WHITE);
     }
@@ -75,14 +82,7 @@ void printar_fragmentos() {
     }
 }
 
-void check_colisao(){
-    // HITBOX DO PLAYER
-    Rectangle playerHitbox = {
-        player.position.x,
-        player.position.y,
-        16 * 5,  // mesmo scale do draw_player
-        16 * 5
-    };
+void check_colisao_fragmento(Rectangle playerHitbox){
 
     // HITBOX DO FRAGMENTO
     Rectangle fragmentoHitbox = {
@@ -92,18 +92,12 @@ void check_colisao(){
         60 //height
     };
 
-    Rectangle puzzleHitbox = {
-        puzzleAtual.x,
-        puzzleAtual.y,
-        72, //width
-        130 //height
-    };
-
     //para ver onde ta a caixa de colisao:
     // DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
     //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
+    // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
 
@@ -126,6 +120,51 @@ void check_colisao(){
         }
         
     }
+
+}
+
+
+void check_colisao_puzzle(Rectangle playerHitbox){
+    // Hitbox do puzzle
+    Rectangle puzzleHitbox = {
+        puzzleAtual.x,
+        puzzleAtual.y,
+        72, //width
+        130 //height
+    };
+
+    if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
+        DrawText("(F) para interagir", puzzleAtual.x - 80, puzzleAtual.y - 30, 20, GREEN);
+
+        int fonteTamanho = 20;
+        int perguntaLargura = MeasureText(puzzleAtual.pergunta, fonteTamanho);
+
+        if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
+            Vector2 position = {SCREEN_WIDTH / 2 - 42 / 2, 20};
+            float scale = 20.0f;
+
+            if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
+                DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+            }
+            
+            if(!puzzleAtual.foiSolucionado){
+                puzzleAtual.foiSolucionado = true;
+            }
+        }
+        
+    }
+}
+
+void check_colisoes(){
+    // HITBOX DO PLAYER
+    Rectangle playerHitbox = {
+        player.position.x,
+        player.position.y,
+        16 * 5,  // mesmo scale do draw_player
+        16 * 5
+    };
+    check_colisao_fragmento(playerHitbox);
+    check_colisao_puzzle(playerHitbox);
 }
 
 void unload_fragmento() {

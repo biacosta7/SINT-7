@@ -36,7 +36,7 @@ int main() {
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento(); // DESENHA O FRAGMENTO
-                check_colisao();
+                check_colisoes();
             EndMode2D();
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);

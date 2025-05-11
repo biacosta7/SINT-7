@@ -11,7 +11,7 @@ typedef struct {
     int numero;
     bool foiConcluida;
     Puzzle puzzle;
-    FragmentoMemoria fragmentosObrigatorio;
+    FragmentoMemoria fragmentoObrigatorio;
 } Fase;
 
 Fase faseAtual;
