@@ -28,7 +28,18 @@ typedef struct FragmentoMemoria{
     Texture2D texture;
 } FragmentoMemoria;
 
+typedef struct Puzzle{
+    bool foiSolucionado; // pra saber se o player coletou
+    char *resposta;
+    char *pergunta;
+    int fase; // a qual fase ele pertence
+    float x;
+    float y;
+    //Texture2D texture;
+} Puzzle;
+
 FragmentoMemoria fragmentoObrigatorioAtual;
+Puzzle puzzleAtual;
 
 typedef struct NodeFragmento {
     FragmentoMemoria fragmento;
@@ -40,6 +51,7 @@ extern NodeFragmento *fragmentosColetados;
 #define TOTAL_FRAGMENTOS_OBRIGATORIOS 4 // mudar depois
 #define QUANT_FASES 4 // mudar depois
 extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
+Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS];
 
 void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();

@@ -15,6 +15,14 @@ FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     // TO-DO: adicionar o resto dos enigmas
 };
 
+Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { // alterar quant 
+    { false, NULL, NULL, 1, 1095, 290 },
+    { false, NULL, NULL, 2, 0, 0 },
+    { false, NULL, NULL, 3, 0, 0 },
+    { false, NULL, NULL, 4, 0, 0 },
+    // TO-DO: adicionar o resto dos puzzles e texture
+};
+
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
 
 void init_fragmento(){
@@ -30,6 +38,9 @@ void init_fragmento(){
             sprintf(path, "assets/fragmentos/background-frag/00%d.png", i+1);
             fragmentoObrigatorioAtual.texture = LoadTexture(path);
             //TO-DO: trocar imagens (texturas) para diferentes imagens (pode fazer uma lista com as texturas)
+
+            puzzleAtual = puzzles[i];
+
             break;
         }
         
@@ -95,9 +106,17 @@ void check_colisao(){
         60 //height
     };
 
+    Rectangle puzzleHitbox = {
+        puzzleAtual.x,
+        puzzleAtual.y,
+        72, //width
+        130 //height
+    };
+
     //para ver onde ta a caixa de colisao:
     // DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
@@ -130,4 +149,5 @@ void check_colisao(){
 
 void unload_fragmento() {
     UnloadTexture(fragmentoTexture);
+    UnloadTexture(fragmentoObrigatorioAtual.texture);
 }
