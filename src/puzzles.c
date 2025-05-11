@@ -1,45 +1,49 @@
 #include "puzzles.h"
 #include "player.h"
-#include <stdio.h>
-#include <stdlib.h>
-#define SCREEN_WIDTH 900
 
 Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
-    { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5... o último era 7.\"", 1, ENIGMA },
+    { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5... o último era 7.\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA },
     { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
     { false, false, "\"Eu nasci do silência. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
 
+Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
+    { false, NULL, NULL, 1, 1095, 290 },
+    { false, NULL, NULL, 2, 0, 0 },
+    { false, NULL, NULL, 3, 0, 0 },
+    { false, NULL, NULL, 4, 0, 0 },
+    // TO-DO: adicionar o resto dos puzzles e texture
+};
+
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
 
-void init_fragmento(){
+void init_fragmento(int fase){
     fragmentoTexture = LoadTexture("assets/fragmentos/Random Device 2.png");
     bgfragmentoTexture = LoadTexture("assets/fragmentos/background-frag.png");
+    
+    fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
+    char path[64];
+    sprintf(path, "assets/fragmentos/background-frag/00%d.png", fase);
+    fragmentoObrigatorioAtual.texture = LoadTexture(path);
+    
+}
 
-    for (int i = 0; i<QUANT_FASES; i++){
-        if(player.faseAtual == i+1){
-            fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
-            fragmentoObrigatorioAtual.x = 550;
-            fragmentoObrigatorioAtual.y = 350;
-            char path[64];
-            sprintf(path, "assets/fragmentos/background-frag/00%d.png", i+1);
-            fragmentoObrigatorioAtual.texture = LoadTexture(path);
-            //TO-DO: trocar imagens (texturas) para diferentes imagens (pode fazer uma lista com as texturas)
-            break;
-        }
-        
+void init_puzzle(int fase){
+    puzzleAtual = puzzles[fase-1];
+    if(fase == 1 || fase == 2){
+        puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
     }
     
 }
 
 void draw_fragmento(){
     if (fragmentoObrigatorioAtual.fase == 1){
-        Vector2 position = {550, 350};
+        Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
         float scale = 3.0f;
         DrawTextureEx(fragmentoTexture, position, 0.0f, scale, WHITE);
     }
@@ -53,7 +57,7 @@ void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     novo->next = fragmentosColetados;
     fragmentosColetados = novo;
 }
-#include <stdio.h> // para printf
+
 
 void printar_fragmentos() {
     NodeFragmento *atual = fragmentosColetados;
@@ -78,14 +82,7 @@ void printar_fragmentos() {
     }
 }
 
-void check_colisao(){
-    // HITBOX DO PLAYER
-    Rectangle playerHitbox = {
-        player.position.x,
-        player.position.y,
-        16 * 5,  // mesmo scale do draw_player
-        16 * 5
-    };
+void check_colisao_fragmento(Rectangle playerHitbox){
 
     // HITBOX DO FRAGMENTO
     Rectangle fragmentoHitbox = {
@@ -98,7 +95,9 @@ void check_colisao(){
     //para ver onde ta a caixa de colisao:
     // DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
+    // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
 
@@ -109,25 +108,66 @@ void check_colisao(){
 
 
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
-            DrawText("Fragmento de Memória Encontrado", (SCREEN_WIDTH - textoLargura) / 2, 20, 20, GREEN);
-            DrawText(fragmentoObrigatorioAtual.conteudo, (SCREEN_WIDTH - textoLargura) / 2, 50, 20, GREEN);
-            Vector2 position = {SCREEN_WIDTH / 2 - bgfragmentoTexture.width / 2, 20};
+            Vector2 position = {SCREEN_WIDTH / 2 - 513 / 2, 20};
             float scale = 1.0f;
             DrawTextureEx(fragmentoObrigatorioAtual.texture, position, 0.0f, scale, WHITE);
+            
             if(!fragmentoObrigatorioAtual.foiColetado){
                 fragmentoObrigatorioAtual.foiColetado = true;
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
+        }
+        
+    }
 
-            //DrawText("Fragmento de Memória Encontrado", (SCREEN_WIDTH - textoLargura) / 2, 40, 20, SKYBLUE);
+}
 
-            //DrawText(fragmentoObrigatorioAtual.conteudo, (SCREEN_WIDTH - textoLargura) / 2, 70, 18, WHITE);
+
+void check_colisao_puzzle(Rectangle playerHitbox){
+    // Hitbox do puzzle
+    Rectangle puzzleHitbox = {
+        puzzleAtual.x,
+        puzzleAtual.y,
+        72, //width
+        130 //height
+    };
+
+    if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
+        DrawText("(F) para interagir", puzzleAtual.x - 80, puzzleAtual.y - 30, 20, GREEN);
+
+        int fonteTamanho = 20;
+        int perguntaLargura = MeasureText(puzzleAtual.pergunta, fonteTamanho);
+
+        if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
+            Vector2 position = {SCREEN_WIDTH / 2 - 42 / 2, 20};
+            float scale = 20.0f;
+
+            if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
+                DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+            }
+            
+            if(!puzzleAtual.foiSolucionado){
+                puzzleAtual.foiSolucionado = true;
+            }
         }
         
     }
 }
 
+void check_colisoes(){
+    // HITBOX DO PLAYER
+    Rectangle playerHitbox = {
+        player.position.x,
+        player.position.y,
+        16 * 5,  // mesmo scale do draw_player
+        16 * 5
+    };
+    check_colisao_fragmento(playerHitbox);
+    check_colisao_puzzle(playerHitbox);
+}
+
 void unload_fragmento() {
     UnloadTexture(fragmentoTexture);
+    UnloadTexture(fragmentoObrigatorioAtual.texture);
 }

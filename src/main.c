@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "puzzles.h"
 #include "graphics.h"
+#include "fase.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -18,7 +19,7 @@ int main() {
     init_player();
     InitGraphics();
     InitCamera();
-    init_fragmento();
+    init_fase();
 
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
@@ -35,10 +36,10 @@ int main() {
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento(); // DESENHA O FRAGMENTO
-                check_colisao();
+                check_colisoes();
             EndMode2D();
 
-            // DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
+            DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
             // DrawText("SINT-7", 10, 10, 20, WHITE);
             
