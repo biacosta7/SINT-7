@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <raylib.h>
 
-
-
 int clamp(int value, int min, int max);
 float lerp(float a, float b, float t);
 void delay_ms(int ms);
@@ -14,5 +12,6 @@ void InitCamera();
 void UpdateCameraPosition();
 void UpdateCameraMove();
 
+Camera2D camera; 
 
 #endif // UTILS_H
