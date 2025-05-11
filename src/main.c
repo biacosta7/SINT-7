@@ -35,12 +35,13 @@ int main() {
             BeginMode2D(camera);
                 DrawBackground();  // DESENHA OS SETORES
                 draw_player();     // DESENHA O PLAYER
-                draw_fragmento(); // DESENHA O FRAGMENTO
+                draw_fragmento_trigger(); // DESENHA O FRAGMENTO
                 check_colisoes();
             EndMode2D();
             
 
             if(check_colisoes() == 'p') draw_puzzle(puzzleAtual.fase);
+            else if(check_colisoes() == 'f') draw_fragmento(fragmentoObrigatorioAtual.fase);
 
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);

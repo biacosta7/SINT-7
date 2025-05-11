@@ -30,7 +30,10 @@ void init_fragmento(int fase){
     char path[64];
     sprintf(path, "assets/fragmentos/background-frag/00%d.png", fase);
     fragmentoObrigatorioAtual.texture = LoadTexture(path);
-    
+
+    char trigger_path[64];
+    sprintf(trigger_path, "assets/fragmentos/trigger-frag/00%d.png", fase);
+    fragmentoObrigatorioAtual.trigger = LoadTexture(trigger_path);
 }
 
 void init_puzzle(int fase){
@@ -41,12 +44,10 @@ void init_puzzle(int fase){
     
 }
 
-void draw_fragmento(){
-    if (fragmentoObrigatorioAtual.fase == 1){
-        Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
-        float scale = 3.0f;
-        DrawTextureEx(fragmentoTexture, position, 0.0f, scale, WHITE);
-    }
+void draw_fragmento_trigger(){
+    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
+    float scale = 3.0f;
+    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
 }
 
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
@@ -108,10 +109,6 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
 
 
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
-            Vector2 position = {SCREEN_WIDTH / 2 - 513 / 2, 20};
-            float scale = 1.0f;
-            DrawTextureEx(fragmentoObrigatorioAtual.texture, position, 0.0f, scale, WHITE);
-            
             if(!fragmentoObrigatorioAtual.foiColetado){
                 fragmentoObrigatorioAtual.foiColetado = true;
                 adicionar_fragmento(fragmentoObrigatorioAtual);
@@ -181,6 +178,18 @@ void draw_puzzle(int puzzle){
         if (puzzleAtual.fase == 1) puzzle_1();
     }
     puzzle_1();
+}
+
+void draw_fragmento(int fragmento){
+    float scale = 1.0f;
+    float textureWidth = 513 * scale; 
+
+    Vector2 position = {
+        SCREEN_WIDTH / 2 - textureWidth / 2, 
+        20
+    };
+    DrawTextureEx(fragmentoObrigatorioAtual.texture, position, 0.0f, scale, WHITE);
+
 }
 
 // puzzles
