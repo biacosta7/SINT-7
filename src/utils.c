@@ -1,12 +1,7 @@
 #include "utils.h"
 #include "player.h"
 #include "raylib.h"
-
-#define SCREEN_WIDTH 900
-#define SCREEN_HEIGHT 512
-#define SECTOR_COUNT 2
-#define SECTOR_WIDTH 900
-#define SECTOR_HEIGHT 512
+#include "config.h"
 
 float cameraX = 0.0f;
 Camera2D camera;  

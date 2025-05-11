@@ -2,7 +2,6 @@
 #include "player.h"
 #include <stdio.h>
 #include <stdlib.h>
-#define SCREEN_WIDTH 900
 
 Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
@@ -25,7 +24,7 @@ Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { // alterar quant
 
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
 
-void init_fragmento(){
+void init_fragmento(){ //tbm inicializa puzzles. TO-DO: alterar nome
     fragmentoTexture = LoadTexture("assets/fragmentos/Random Device 2.png");
     bgfragmentoTexture = LoadTexture("assets/fragmentos/background-frag.png");
 
@@ -64,7 +63,7 @@ void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     novo->next = fragmentosColetados;
     fragmentosColetados = novo;
 }
-#include <stdio.h> // para printf
+
 
 void printar_fragmentos() {
     NodeFragmento *atual = fragmentosColetados;
