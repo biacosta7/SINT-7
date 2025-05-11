@@ -5,7 +5,7 @@ Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
-    { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5... o último era 7.\"", 1, ENIGMA, 550, 350 },
+    { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA },
     { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
     { false, false, "\"Eu nasci do silência. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
@@ -44,12 +44,6 @@ void init_puzzle(int fase){
     
 }
 
-void draw_fragmento_trigger(){
-    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
-    float scale = 3.0f;
-    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
-}
-
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     NodeFragmento *novo = (NodeFragmento *)malloc(sizeof(NodeFragmento));
     if (!novo) return; // Falha de alocação
@@ -83,6 +77,8 @@ void printar_fragmentos() {
     }
 }
 
+
+// Colisões
 bool check_colisao_fragmento(Rectangle playerHitbox){
 
     // HITBOX DO FRAGMENTO
@@ -94,19 +90,12 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     };
 
     //para ver onde ta a caixa de colisao:
-    // DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
-    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
     // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
-
-
-        int fonteTamanho = 20;
-        int textoLargura = MeasureText(fragmentoObrigatorioAtual.conteudo, fonteTamanho);
-        int tituloLargura = MeasureText("Fragmento de Memória Encontrado", fonteTamanho);
-
 
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
             if(!fragmentoObrigatorioAtual.foiColetado){
@@ -122,7 +111,6 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
 
 }
 
-
 bool check_colisao_puzzle(Rectangle playerHitbox){
     // Hitbox do puzzle
     Rectangle puzzleHitbox = {
@@ -132,10 +120,10 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
         130 //height
     };
     
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
-
         if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
             
             if(!puzzleAtual.foiSolucionado){
@@ -160,11 +148,13 @@ char check_colisoes(){
     bool puzzle = check_colisao_puzzle(playerHitbox);
 
     if (fragmento) return 'f';
-    if (puzzle) return 'p';
+    else if (puzzle) return 'p';
+    
     return 'z';
 }
 
 
+// Draw Puzzle e Fragmento
 void draw_puzzle(int puzzle){
     float scale = 18.0f;
     float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
@@ -177,7 +167,6 @@ void draw_puzzle(int puzzle){
         DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
         if (puzzleAtual.fase == 1) puzzle_1();
     }
-    puzzle_1();
 }
 
 void draw_fragmento(int fragmento){
@@ -192,8 +181,13 @@ void draw_fragmento(int fragmento){
 
 }
 
-// puzzles
+void draw_fragmento_trigger(){
+    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
+    float scale = 3.0f;
+    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
+}
 
+// Lógica dos Puzzles
 void puzzle_1() {
     static int input[4] = { -1, -1, -1, -1 };
     static int inputIndex = 0;
@@ -204,8 +198,8 @@ void puzzle_1() {
 
     int buttonSize = 50;
     int padding = 10;
-    int startX = 100;
-    int startY = 100;
+    int startX = (SCREEN_WIDTH / 2 - 21) - 130; //42 (tam do terminal) / 2 = 21
+    int startY = 150;
 
     // Desenha os botões de 0 a 9
     for (int i = 0; i < 10; i++) {
@@ -249,21 +243,21 @@ void puzzle_1() {
     }
 
     // Mostra entrada atual
-    DrawText("Entrada:", startX, startY + 130, 20, BLACK);
+    DrawText(">", startX, startY + 130, 20, GREEN);
     for (int i = 0; i < inputIndex; i++) {
-        DrawText(TextFormat("%d", input[i]), startX + 80 + i * 20, startY + 130, 20, DARKBLUE);
+        DrawText(TextFormat("%d", input[i]), startX + 20 + i * 20, startY + 130, 20, WHITE);
     }
 
     // Mensagem de resultado
     if (success) {
-        DrawText("Correto!", startX, startY + 170, 20, GREEN);
+        DrawText("Aprovado.", startX, startY + 170, 20, GREEN);
     } else if (error) {
-        DrawText("Incorreto!", startX, startY + 170, 20, RED);
+        DrawText("Acesso negado.", startX, startY + 170, 20, RED);
     }
 
     // Botão de reset
-    Rectangle resetBtn = { startX, startY + 210, 100, 30 };
-    DrawRectangleRec(resetBtn, GRAY);
+    Rectangle resetBtn = { startX  + 300, startY + 215, 100, 30 };
+    DrawRectangleRec(resetBtn, DARKGRAY);
     DrawText("Resetar", resetBtn.x + 10, resetBtn.y + 5, 20, WHITE);
 
     if (CheckCollisionPointRec(GetMousePosition(), resetBtn) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
