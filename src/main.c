@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "puzzles.h"
 #include "graphics.h"
+#include "fase.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -18,7 +19,7 @@ int main() {
     init_player();
     InitGraphics();
     InitCamera();
-    init_fragmento();
+    init_fase();
 
     while (!WindowShouldClose()) {
         if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;

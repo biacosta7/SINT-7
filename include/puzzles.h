@@ -11,7 +11,7 @@ void start_memory_fragment(int id);
 bool is_puzzle_solved();
 void end_puzzle();
 
-void init_fragmento();
+void init_fragmento(int fase);
 void draw_fragmento();
 void unload_fragmento();
 void check_colisao();
