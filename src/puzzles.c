@@ -235,8 +235,16 @@ void puzzle_1() {
                             break;
                         }
                     }
-                    if (match) success = true;
-                    else error = true;
+                    if (match) {
+                        success = true;
+                        puzzleAtual.foiSolucionado = true;
+                        // Desbloqueia a fase 2 se ainda não estiver desbloqueada
+                        if (!player.fasesDesbloqueadas[1]) {
+                            desbloquear_fase(1);
+                        }
+                    } else {
+                        error = true;
+                    }
                 }
             }
         }
@@ -251,7 +259,6 @@ void puzzle_1() {
     // Mensagem de resultado
     if (success) {
         DrawText("Aprovado.", startX, startY + 170, 20, GREEN);
-        puzzleAtual.foiSolucionado = true;
     } else if (error) {
         DrawText("Acesso negado.", startX, startY + 170, 20, RED);
     }
@@ -269,8 +276,8 @@ void puzzle_1() {
     }
 }
 
-
 void unload_fragmento() {
     UnloadTexture(fragmentoTexture);
     UnloadTexture(fragmentoObrigatorioAtual.texture);
 }
+

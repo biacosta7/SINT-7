@@ -37,6 +37,7 @@ int main() {
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
                 char interacao = check_colisoes(); // Chamar apenas uma vez
+                
             EndMode2D();
             
             if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
