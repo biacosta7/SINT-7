@@ -251,6 +251,7 @@ void puzzle_1() {
     // Mensagem de resultado
     if (success) {
         DrawText("Aprovado.", startX, startY + 170, 20, GREEN);
+        puzzleAtual.foiSolucionado = true;
     } else if (error) {
         DrawText("Acesso negado.", startX, startY + 170, 20, RED);
     }

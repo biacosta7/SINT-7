@@ -39,10 +39,8 @@ int main() {
                 char interacao = check_colisoes(); // Chamar apenas uma vez
             EndMode2D();
             
-
             if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
             else if(interacao == 'f') draw_fragmento(fragmentoObrigatorioAtual.fase);
-
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
