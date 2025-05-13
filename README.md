@@ -71,7 +71,7 @@ gcc src/*.c -Iinclude -o sint7 -lraylib -framework OpenGL -framework Cocoa -fram
     <td align="center">
       <a href="https://github.com/georgenetoo">
         <img src="https://github.com/georgenetoo.png" width="100px;" alt="George Neto"/>
-        <br /><sub><b>George Neto</b></sub>
+        <br /><sub><b>George Almerio</b></sub>
       </a>
     </td>
     <td align="center">
