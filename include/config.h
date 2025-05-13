@@ -5,7 +5,7 @@
 #define QUANT_FASES 4 // mudar depois
 #define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 512
-#define SECTOR_COUNT 2
+#define SECTOR_COUNT 4
 #define SECTOR_WIDTH 900
 #define SECTOR_HEIGHT 512
 

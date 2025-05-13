@@ -44,6 +44,8 @@ int main() {
                 draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
                 char interacao = check_colisoes(); // Chamar apenas uma vez
 
+            EndMode2D();
+
             int btnX = 50;
             int btnY = 50;
             int scaleI = 5.0f;
@@ -52,7 +54,6 @@ int main() {
             float scale = 0.1f;
             DrawTextureEx(botaoTexture, (Vector2){btnX, btnY}, 0.0f, scale, WHITE);
 
-            EndMode2D();
             if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                 Vector2 mouse = GetMousePosition();
                 if (mouse.x >= btnX && mouse.x <= btnX + botaoTexture.width &&
