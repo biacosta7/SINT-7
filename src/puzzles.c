@@ -6,10 +6,10 @@ NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
-    { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
+    { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA },
     { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
-    { false, false, "\"Eu nasci do silência. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
+    { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
 
