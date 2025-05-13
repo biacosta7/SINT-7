@@ -20,6 +20,8 @@ char check_colisoes();
 bool check_colisao_fragmento(Rectangle playerHitbox);
 bool check_colisao_puzzle(Rectangle playerHitbox);
 
+extern bool fragmentoFoiAtivado;
+
 enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
 
 typedef struct FragmentoMemoria{

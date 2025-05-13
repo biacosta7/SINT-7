@@ -84,11 +84,10 @@ int main() {
                     i++;
                 }
             }
-
             if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
-            else if(interacao == 'f') draw_fragmento(fragmentoObrigatorioAtual.fase);
-
-
+            if (fragmentoFoiAtivado) {
+                draw_fragmento(fragmentoObrigatorioAtual.fase);
+            }
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
             // DrawText("SINT-7", 10, 10, 20, WHITE);
