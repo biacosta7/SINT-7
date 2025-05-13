@@ -46,7 +46,6 @@ typedef struct Puzzle{
 
 FragmentoMemoria fragmentoObrigatorioAtual;
 Puzzle puzzleAtual;
-
 typedef struct NodeFragmento {
     FragmentoMemoria fragmento;
     struct NodeFragmento *next;

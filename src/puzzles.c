@@ -61,8 +61,7 @@ void printar_fragmentos() {
     if (!atual) {
         printf("Nenhum fragmento coletado.\n");
         return;
-    }
-
+    } 
     printf("Fragmentos coletados:\n");
     while (atual != NULL) {
         printf("Fragmento %d:\n", i++);
@@ -181,10 +180,10 @@ void draw_fragmento(int fragmento){
 
 }
 
-void draw_fragmento_trigger(){
-    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
+void draw_fragmento_trigger(){ 
+    Vector2 posTela = GetWorldToScreen2D((Vector2){ fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y }, camera);
     float scale = 3.0f;
-    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
+    DrawTextureEx(fragmentoObrigatorioAtual.trigger, posTela, 0.0f, scale, WHITE);
 }
 
 // Lógica dos Puzzles

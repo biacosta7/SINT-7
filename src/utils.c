@@ -2,6 +2,7 @@
 #include "player.h"
 #include "raylib.h"
 #include "config.h"
+#include <math.h>
 
 float cameraX = 0.0f;
  
@@ -40,4 +41,6 @@ void UpdateCameraPosition() {
     }
 
     camera.target.y = SCREEN_HEIGHT / 2.0f;
+
+    camera.target.x = roundf(camera.target.x);
 }
