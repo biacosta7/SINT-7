@@ -3,6 +3,7 @@
 
 Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
+bool fragmentoFoiAtivado = false;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo.\nEla dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
@@ -97,15 +98,15 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
 
-        if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
-            if(!fragmentoObrigatorioAtual.foiColetado){
+        if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
+            if (!fragmentoObrigatorioAtual.foiColetado) {
                 fragmentoObrigatorioAtual.foiColetado = true;
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
+            fragmentoFoiAtivado = !fragmentoFoiAtivado;
             return true;
         }
-        
     }
     return false;
 
