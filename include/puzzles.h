@@ -13,12 +13,14 @@ void end_puzzle();
 void puzzle_1();
 
 void init_fragmento(int fase);
+void update_fragmento();
 void draw_fragmento(int fragmento);
 void draw_fragmento_trigger();
-void unload_fragmento();
 char check_colisoes();
 bool check_colisao_fragmento(Rectangle playerHitbox);
 bool check_colisao_puzzle(Rectangle playerHitbox);
+void free_fragmento_resources();
+void free_puzzle_resources();
 
 extern bool fragmentoFoiAtivado;
 

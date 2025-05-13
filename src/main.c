@@ -34,6 +34,8 @@ int main() {
         update_player(); // Atualiza jogador
         UpdateCameraPosition(); // Atualiza camera.target.x se necessário
         UpdateCameraMove(); // Atualiza cameraX baseado na nova camera
+        update_fragmento();
+        //update_puzzle();
 
         BeginDrawing();
             ClearBackground(BLACK);

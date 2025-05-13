@@ -7,7 +7,7 @@ bool fragmentoFoiAtivado = false;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
-    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA },
+    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2030, 330 },
     { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
     { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
@@ -15,7 +15,7 @@ FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
 
 Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
-    { false, NULL, NULL, 2, 0, 0 },
+    { false, NULL, NULL, 2, 2900, 350 },
     { false, NULL, NULL, 3, 0, 0 },
     { false, NULL, NULL, 4, 0, 0 },
     // TO-DO: adicionar o resto dos puzzles e texture
@@ -28,14 +28,35 @@ void init_fragmento(int fase){
     bgfragmentoTexture = LoadTexture("assets/fragmentos/background-frag.png");
     
     fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
-    char path[64];
-    sprintf(path, "assets/fragmentos/background-frag/00%d.png", fase);
-    fragmentoObrigatorioAtual.texture = LoadTexture(path);
-
-    char trigger_path[64];
-    sprintf(trigger_path, "assets/fragmentos/trigger-frag/00%d.png", fase);
-    fragmentoObrigatorioAtual.trigger = LoadTexture(trigger_path);
 }
+
+void update_fragmento() {
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+        if (fragmentosObrigatorios[i].fase == player.faseAtual) {
+            fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
+
+            char path[64];
+            sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
+            fragmentosObrigatorios[i].texture = LoadTexture(path);
+
+            char trigger_path[64];
+            sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
+            fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
+
+            break;
+        }
+    }
+}
+
+void update_puzzle(){
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+        if (puzzles[i].fase == player.faseAtual) {
+            puzzleAtual = puzzles[i];
+            break;
+        }
+    }
+}
+
 
 void init_puzzle(int fase){
     puzzleAtual = puzzles[fase-1];
@@ -87,17 +108,17 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
         fragmentoObrigatorioAtual.x,
         fragmentoObrigatorioAtual.y,
         32, //width
-        60 //height
+        120 //height
     };
 
     //para ver onde ta a caixa de colisao:
-    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
 
     // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
-
+        
         if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
             if (!fragmentoObrigatorioAtual.foiColetado) {
                 fragmentoObrigatorioAtual.foiColetado = true;
@@ -121,7 +142,7 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
         130 //height
     };
     
-    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
+    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
@@ -277,8 +298,25 @@ void puzzle_1() {
     }
 }
 
-void unload_fragmento() {
-    UnloadTexture(fragmentoTexture);
-    UnloadTexture(fragmentoObrigatorioAtual.texture);
-}
+void free_fragmento_resources() {
+    NodeFragmento *atual = fragmentosColetados;
+    while (atual != NULL) {
+        NodeFragmento *temp = atual;
+        atual = atual->next;
+        free(temp);
+    }
+    fragmentosColetados = NULL;
 
+    UnloadTexture(fragmentoTexture);
+    UnloadTexture(bgfragmentoTexture);
+
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+        UnloadTexture(fragmentosObrigatorios[i].texture);
+        UnloadTexture(fragmentosObrigatorios[i].trigger);
+    }
+}
+void free_puzzle_resources() {
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+        UnloadTexture(puzzles[i].texture);
+    }
+}

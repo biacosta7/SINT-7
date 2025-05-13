@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "utils.h"
 #include "config.h"
+#include "puzzles.h"
 
 Texture2D bgSectors[SECTOR_COUNT];
 
@@ -30,4 +31,6 @@ void UnloadGraphics() {
     for (int i = 0; i < SECTOR_COUNT; i++) {
         UnloadTexture(bgSectors[i]);
     }
+    free_fragmento_resources();
+    free_puzzle_resources();
 }
