@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "raylib.h" 
 #include "config.h"
-
+void update_fragmento_opcional();
 void init_puzzle(int fase);
 void update_puzzle();
 void draw_puzzle(int puzzle);
@@ -36,6 +36,7 @@ typedef struct FragmentoMemoria{
     float y;
     Texture2D texture;
     Texture2D trigger;
+    char resumo[512]; //texto que sera gerado pe IA
 } FragmentoMemoria;
 
 typedef struct Puzzle{
@@ -47,6 +48,7 @@ typedef struct Puzzle{
     float y;
     Texture2D texture;
 } Puzzle;
+FragmentoMemoria fragmentoOpcionalAtual;
 
 FragmentoMemoria fragmentoObrigatorioAtual;
 Puzzle puzzleAtual;

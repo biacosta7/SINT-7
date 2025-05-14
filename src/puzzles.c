@@ -1,9 +1,35 @@
 #include "puzzles.h"
 #include "player.h"
+#include <string.h>
 
 Texture2D fragmentoTexture, bgfragmentoTexture;
+FragmentoMemoria fragmentoOpcionalAtual;
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
+
+FragmentoMemoria fragmentosOpcionais[TOTAL_FRAGMENTOS_OPCIONAIS] = {
+    { true, false, "\"\"", 1,  NULL  },
+    { true, false, "\"\"", 2,  NULL  },
+    { false, false, "\"\"", 3, NULL },
+    { false, false, "\"\"", 4, NULL },
+    // TO-DO: adicionar o resto dos enigmas
+};
+void update_fragmento_opcional() {
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OPCIONAIS; i++) {
+        if (fragmentosOpcionais[i].fase == player.faseAtual) {
+            fragmentoOpcionalAtual = fragmentosOpcionais[i];
+            char path[64];
+            sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
+            fragmentosOpcionais[i].texture = LoadTexture(path);
+
+            char trigger_path[64];
+            sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
+            fragmentosOpcionais[i].trigger = LoadTexture(trigger_path);
+
+            break;
+        }
+    }
+}
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
@@ -99,6 +125,17 @@ void printar_fragmentos() {
     }
 }
 
+bool fragmento_ja_coletado(const char *conteudo) {
+    NodeFragmento *atual = fragmentosColetados;
+    while (atual != NULL) {
+        if (strcmp(atual->fragmento.conteudo, conteudo) == 0) {
+            return true;
+        }
+        atual = atual->next;
+    }
+    return false;
+}
+
 
 // Colisões
 bool check_colisao_fragmento(Rectangle playerHitbox){
@@ -119,8 +156,8 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
         
-        if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
-            if (!fragmentoObrigatorioAtual.foiColetado) {
+        if (IsKeyPressed(KEY_F)) {
+            if (!fragmento_ja_coletado(fragmentoObrigatorioAtual.conteudo)) {
                 fragmentoObrigatorioAtual.foiColetado = true;
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
@@ -130,7 +167,6 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
         }
     }
     return false;
-
 }
 
 bool check_colisao_puzzle(Rectangle playerHitbox){
