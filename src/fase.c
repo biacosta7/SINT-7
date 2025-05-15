@@ -2,7 +2,6 @@
 #include "puzzles.h"
 #include "player.h"
 
-
 void init_fase(){
     for (int i = 0; i<QUANT_FASES; i++){
         

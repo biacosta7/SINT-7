@@ -2,7 +2,6 @@
 #include "player.h"
 #include <stdio.h>
 
-
 #define QUANT_BOTOES 3
 
 static EstadoMenu estadoAtual = MENU_PRINCIPAL;

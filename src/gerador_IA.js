@@ -5,10 +5,13 @@ dotenv.config();
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-pro-latest" });
 
 async function extrairFragmentos() {
-  const raw = await fs.readFile('./historia.json', 'utf8');
+  const raw = await fs.readFile('./SINT-7/src/historia.json', 'utf8');
+
+
+
   const { historia } = JSON.parse(raw);
 
   const prompt = `

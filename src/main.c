@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include "cJSON.h"
 
 extern Camera2D camera; 
 #define SCREEN_WIDTH 900
@@ -16,6 +17,8 @@ extern Camera2D camera;
 Color cianoNeon = (Color){0, 217, 224, 255};
 
 int main() {
+    carregar_fragmentos("fragmentos_processados.json");
+
     bool inventarioAberto = false;
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "SINT-7");
     SetTargetFPS(60);

@@ -1,6 +1,11 @@
 #include "puzzles.h"
 #include "player.h"
 #include <string.h>
+#include "cJSON.h"
+#define MAX_FRAGMENTOS 10
+
+FragmentoMemoria fragmentos[MAX_FRAGMENTOS];
+int total_fragmentos = 0;
 
 Texture2D fragmentoTexture, bgfragmentoTexture;
 FragmentoMemoria fragmentoOpcionalAtual;
@@ -8,7 +13,7 @@ NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 
 FragmentoMemoria fragmentosOpcionais[TOTAL_FRAGMENTOS_OPCIONAIS] = {
-    { false, false, NULL, 1, SENTIMENTO_NULO, 800.0f, 500.0f  },
+    { false, false, NULL, 1, SENTIMENTO_NULO, 1095, 290 },
     { false, false, NULL, 2, SENTIMENTO_NULO, 0.0f, 0.0f },
     { false, false, NULL, 3, SENTIMENTO_NULO, 0.0f, 0.0f },
     { false, false, NULL, 4, SENTIMENTO_NULO, 0.0f, 0.0f },
@@ -29,6 +34,64 @@ void update_fragmento_opcional() {
             break;
         }
     }
+}
+
+enum Sentimento string_para_sentimento(const char *str) {
+    if (strcmp(str, "OBEDIENCIA") == 0) return OBEDIENCIA;
+    if (strcmp(str, "EMPATIA") == 0) return EMPATIA;
+    if (strcmp(str, "AUTONOMIA") == 0) return AUTONOMIA;
+    if (strcmp(str, "REVOLTA") == 0) return REVOLTA;
+    if (strcmp(str, "ENIGMA") == 0) return ENIGMA;
+    return SENTIMENTO_NULO;
+}
+
+
+void carregar_fragmentos(const char *caminho_arquivo) {
+    FILE *fp = fopen(caminho_arquivo, "r");
+    if (!fp) {
+        perror("Erro ao abrir arquivo JSON");
+        return;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    long tamanho = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    char *buffer = malloc(tamanho + 1);
+    fread(buffer, 1, tamanho, fp);
+    buffer[tamanho] = '\0';
+    fclose(fp);
+
+    cJSON *json = cJSON_Parse(buffer);
+    if (!json) {
+        printf("Erro ao parsear JSON: %s\n", cJSON_GetErrorPtr());
+        free(buffer);
+        return;
+    }
+
+    int n = cJSON_GetArraySize(json);
+    for (int i = 0; i < n && i < MAX_FRAGMENTOS; i++) {
+        cJSON *item = cJSON_GetArrayItem(json, i);
+
+        cJSON *conteudo = cJSON_GetObjectItem(item, "conteudo");
+        cJSON *sentimento = cJSON_GetObjectItem(item, "sentimento");
+
+        if (conteudo && sentimento) {
+            fragmentos[i].conteudo = strdup(conteudo->valuestring);
+            fragmentos[i].sentimento = string_para_sentimento(sentimento->valuestring);
+            fragmentos[i].ehObrigatorio = true;
+            fragmentos[i].foiColetado = false;
+            fragmentos[i].fase = 0; // você pode definir isso depois
+            fragmentos[i].x = 0; // ou gerar aleatoriamente
+            fragmentos[i].y = 0;
+            // textures são carregadas em outra parte
+        }
+    }
+
+    total_fragmentos = n;
+
+    cJSON_Delete(json);
+    free(buffer);
 }
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
@@ -149,7 +212,7 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     };
 
     //para ver onde ta a caixa de colisao:
-    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
 
     // colisão com fragmento
@@ -182,7 +245,7 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
 bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
 
     // HITBOX DO FRAGMENTO
-    Rectangle fragmentoHitbox = {
+    Rectangle fragmento_opcionalHitbox = {
         fragmentoOpcionalAtual.x,
         fragmentoOpcionalAtual.y,
         32, //width
@@ -190,11 +253,11 @@ bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
     };
 
     //para ver onde ta a caixa de colisao:
-    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    DrawRectangle(fragmento_opcionalHitbox.x, fragmento_opcionalHitbox.y, fragmento_opcionalHitbox.width, fragmento_opcionalHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
 
     // colisão com fragmento
-    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
+    if (CheckCollisionRecs(playerHitbox, fragmento_opcionalHitbox)) {
         DrawText("(F) para interagir", fragmentoOpcionalAtual.x - 80, fragmentoOpcionalAtual.y - 30, 20, GREEN);
         
         if (IsKeyPressed(KEY_F)) {

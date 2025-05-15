@@ -2,6 +2,7 @@
 #include "player.h"
 #include "raylib.h"
 #include "config.h"
+#include "cJSON.h"
 
 float cameraX = 0.0f;
  

@@ -22,6 +22,8 @@ bool check_colisao_fragmento(Rectangle playerHitbox);
 bool check_colisao_puzzle(Rectangle playerHitbox);
 void free_fragmento_resources();
 void free_puzzle_resources();
+void carregar_fragmentos(const char *caminho_arquivo);
+enum Sentimento string_para_sentimento(const char *str);
 
 extern bool fragmentoFoiAtivado;
 
