@@ -35,7 +35,7 @@ int main() {
         UpdateCameraPosition(); // Atualiza camera.target.x se necessário
         UpdateCameraMove(); // Atualiza cameraX baseado na nova camera
         update_fragmento();
-        //update_puzzle();
+        update_puzzle();
 
         BeginDrawing();
             ClearBackground(BLACK);
@@ -87,7 +87,15 @@ int main() {
                     i++;
                 }
             }
-            if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
+            if (puzzleFoiAtivado) {
+                draw_puzzle(player.faseAtual);
+
+                // ESC fecha o puzzle
+                if (IsKeyDown(KEY_X)) {
+                    puzzleFoiAtivado = false;
+                    init_puzzle(player.faseAtual);
+                }
+            }
             if (fragmentoFoiAtivado) {
                 draw_fragmento(fragmentoObrigatorioAtual.fase);
             }

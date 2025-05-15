@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "config.h"
 #include "puzzles.h"
+#include "player.h"
 
 Texture2D bgSectors[SECTOR_COUNT];
 
@@ -20,9 +21,20 @@ void InitGraphics() {
     }
 }
 
+int maiorFaseAlcancada = 1; // começa na fase 1
+
+void atualizarMaiorFase() {
+    if (player.faseAtual > maiorFaseAlcancada) {
+        maiorFaseAlcancada = player.faseAtual;
+    }
+}
 
 void DrawBackground() {
-    for (int i = 0; i < SECTOR_COUNT; i++) {
+    atualizarMaiorFase();
+
+    int maxIndex = (maiorFaseAlcancada * 2); // cada fase tem 2 bgs
+
+    for (int i = 0; i < maxIndex && i < SECTOR_COUNT; i++) {
         DrawTexture(bgSectors[i], i * SECTOR_WIDTH, 0, WHITE);
     }
 }

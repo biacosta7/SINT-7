@@ -11,6 +11,7 @@ void start_memory_fragment(int id);
 bool is_puzzle_solved();
 void end_puzzle();
 void puzzle_1();
+void puzzle_2();
 
 void init_fragmento(int fase);
 void update_fragmento();
@@ -23,6 +24,7 @@ void free_fragmento_resources();
 void free_puzzle_resources();
 
 extern bool fragmentoFoiAtivado;
+extern bool puzzleFoiAtivado;
 
 enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
 
