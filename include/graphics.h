@@ -6,6 +6,7 @@
 void InitGraphics();
 void UnloadGraphics();
 void DrawBackground();
+void atualizarMaiorFase();
 
 extern float cameraX;
 

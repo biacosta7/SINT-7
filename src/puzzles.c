@@ -30,9 +30,10 @@ void init_fragmento(int fase){
     fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
 }
 
+int countFragCarregado = 0, countPuzzleCarregado=0;
 void update_fragmento() {
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
-        if (fragmentosObrigatorios[i].fase == player.faseAtual) {
+        if (fragmentosObrigatorios[i].fase == player.faseAtual && i>=countFragCarregado) {
             fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
 
             char path[64];
@@ -43,6 +44,8 @@ void update_fragmento() {
             sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
             fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
 
+            countFragCarregado++;
+
             break;
         }
     }
@@ -50,11 +53,13 @@ void update_fragmento() {
 
 void update_puzzle(){
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
-        if (puzzles[i].fase == player.faseAtual) {
+        if (puzzles[i].fase == player.faseAtual && i>=countPuzzleCarregado) {
             puzzleAtual = puzzles[i];
+            countPuzzleCarregado++;
             break;
         }
     }
+
 }
 
 
@@ -121,7 +126,8 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
         
         if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
             if (!fragmentoObrigatorioAtual.foiColetado) {
-                fragmentoObrigatorioAtual.foiColetado = true;
+                fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
+                fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
@@ -143,6 +149,7 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
     };
     
     DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
+    
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
@@ -188,6 +195,7 @@ void draw_puzzle(int puzzle){
     if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
         DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
         if (puzzleAtual.fase == 1) puzzle_1();
+        else puzzle_2();
     }
 }
 
@@ -295,6 +303,81 @@ void puzzle_1() {
         for (int i = 0; i < 4; i++) input[i] = -1;
         success = false;
         error = false;
+    }
+}
+
+
+#define MAX_CONNECTIONS 8
+
+typedef struct {
+    KeyboardKey key;
+    int value;      // 0 ou 1
+    int ledIndex;   // 0 = LED1, 1 = LED2, etc.
+    bool active;
+} Connection;
+
+void puzzle_2() {
+    static bool initialized = false;
+    static Texture2D ledOn, ledOff, ledNeutro, board;
+    static bool connections[MAX_CONNECTIONS] = {false};
+    static bool resolved = false;
+
+    if (!initialized) {
+        ledOn = LoadTexture("assets/puzzles/led_on.png");
+        ledOff = LoadTexture("assets/puzzles/led_off.png");
+        ledNeutro = LoadTexture("assets/puzzles/led_neutro.png");
+        board = LoadTexture("assets/puzzles/circuito.png");
+        initialized = true;
+    }
+
+    Connection connectionDefs[MAX_CONNECTIONS] = {
+        {KEY_A, 0, 1},
+        {KEY_B, 0, 3},
+        {KEY_C, 0, 2},
+        {KEY_D, 0, 0},
+        {KEY_E, 1, 0},
+        {KEY_F, 1, 2},
+        {KEY_G, 1, 1},
+        {KEY_H, 1, 3}
+    };
+
+    // Alternar conexões
+    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        if (IsKeyPressed(connectionDefs[i].key)) {
+            connections[i] = !connections[i];
+        }
+    }
+
+    int leds[4] = {-1, -1, -1, -1};
+    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        if (connections[i]) {
+            leds[connectionDefs[i].ledIndex] = connectionDefs[i].value;
+        }
+    }
+
+    resolved = (leds[0] == 0 && leds[1] == 1 && leds[2] == 0 && leds[3] == 1);
+    if (resolved && !puzzleAtual.foiSolucionado) {
+        puzzleAtual.foiSolucionado = true;
+        if (!player.fasesDesbloqueadas[2]) {
+            desbloquear_fase(2);
+        }
+    }
+
+    DrawTexture(board, 0, 0, WHITE);
+
+    Vector2 ledPositions[4] = {
+        {620, 63}, {620, 143}, {620, 213}, {620, 287}
+    };
+
+    for (int i = 0; i < 4; i++) {
+        Texture2D tex = (leds[i] == 1) ? ledOn : (leds[i] == 0 ? ledOff : ledNeutro);
+        DrawTexture(tex, ledPositions[i].x, ledPositions[i].y, WHITE);
+    }
+
+    if (resolved) {
+        DrawText("PUZZLE RESOLVIDO!", 280, 500, 24, GREEN);
+    } else {
+        DrawText("Pressione A-H para conectar saídas", 230, 500, 20, GRAY);
     }
 }
 
