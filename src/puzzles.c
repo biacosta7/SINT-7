@@ -52,12 +52,8 @@ void update_fragmento() {
 
 void update_puzzle(){
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
-        if (puzzles[i].fase == player.faseAtual && i>=countPuzzleCarregado) {
-            puzzleAtual = puzzles[i];
-
-            if(puzzleAtual.fase == 1){
-                puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
-            }
+        if (puzzles[i].fase == player.faseAtual && i >= countPuzzleCarregado) {
+            puzzles[i] = puzzles[i]; // mantém sincronizado, mas não seta puzzleAtual ainda
             countPuzzleCarregado++;
             break;
         }
@@ -67,11 +63,14 @@ void update_puzzle(){
 
 void init_puzzle(int fase){
     puzzleAtual = puzzles[fase-1];
+
     if(fase == 1){
         puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
-        if (puzzleAtual.texture.id == 0) printf("$$$ ERRO: puzzleAtual.texture.id == 0\n");
-        else printf("TA OK\n");
+    } else if (fase == 2) {
+        puzzleAtual.texture = LoadTexture("assets/puzzles/circuito.png");
     }
+
+    puzzleFoiAtivado = false; 
 }
 
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
@@ -156,13 +155,11 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
-        if (IsKeyDown(KEY_F)){ // ERRO: texto não mantem
-            
-            if(!puzzleAtual.foiSolucionado){
-                puzzleAtual.foiSolucionado = true;
+        if (IsKeyPressed(KEY_F)) {
+            if (!puzzleAtual.foiSolucionado) {
+                init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
             }
-            //puzzleFoiAtivado = !puzzleFoiAtivado;
-
+            puzzleFoiAtivado = true;
             return true;
         }
     }
@@ -197,9 +194,6 @@ void draw_puzzle(int puzzle){
             20
         };
         DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
-
-        printf("Fase: %d\n", puzzleAtual.fase);
-        if (puzzleAtual.texture.id == 0) printf("ERRO: puzzleAtual.texture.id == 0\n");
         puzzle_1();
     } else if (puzzleAtual.fase == 2) {
         puzzle_2();

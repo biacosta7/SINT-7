@@ -87,7 +87,15 @@ int main() {
                     i++;
                 }
             }
-            if(interacao == 'p') draw_puzzle(puzzleAtual.fase);
+            if (puzzleFoiAtivado) {
+                draw_puzzle(player.faseAtual);
+
+                // ESC fecha o puzzle
+                if (IsKeyDown(KEY_X)) {
+                    puzzleFoiAtivado = false;
+                    init_puzzle(player.faseAtual);
+                }
+            }
             if (fragmentoFoiAtivado) {
                 draw_fragmento(fragmentoObrigatorioAtual.fase);
             }

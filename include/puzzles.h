@@ -24,6 +24,7 @@ void free_fragmento_resources();
 void free_puzzle_resources();
 
 extern bool fragmentoFoiAtivado;
+extern bool puzzleFoiAtivado;
 
 enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
 
