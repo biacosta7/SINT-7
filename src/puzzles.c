@@ -8,7 +8,7 @@ bool puzzleFoiAtivado = false;
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2030, 330 },
-    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA },
+    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4140, 330 },
     { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
@@ -16,7 +16,7 @@ FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
 Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
     { false, NULL, NULL, 2, 2900, 290 },
-    { false, NULL, NULL, 3, 0, 0 },
+    { false, NULL, NULL, 3, 5140, 300 },
     { false, NULL, NULL, 4, 0, 0 },
     // TO-DO: adicionar o resto dos puzzles e texture
 };
