@@ -1,9 +1,9 @@
 #include "puzzles.h"
 #include "player.h"
 
-Texture2D fragmentoTexture, bgfragmentoTexture;
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
+bool puzzleFoiAtivado = false;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
@@ -15,7 +15,7 @@ FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
 
 Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
-    { false, NULL, NULL, 2, 2900, 350 },
+    { false, NULL, NULL, 2, 2900, 290 },
     { false, NULL, NULL, 3, 0, 0 },
     { false, NULL, NULL, 4, 0, 0 },
     // TO-DO: adicionar o resto dos puzzles e texture
@@ -24,27 +24,26 @@ Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
 
 void init_fragmento(int fase){
-    fragmentoTexture = LoadTexture("assets/fragmentos/Random Device 2.png");
-    bgfragmentoTexture = LoadTexture("assets/fragmentos/background-frag.png");
-    
     fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
 }
 
 int countFragCarregado = 0, countPuzzleCarregado=0;
 void update_fragmento() {
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
-        if (fragmentosObrigatorios[i].fase == player.faseAtual && i>=countFragCarregado) {
+        if (fragmentosObrigatorios[i].fase == player.faseAtual) {
             fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
 
-            char path[64];
-            sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
-            fragmentosObrigatorios[i].texture = LoadTexture(path);
+            if(i>=countFragCarregado){
+                char path[64];
+                sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
+                fragmentosObrigatorios[i].texture = LoadTexture(path);
 
-            char trigger_path[64];
-            sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
-            fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
+                char trigger_path[64];
+                sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
+                fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
 
-            countFragCarregado++;
+                countFragCarregado++;
+            }
 
             break;
         }
@@ -55,20 +54,24 @@ void update_puzzle(){
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
         if (puzzles[i].fase == player.faseAtual && i>=countPuzzleCarregado) {
             puzzleAtual = puzzles[i];
+
+            if(puzzleAtual.fase == 1){
+                puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
+            }
             countPuzzleCarregado++;
             break;
         }
     }
-
 }
 
 
 void init_puzzle(int fase){
     puzzleAtual = puzzles[fase-1];
-    if(fase == 1 || fase == 2){
+    if(fase == 1){
         puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
+        if (puzzleAtual.texture.id == 0) printf("$$$ ERRO: puzzleAtual.texture.id == 0\n");
+        else printf("TA OK\n");
     }
-    
 }
 
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
@@ -117,7 +120,7 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     };
 
     //para ver onde ta a caixa de colisao:
-    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
     // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
 
     // colisão com fragmento
@@ -148,7 +151,7 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
         130 //height
     };
     
-    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
     
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
@@ -158,6 +161,7 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
             if(!puzzleAtual.foiSolucionado){
                 puzzleAtual.foiSolucionado = true;
             }
+            //puzzleFoiAtivado = !puzzleFoiAtivado;
 
             return true;
         }
@@ -185,17 +189,20 @@ char check_colisoes(){
 
 // Draw Puzzle e Fragmento
 void draw_puzzle(int puzzle){
-    float scale = 18.0f;
-    float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
-    Vector2 position = {
-        SCREEN_WIDTH / 2.0f - textureWidth / 2.0f,
-        20
-    };
-
-    if(puzzleAtual.fase == 1 || puzzleAtual.fase == 2) { //fases que usam terminal
+    if(puzzleAtual.fase == 1) { //fases que usam terminal
+        float scale = 18.0f;
+        float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
+        Vector2 position = {
+            SCREEN_WIDTH / 2.0f - textureWidth / 2.0f,
+            20
+        };
         DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
-        if (puzzleAtual.fase == 1) puzzle_1();
-        else puzzle_2();
+
+        printf("Fase: %d\n", puzzleAtual.fase);
+        if (puzzleAtual.texture.id == 0) printf("ERRO: puzzleAtual.texture.id == 0\n");
+        puzzle_1();
+    } else if (puzzleAtual.fase == 2) {
+        puzzle_2();
     }
 }
 
@@ -389,9 +396,6 @@ void free_fragmento_resources() {
         free(temp);
     }
     fragmentosColetados = NULL;
-
-    UnloadTexture(fragmentoTexture);
-    UnloadTexture(bgfragmentoTexture);
 
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
         UnloadTexture(fragmentosObrigatorios[i].texture);
