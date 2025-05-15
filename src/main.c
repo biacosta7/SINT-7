@@ -1,113 +1,76 @@
-#include "raylib.h"
-#include "player.h"
-#include "utils.h"
-#include "puzzles.h"
-#include "graphics.h"
-#include "fase.h"
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 
-extern Camera2D camera; 
-#define SCREEN_WIDTH 900
-#define SCREEN_HEIGHT 512
+struct MemoryStruct {
+    char *memory;
+    size_t size;
+};
 
-Color cianoNeon = (Color){0, 217, 224, 255};
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+    size_t realSize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
 
-int main() {
-    bool inventarioAberto = false;
-    InitWindow(900, 512, "SINT-7");
-    SetTargetFPS(60);
-    
-    init_player();
-    InitGraphics();
-    InitCamera();
-    init_fase();
-
-    Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
-    Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
-
-    while (!WindowShouldClose()) {
-        if (IsKeyDown(KEY_RIGHT)) player.position.x += 2;
-        if (IsKeyDown(KEY_LEFT))  player.position.x -= 2;
-
-        update_player(); // Atualiza jogador
-        UpdateCameraPosition(); // Atualiza camera.target.x se necessário
-        UpdateCameraMove(); // Atualiza cameraX baseado na nova camera
-        update_fragmento();
-        update_puzzle();
-
-        BeginDrawing();
-            ClearBackground(BLACK);
-
-            BeginMode2D(camera);
-                DrawBackground();  // DESENHA OS SETORES
-                draw_player();     // DESENHA O PLAYER
-                draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
-                char interacao = check_colisoes(); // Chamar apenas uma vez
-
-            EndMode2D();
-
-            int btnX = 50;
-            int btnY = 50;
-            int scaleI = 5.0f;
-            int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
-            int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
-            float scale = 0.1f;
-            DrawTextureEx(botaoTexture, (Vector2){btnX, btnY}, 0.0f, scale, WHITE);
-
-            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-                Vector2 mouse = GetMousePosition();
-                if (mouse.x >= btnX && mouse.x <= btnX + botaoTexture.width &&
-                    mouse.y >= btnY && mouse.y <= btnY + botaoTexture.height) {
-                    inventarioAberto = !inventarioAberto;
-                    printf("Botão Menu clicado!\n");
-                }
-            }
-            if(inventarioAberto) {
-                DrawTextureEx(inventarioTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
-                int i = 1;
-                int textoX = inventX + 40;
-                int textoY = inventY + 50;
-                int linhaAltura = 25;
-                NodeFragmento *atual = fragmentosColetados;
-                while (atual != NULL) {
-                    DrawText(TextFormat("FM-00%d:", i), textoX, textoY, 20, cianoNeon);
-                    textoY += linhaAltura;
-                    char buffer[512];
-                    strcpy(buffer, atual->fragmento.conteudo); // Para não alterar o original
-                    char *linha = strtok(buffer, "\n");
-                    while (linha != NULL) {
-                        DrawText(linha, textoX + 10, textoY, 20, WHITE); // Indentação leve
-                        textoY += linhaAltura;
-                        linha = strtok(NULL, "\n");
-                    }
-                    textoY += 10; // Espaço extra entre fragmentos
-                    atual = atual->next;
-                    i++;
-                }
-            }
-            if (puzzleFoiAtivado) {
-                draw_puzzle(player.faseAtual);
-
-                // ESC fecha o puzzle
-                if (IsKeyDown(KEY_X)) {
-                    puzzleFoiAtivado = false;
-                    init_puzzle(player.faseAtual);
-                }
-            }
-            if (fragmentoFoiAtivado) {
-                draw_fragmento(fragmentoObrigatorioAtual.fase);
-            }
-            DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
-            // DrawText(TextFormat("Camera X: %.2f", camera.target.x), 10, 50, 20, WHITE);
-            // DrawText("SINT-7", 10, 10, 20, WHITE);
-            
-        EndDrawing();
+    char *ptr = realloc(mem->memory, mem->size + realSize + 1);
+    if (ptr == NULL) {
+        fprintf(stderr, "Erro ao alocar memória\n");
+        return 0;
     }
 
-    UnloadGraphics();
-    free_player_resources();
-    CloseWindow();
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realSize);
+    mem->size += realSize;
+    mem->memory[mem->size] = 0;
+
+    printf("[DEBUG] Dados recebidos (%zu bytes): %s\n", realSize, (char *)contents);
+    return realSize;
+}
+
+void enviar_para_ia(const char *pergunta) {
+    printf("[DEBUG] Função enviar_para_ia chamada com pergunta: %s\n", pergunta);
+
+    CURL *curl = curl_easy_init();
+    if (!curl) {
+        fprintf(stderr, "Erro ao inicializar CURL\n");
+        return;
+    }
+
+    struct MemoryStruct resposta;
+    resposta.memory = malloc(1);
+    resposta.size = 0;
+
+    const char *url = "http://localhost:5000/gerar";
+
+    char json[512];
+    snprintf(json, sizeof(json), "{\"pergunta\": \"%s\"}", pergunta);
+    printf("[DEBUG] JSON a ser enviado: %s\n", json);
+
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&resposta);
+
+    printf("[DEBUG] Enviando requisição...\n");
+
+    CURLcode res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        fprintf(stderr, "Erro ao realizar requisição: %s\n", curl_easy_strerror(res));
+    } else {
+        printf("[DEBUG] Requisição concluída com sucesso.\n");
+        printf("Resposta da IA: %s\n", resposta.memory);
+    }
+
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
+    free(resposta.memory);
+}
+
+int main() {
+    enviar_para_ia("teste do C para Flask");
     return 0;
 }

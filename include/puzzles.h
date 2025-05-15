@@ -40,6 +40,7 @@ typedef struct FragmentoMemoria{
     Texture2D trigger;
 } FragmentoMemoria;
 
+
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
     char *resposta;
@@ -50,6 +51,7 @@ typedef struct Puzzle{
     Texture2D texture;
 } Puzzle;
 
+FragmentoMemoria fragmentoOpcionalAtual;
 FragmentoMemoria fragmentoObrigatorioAtual;
 Puzzle puzzleAtual;
 

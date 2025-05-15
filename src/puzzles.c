@@ -5,6 +5,15 @@ NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 bool puzzleFoiAtivado = false;
 
+
+
+FragmentoMemoria fragmentosOpcionais[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
+    { false, false, NULL, 1, NULL, 800.0f, 500.0f  },
+    { false, false, NULL, 2, NULL, 0.0f, 0.0f },
+    { false, false, NULL, 3, NULL, 0.0f, 0.0f },
+    { false, false, NULL, 4, NULL, 0.0f, 0.0f },
+};
+
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2030, 330 },
@@ -44,6 +53,23 @@ void update_fragmento() {
 
                 countFragCarregado++;
             }
+
+            break;
+        }
+    }
+}
+
+void update_fragmento_opcional() {
+    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+        if (fragmentosOpcionais[i].fase == player.faseAtual) {
+            fragmentoOpcionalAtual = fragmentosOpcionais[i];
+            char path[64];
+            sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
+            fragmentosOpcionais[i].texture = LoadTexture(path);
+
+            char trigger_path[64];
+            sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
+            fragmentosOpcionais[i].trigger = LoadTexture(trigger_path);
 
             break;
         }
@@ -141,6 +167,37 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
 
 }
 
+bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
+
+    // HITBOX DO FRAGMENTO
+    Rectangle fragmento_opcionalHitbox = {
+        fragmentoOpcionalAtual.x,
+        fragmentoOpcionalAtual.y,
+        32, //width
+        120 //height
+    };
+
+    //para ver onde ta a caixa de colisao:
+    DrawRectangle(fragmento_opcionalHitbox.x, fragmento_opcionalHitbox.y, fragmento_opcionalHitbox.width, fragmento_opcionalHitbox.height, YELLOW);
+    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+
+    // colisão com fragmento
+    if (CheckCollisionRecs(playerHitbox, fragmento_opcionalHitbox)) {
+        DrawText("(F) para interagir", fragmentoOpcionalAtual.x - 80, fragmentoOpcionalAtual.y - 30, 20, GREEN);
+        
+        // if (IsKeyPressed(KEY_F)) {
+        //     if (!fragmento_ja_coletado(fragmentoOpcionalAtual.conteudo)) {
+        //         fragmentoOpcionalAtual.foiColetado = true;
+        //         adicionar_fragmento(fragmentoOpcionalAtual);
+        //         printar_fragmentos();
+        //     }
+        //     fragmentoFoiAtivado = !fragmentoFoiAtivado;
+        //     return true;
+        // }
+    }
+    return false;
+}
+
 bool check_colisao_puzzle(Rectangle playerHitbox){
     // Hitbox do puzzle
     Rectangle puzzleHitbox = {
@@ -176,10 +233,11 @@ char check_colisoes(){
     };
     bool fragmento = check_colisao_fragmento(playerHitbox);
     bool puzzle = check_colisao_puzzle(playerHitbox);
+    bool fragmento_opcional = check_colisao_fragmento_opcional(playerHitbox);
 
     if (fragmento) return 'f';
     else if (puzzle) return 'p';
-    
+    else if(fragmento_opcional) return 'o';
     return 'z';
 }
 
