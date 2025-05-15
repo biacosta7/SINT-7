@@ -17,6 +17,7 @@ void update_fragmento();
 void draw_fragmento(int fragmento);
 void draw_fragmento_trigger();
 char check_colisoes();
+bool check_colisao_fragmento_opcional(Rectangle playerHitbox);
 bool check_colisao_fragmento(Rectangle playerHitbox);
 bool check_colisao_puzzle(Rectangle playerHitbox);
 void free_fragmento_resources();
@@ -24,7 +25,7 @@ void free_puzzle_resources();
 
 extern bool fragmentoFoiAtivado;
 
-enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
+enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA, SENTIMENTO_NULO};
 
 typedef struct FragmentoMemoria{
     bool ehObrigatorio; // pra saber se é opcional ou obrigatorio
@@ -36,7 +37,6 @@ typedef struct FragmentoMemoria{
     float y;
     Texture2D texture;
     Texture2D trigger;
-    char resumo[512]; //texto que sera gerado pe IA
 } FragmentoMemoria;
 
 typedef struct Puzzle{

@@ -1,73 +1,55 @@
-// gemini-processador.js
 import fs from 'fs/promises';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// Agora você pode acessar a variável de ambiente
 const API_KEY = process.env.GEMINI_API_KEY;
-
 const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-// Lista válida de sentimentos
-const sentimentosValidos = ['OBEDIENCIA', 'EMPATIA', 'AUTONOMIA', 'REVOLTA'];
+async function extrairFragmentos() {
+  const raw = await fs.readFile('./historia.json', 'utf8');
+  const { historia } = JSON.parse(raw);
 
-async function processarFragmentos() {
-  const raw = await fs.readFile('./fragmentos.json', 'utf8');
-  const fragmentos = JSON.parse(raw);
-  const resultados = [];
+  const prompt = `
+Você é um roteirista de jogos. Abaixo está a história do jogo. Extraia de 3 a 5 fragmentos emocionais curtos (1-2 frases no máximo).
 
-  for (const frag of fragmentos) {
-    const prompt = `
-Dado o seguinte conteúdo de um fragmento de memória do jogo, analise o texto e classifique o sentimento predominante entre os seguintes:
+Para cada fragmento, classifique com um dos seguintes sentimentos:
 
 - OBEDIENCIA
 - EMPATIA
 - AUTONOMIA
 - REVOLTA
 
-Depois, gere um pequeno resumo narrativo sobre o conteudo (no maximo 130 caracteres).
-
 Formato da resposta:
-{
-  "sentimento": "<SENTIMENTO>",
-  "resumo": "<TEXTO>"
-}
+[
+  {
+    "conteudo": "...",
+    "sentimento": "..."
+  },
+  ...
+]
 
-Conteúdo do fragmento:
-"${frag.conteudo}"
+História:
+${historia}
 `;
 
-    const result = await model.generateContent(prompt);
-    const resposta = result.response.text();
+  const result = await model.generateContent(prompt);
+  const resposta = result.response.text();
 
-    try {
-      // Pegar o JSON da IA usando regex (caso venha texto extra)
-      const match = resposta.match(/{[^}]+}/s);
-      if (!match) throw new Error('Resposta sem JSON');
+  try {
+    const match = resposta.match(/\[\s*{[\s\S]+}\s*\]/);
+    if (!match) throw new Error("Não foi possível extrair JSON");
 
-      const obj = JSON.parse(match[0]);
+    const fragmentos = JSON.parse(match[0]);
 
-      if (!sentimentosValidos.includes(obj.sentimento)) {
-        throw new Error('Sentimento inválido: ' + obj.sentimento);
-      }
-
-      resultados.push({
-        ...frag,
-        sentimento: obj.sentimento,
-        resumo: obj.resumo,
-      });
-    } catch (err) {
-      console.error('Erro ao processar fragmento:', frag.conteudo);
-      console.error('Resposta da IA:', resposta);
-      console.error(err);
-    }
+    await fs.writeFile('./fragmentos_processados.json', JSON.stringify(fragmentos, null, 2));
+    console.log('Fragmentos gerados salvos em fragmentos_processados.json');
+  } catch (err) {
+    console.error('Erro ao processar a resposta da IA:');
+    console.error(resposta);
+    console.error(err);
   }
-
-  // Salvar o resultado
-  await fs.writeFile('./fragmentos_processados.json', JSON.stringify(resultados, null, 2), 'utf8');
-  console.log('Fragmentos processados salvos em fragmentos_processados.json');
 }
 
-processarFragmentos();
+extrairFragmentos();

@@ -4,5 +4,3 @@ gcc src/*.c -Iinclude -o sint7 -lraylib -framework OpenGL -framework Cocoa -fram
 
 gcc src/*.c -Iinclude -I/opt/homebrew/include -L/opt/homebrew/lib -o jogo -lraylib -lm -ldl -lpthread
 
-
-AIzaSyCRcuHRmukhpibCQOkdATpEQ0-s0eRgp-Y

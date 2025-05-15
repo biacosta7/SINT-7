@@ -8,12 +8,12 @@ NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 
 FragmentoMemoria fragmentosOpcionais[TOTAL_FRAGMENTOS_OPCIONAIS] = {
-    { true, false, "\"\"", 1,  NULL  },
-    { true, false, "\"\"", 2,  NULL  },
-    { false, false, "\"\"", 3, NULL },
-    { false, false, "\"\"", 4, NULL },
-    // TO-DO: adicionar o resto dos enigmas
+    { false, false, NULL, 1, SENTIMENTO_NULO, 800.0f, 500.0f  },
+    { false, false, NULL, 2, SENTIMENTO_NULO, 0.0f, 0.0f },
+    { false, false, NULL, 3, SENTIMENTO_NULO, 0.0f, 0.0f },
+    { false, false, NULL, 4, SENTIMENTO_NULO, 0.0f, 0.0f },
 };
+
 void update_fragmento_opcional() {
     for (int i = 0; i < TOTAL_FRAGMENTOS_OPCIONAIS; i++) {
         if (fragmentosOpcionais[i].fase == player.faseAtual) {
@@ -169,6 +169,47 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
     return false;
 }
 
+
+
+
+
+
+
+
+
+
+// Colisões
+bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
+
+    // HITBOX DO FRAGMENTO
+    Rectangle fragmentoHitbox = {
+        fragmentoOpcionalAtual.x,
+        fragmentoOpcionalAtual.y,
+        32, //width
+        120 //height
+    };
+
+    //para ver onde ta a caixa de colisao:
+    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
+    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+
+    // colisão com fragmento
+    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
+        DrawText("(F) para interagir", fragmentoOpcionalAtual.x - 80, fragmentoOpcionalAtual.y - 30, 20, GREEN);
+        
+        if (IsKeyPressed(KEY_F)) {
+            if (!fragmento_ja_coletado(fragmentoOpcionalAtual.conteudo)) {
+                fragmentoOpcionalAtual.foiColetado = true;
+                adicionar_fragmento(fragmentoOpcionalAtual);
+                printar_fragmentos();
+            }
+            fragmentoFoiAtivado = !fragmentoFoiAtivado;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool check_colisao_puzzle(Rectangle playerHitbox){
     // Hitbox do puzzle
     Rectangle puzzleHitbox = {
@@ -204,10 +245,11 @@ char check_colisoes(){
     };
     bool fragmento = check_colisao_fragmento(playerHitbox);
     bool puzzle = check_colisao_puzzle(playerHitbox);
+    bool fragmento_opcional = check_colisao_fragmento_opcional(playerHitbox);
 
     if (fragmento) return 'f';
     else if (puzzle) return 'p';
-    
+    else if(fragmento_opcional) return 'o';
     return 'z';
 }
 
