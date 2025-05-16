@@ -1,6 +1,8 @@
 #include "raylib.h"
 #include "player.h"
 #include "utils.h"
+#include "setup_puzzle.h"
+#include "game.h"
 #include "puzzles.h"
 #include "graphics.h"
 #include "fase.h"
@@ -52,7 +54,6 @@ int main() {
                 draw_player();     // DESENHA O PLAYER
                 draw_fragmento_trigger(); // DESENHA O TRIGGER FRAGMENTO
                 char interacao = check_colisoes(); // Chamar apenas uma vez
-
             EndMode2D();
 
             int btnX = 50;

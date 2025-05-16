@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "utils.h"
 #include "config.h"
-#include "puzzles.h"
+#include "setup_puzzle.h"
 #include "player.h"
 
 Texture2D bgSectors[SECTOR_COUNT];
