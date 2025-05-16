@@ -75,12 +75,23 @@ void init_puzzle(int fase){
 
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     NodeFragmento *novo = (NodeFragmento *)malloc(sizeof(NodeFragmento));
-    if (!novo) return; // Falha de alocação
+    if (!novo) return; 
 
     novo->fragmento = novoFragmento;
-    novo->next = fragmentosColetados;
-    fragmentosColetados = novo;
+    novo->next = NULL;
+
+    if(fragmentosColetados == NULL){
+        fragmentosColetados = novo;
+    }
+    else{
+        NodeFragmento *atual = fragmentosColetados;
+        while (atual->next != NULL) {
+            atual = atual->next;
+        }
+        atual->next = novo;
+    }
 }
+
 
 
 void printar_fragmentos() {
