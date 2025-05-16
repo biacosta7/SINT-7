@@ -56,10 +56,13 @@ int main() {
             float scale = 0.1f;
             DrawTextureEx(botaoTexture, (Vector2){btnX, btnY}, 0.0f, scale, WHITE);
 
-            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 Vector2 mouse = GetMousePosition();
-                if (mouse.x >= btnX && mouse.x <= btnX + botaoTexture.width &&
-                    mouse.y >= btnY && mouse.y <= btnY + botaoTexture.height) {
+                float scaledWidth = botaoTexture.width * scale;
+                float scaledHeight = botaoTexture.height * scale;
+
+                if (mouse.x >= btnX && mouse.x <= btnX + scaledWidth &&
+                    mouse.y >= btnY && mouse.y <= btnY + scaledHeight) {
                     inventarioAberto = !inventarioAberto;
                     printf("Botão Menu clicado!\n");
                 }
