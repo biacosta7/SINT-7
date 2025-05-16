@@ -4,6 +4,7 @@
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 bool puzzleFoiAtivado = false;
+double tempoFragmentoAtivado = 0.0;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
@@ -119,38 +120,37 @@ void printar_fragmentos() {
 
 
 // Colisões
-bool check_colisao_fragmento(Rectangle playerHitbox){
-
-    // HITBOX DO FRAGMENTO
+bool check_colisao_fragmento(Rectangle playerHitbox) {
     Rectangle fragmentoHitbox = {
         fragmentoObrigatorioAtual.x,
         fragmentoObrigatorioAtual.y,
-        32, //width
-        120 //height
+        32,
+        120
     };
 
-    //para ver onde ta a caixa de colisao:
-    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
-    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
-
-    // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
         DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
-        
-        if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
+
+        if (IsKeyPressed(KEY_F)) {
             if (!fragmentoObrigatorioAtual.foiColetado) {
                 fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
                 fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
-            fragmentoFoiAtivado = !fragmentoFoiAtivado;
+
+            fragmentoFoiAtivado = true;
+            tempoFragmentoAtivado = GetTime();
             return true;
         }
     }
-    return false;
+    if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+        fragmentoFoiAtivado = false;
+    }
 
+    return false;
 }
+
 
 bool check_colisao_puzzle(Rectangle playerHitbox){
     // Hitbox do puzzle
