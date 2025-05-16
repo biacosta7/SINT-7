@@ -14,6 +14,7 @@ extern Camera2D camera;
 #define SCREEN_HEIGHT 512
 
 Color cianoNeon = (Color){0, 217, 224, 255};
+int scrollOffset = 0;
 
 int main() {
     bool inventarioAberto = false;
@@ -76,6 +77,16 @@ int main() {
 
                 // Exibição do inventário
                 if (inventarioAberto) {
+                    int scrollSpeed = 20; // pixels por "rolada"
+                    if (IsKeyDown(KEY_DOWN)) scrollOffset -= scrollSpeed;
+                    if (IsKeyDown(KEY_UP)) scrollOffset += scrollSpeed;
+
+                    // ou com o mouse:
+                    scrollOffset += GetMouseWheelMove() * scrollSpeed;
+
+                    // Limitar o scroll superior (para não passar do topo)
+                    if (scrollOffset > 0) scrollOffset = 0;
+
                     int scaleI = 5.0f;
                     int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
                     int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
@@ -84,14 +95,18 @@ int main() {
                     
                     int i = 1;
                     int textoX = inventX + 40;
-                    int textoY = inventY + 50;
+                    int textoY = inventY + 50 + scrollOffset;
                     int linhaAltura = 25;
+                    int textoAlturaTotal = 0;
                     NodeFragmento *atual = fragmentosColetados;
-
+                    
+                    BeginScissorMode(inventX, inventY + 30, inventarioTexture.width * scaleI, inventarioTexture.height * scaleI);
                     while (atual != NULL) {
+                        textoAlturaTotal += linhaAltura; 
                         DrawText(TextFormat("FM-00%d:", i), textoX, textoY, 20, cianoNeon);
                         textoY += linhaAltura;
-                        char buffer[512];
+                       
+                       char buffer[512];
                         strcpy(buffer, atual->fragmento.conteudo);
                         char *linha = strtok(buffer, "\n");
                         while (linha != NULL) {
@@ -103,6 +118,12 @@ int main() {
                         atual = atual->next;
                         i++;
                     }
+                    int inventarioAltura = inventarioTexture.height * scaleI;
+                    int scrollLimiteInferior = inventarioAltura - textoAlturaTotal - 50;
+                    if (scrollOffset < scrollLimiteInferior){
+                        scrollOffset = scrollLimiteInferior;
+                    }
+                    EndScissorMode();
                 }
 
                 // Puzzles e fragmentos
