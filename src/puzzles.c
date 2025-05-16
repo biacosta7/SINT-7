@@ -129,9 +129,9 @@ bool check_colisao_fragmento(Rectangle playerHitbox) {
     };
 
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
-        DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
+        DrawText("(I) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
 
-        if (IsKeyPressed(KEY_F)) {
+        if (IsKeyPressed(KEY_I)) {
             if (!fragmentoObrigatorioAtual.foiColetado) {
                 fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
                 fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
@@ -165,8 +165,8 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
     
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
-        DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
-        if (IsKeyPressed(KEY_F)) {
+        DrawText("(I) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
+        if (IsKeyPressed(KEY_I)) {
             if (!puzzleAtual.foiSolucionado) {
                 init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
             }
