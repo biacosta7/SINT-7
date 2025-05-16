@@ -99,7 +99,7 @@ void draw_menu() {
         }
 
         // Texto de copyright
-        DrawText("© 2023 SINT-7 Game", 20, GetScreenHeight() - 30, 15, WHITE);
+        DrawText("© 2025 SINT-7 Game", 20, GetScreenHeight() - 30, 15, WHITE);
     }
     else if (estadoAtual == MENU_PAUSADO) {
         // Desenha overlay semi-transparente
