@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "raylib.h" 
 #include "config.h"
+#include "fragmentos.h"
 
 void init_puzzle(int fase);
 void update_puzzle();
@@ -26,14 +27,14 @@ void free_puzzle_resources();
 extern bool fragmentoFoiAtivado;
 extern bool puzzleFoiAtivado;
 
-enum Sentimento {OBEDIENCIA, EMPATIA, AUTONOMIA, REVOLTA, ENIGMA};
+//enum Sentimento2 {OBEDIENCIA2, EMPATIA2, AUTONOMIA2, REVOLTA2, ENIGMA};
 
 typedef struct FragmentoMemoria{
     bool ehObrigatorio; // pra saber se é opcional ou obrigatorio
     bool foiColetado; // pra saber se o player coletou
     char *conteudo;
     int fase; // a qual fase ele pertence
-    enum Sentimento sentimento;
+    Sentimento sentimento;
     float x;
     float y;
     Texture2D texture;

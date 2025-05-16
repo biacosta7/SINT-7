@@ -22,7 +22,6 @@ Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
 };
 
 //TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
-
 void init_fragmento(int fase){
     fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
 }
