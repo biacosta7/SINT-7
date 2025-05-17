@@ -21,6 +21,10 @@ Color cianoNeon = (Color){0, 217, 224, 255};
 int scrollOffset = 0;
 
 int main() {
+    InitAudioDevice(); 
+    //Music trilhaSonora = LoadMusicStream("assets/musica.ogg");
+    //PlayMusicStream(trilhaSonora); adicionar a trilha sonora e colocar ela no parenteses a cima
+
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
 
@@ -41,6 +45,7 @@ int main() {
     }
 
     while (!WindowShouldClose()) {
+        //UpdateMusicStream(trilhaSonora);
         update_menu();
 
         if (get_estado_menu() == MENU_JOGANDO) {
@@ -175,7 +180,8 @@ int main() {
         }
         EndDrawing();
     }
-
+    //UnloadMusicStream(trilhaSonora);
+    //CloseAudioDevice(); 
     unload_menu_textures();
     UnloadGraphics();
     UnloadTexture(botaoTexture);
