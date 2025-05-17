@@ -7,5 +7,6 @@
 
 void puzzle_1();
 void puzzle_2();
+void puzzle_3();
 
 #endif // PUZZLES_H
