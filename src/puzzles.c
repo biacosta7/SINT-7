@@ -107,6 +107,8 @@ void puzzle_2() {
     static bool connections[MAX_CONNECTIONS] = {false};
     static bool resolved = false;
 
+    int offsetX = 70;
+
     if (!initialized) {
         ledOn = LoadTexture("assets/puzzles/led_on.png");
         ledOff = LoadTexture("assets/puzzles/led_off.png");
@@ -148,10 +150,10 @@ void puzzle_2() {
         }
     }
 
-    DrawTexture(board, 0, 0, WHITE);
+    DrawTexture(board, offsetX, 0, WHITE);
 
     Vector2 ledPositions[4] = {
-        {620, 63}, {620, 143}, {620, 213}, {620, 287}
+        {620 + offsetX, 63}, {620 + offsetX, 143}, {620 + offsetX, 213}, {620 + offsetX, 287}
     };
 
     for (int i = 0; i < 4; i++) {
@@ -160,9 +162,9 @@ void puzzle_2() {
     }
 
     if (resolved) {
-        DrawText("PUZZLE RESOLVIDO!", 280, 500, 24, GREEN);
+        DrawText("Validado!", 300 + offsetX, 430, 24, GREEN);
     } else {
-        DrawText("Pressione A-H para conectar saídas", 230, 500, 20, GRAY);
+        DrawText("Pressione A-H para conectar saídas", 220 + offsetX, 430, 20, GRAY);
     }
 }
 

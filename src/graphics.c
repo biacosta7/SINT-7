@@ -7,6 +7,11 @@
 #include "setup_puzzle.h"
 #include "player.h"
 
+bool escurecendo = false;
+bool clareando = false;
+float escurecimentoAlpha = 0.0f;
+bool deveDesenharEscuro = false;
+
 Texture2D bgSectors[SECTOR_COUNT];
 
 void InitGraphics() {
@@ -45,4 +50,34 @@ void UnloadGraphics() {
     }
     free_fragmento_resources();
     free_puzzle_resources();
+}
+
+void atualizar_e_desenhar_fundo_escuro() {
+    // Atualiza a opacidade
+    if (escurecendo && escurecimentoAlpha < 153.0f) {
+        escurecimentoAlpha += 300 * GetFrameTime(); // velocidade ajustável
+        if (escurecimentoAlpha > 153.0f) escurecimentoAlpha = 153.0f;
+    }
+    if (clareando && escurecimentoAlpha > 0.0f) {
+        escurecimentoAlpha -= 300 * GetFrameTime();
+        if (escurecimentoAlpha < 0.0f) escurecimentoAlpha = 0.0f;
+    }
+
+    // Só desenha se houver algo visível
+    if (escurecimentoAlpha > 0.0f) {
+        deveDesenharEscuro = true;
+        
+    }
+}
+
+void alternar_estado_fundo_escuro(bool aberto){
+    if(aberto){
+        escurecendo = true;
+        clareando = false;
+    } else{
+        escurecendo = false;
+        clareando = true;
+        deveDesenharEscuro = false;
+    }
+    
 }

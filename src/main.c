@@ -29,7 +29,7 @@ int main() {
     InitGraphics();
     InitCamera();
     init_fase();
-    processar_ia(); // chamar aqui a ia
+    //processar_ia(); // chamar aqui a ia
     init_menu(); // Adiciona menu
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
@@ -41,6 +41,8 @@ int main() {
 
     while (!WindowShouldClose()) {
         update_menu(); // Sempre atualiza o estado do menu
+
+        
 
         // Atualizações apenas quando o jogo estiver ativo
         if (get_estado_menu() == MENU_JOGANDO) {
@@ -63,12 +65,17 @@ int main() {
                     draw_player();     
                     draw_fragmento_trigger(); 
                     char interacao = check_colisoes(); 
+                    atualizar_e_desenhar_fundo_escuro();
                 EndMode2D();
 
                 int btnX = 50;
                 int btnY = 50;
                 float scale = 0.1f;
                 DrawTextureEx(botaoTexture, (Vector2){btnX, btnY}, 0.0f, scale, WHITE);
+                if(deveDesenharEscuro) {
+                    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
+                        (Color){0, 0, 0, (unsigned char)escurecimentoAlpha});
+                }
 
                 // Clique no botão do inventário
                 if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -140,6 +147,7 @@ int main() {
                     if (IsKeyDown(KEY_X)) {
                         puzzleFoiAtivado = false;
                         init_puzzle(player.faseAtual);
+                        alternar_estado_fundo_escuro(false);
                     }
                 }
 

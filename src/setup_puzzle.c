@@ -4,6 +4,7 @@
 #include "puzzles.h"
 #include "setup_puzzle.h"
 #include "player.h"
+#include "graphics.h"
 
 bool puzzleFoiAtivado = false;
 int countPuzzleCarregado = 0;
@@ -72,8 +73,10 @@ void draw_puzzle(int puzzle){
             20
         };
         DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+        alternar_estado_fundo_escuro(true);
         puzzle_1();
     } else if (puzzleAtual.fase == 2) {
+        alternar_estado_fundo_escuro(true);
         puzzle_2();
     }
 }
