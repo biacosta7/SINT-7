@@ -5,6 +5,7 @@
 
 typedef enum {
     MENU_PRINCIPAL,
+    MENU_LORE,       // Novo estado para a tela de lore
     MENU_JOGANDO,
     MENU_PAUSADO,
     MENU_GAME_OVER
@@ -15,6 +16,17 @@ typedef struct {
     const char *texto;
     bool hover;
 } Botao;
+
+// Estrutura para controlar a tela de lore
+typedef struct {
+    Texture2D background;
+    const char *textoHistoria;
+    float scrollOffset;
+    float scrollSpeed;
+    bool podePular;
+    float tempoExibicao;
+    Font fonte;
+} TelaLore;
 
 void init_menu();
 void update_menu();
