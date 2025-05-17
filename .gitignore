@@ -19,3 +19,4 @@ sint7
 .env
 venv
 *.cache
+.cache_ggshield

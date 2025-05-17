@@ -14,17 +14,26 @@ run-server:
 sint7: src/*.c
 	@echo "Compilando jogo..."
 	@{ \
-		echo "Tentando com paths do Homebrew..."; \
-		gcc src/*.c -Iinclude -I/opt/homebrew/include -L/opt/homebrew/lib -o sint7 \
-			-lraylib -lm -ldl -lpthread; \
-	} || { \
-		gcc src/*.c -Iinclude -o sint7 \
-			-lraylib -framework OpenGL -framework Cocoa \
-			-framework IOKit -framework CoreVideo; \
-	} || { \
-		echo "Erro: Falha na compilação do projeto."; \
-		exit 1; \
+		if [ -d /opt/homebrew/lib ]; then \
+			echo "Usando paths do Homebrew…"; \
+			gcc src/*.c \
+				-Iinclude -I/opt/homebrew/include \
+				-L/opt/homebrew/lib \
+				-o sint7 \
+				-lraylib -lm -ldl -lpthread; \
+		else \
+			echo "Usando linkagem macOS frameworks…"; \
+			gcc src/*.c \
+				-Iinclude \
+				-o sint7 \
+				-lraylib \
+				-framework OpenGL \
+				-framework Cocoa \
+				-framework IOKit \
+				-framework CoreVideo; \
+		fi; \
 	}
+	@echo "Jogo compilado."
 
 start:
 	@./start.sh

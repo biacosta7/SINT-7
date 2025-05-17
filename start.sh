@@ -9,8 +9,8 @@ make run-server &
 # Dá um tempinho para o servidor iniciar
 sleep 8
 
-# Roda a compilação
-make sint7
+# Força recompilação do jogo
+make -B sint7
 
 # Espera o servidor finalizar (opcional, se quiser manter o script aberto)
 wait
