@@ -2,7 +2,6 @@
 #include "player.h"
 #include <stdio.h>
 
-
 #define QUANT_BOTOES 3
 
 static EstadoMenu estadoAtual = MENU_PRINCIPAL;
@@ -12,11 +11,11 @@ static Botao botoes[QUANT_BOTOES];
 static Font fonte;
 
 void init_menu() {
-    // Carrega texturas
-    backgroundTexture = LoadTexture("assets/menu/background.png");
-    logoTexture = LoadTexture("assets/menu/logo.png");
-    fonte = LoadFont("assets/menu/font.ttf"); // Ou use GetFontDefault()
+    backgroundTexture = LoadTexture("assets/setores/inicio.jpg");
 
+    
+    fonte = LoadFontEx("assets/arguments/font.ttf", 32, 0, 250);
+    
     // Configura botões
     int btnWidth = 200;
     int btnHeight = 50;
@@ -71,21 +70,30 @@ void update_menu() {
 
 void draw_menu() {
     if (estadoAtual == MENU_PRINCIPAL) {
-        // Desenha background
-        DrawTexture(backgroundTexture, 0, 0, WHITE);
+        // Desenha background - agora usando menu_bg.png
+        DrawTexturePro(
+            backgroundTexture,
+            (Rectangle){0, 0, backgroundTexture.width, backgroundTexture.height},
+            (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
+            (Vector2){0, 0},
+            0,
+            WHITE
+        );
         
-        // Desenha logo
+        /*
+        // Se quiser manter a logo (comente se não tiver o arquivo)
         DrawTexture(
             logoTexture,
             (GetScreenWidth() - logoTexture.width) / 2,
             100,
             WHITE
         );
+        */
 
         // Desenha botões
         for (int i = 0; i < QUANT_BOTOES; i++) {
-            Color btnColor = botoes[i].hover ? SKYBLUE : LIGHTGRAY;
-            DrawRectangleRec(botoes[i].rect, btnColor);
+            Color btnColor = botoes[i].hover ? SKYBLUE : (Color){200, 200, 200, 200}; // Mais transparente
+            DrawRectangleRounded(botoes[i].rect, 0.3f, 10, btnColor);
             
             // Centraliza texto nos botões
             int textWidth = MeasureText(botoes[i].texto, 20);
@@ -94,7 +102,7 @@ void draw_menu() {
                 botoes[i].rect.x + (botoes[i].rect.width - textWidth) / 2,
                 botoes[i].rect.y + 15,
                 20,
-                DARKGRAY
+                DARKBLUE
             );
         }
 
@@ -131,7 +139,7 @@ void draw_menu() {
 
 void unload_menu_textures() {
     UnloadTexture(backgroundTexture);
-    UnloadTexture(logoTexture);
+    // UnloadTexture(logoTexture); // Descomente se estiver usando a logo
     UnloadFont(fonte);
 }
 
