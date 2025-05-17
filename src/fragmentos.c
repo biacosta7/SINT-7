@@ -3,6 +3,7 @@
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
 int countFragCarregado = 0;
+double tempoFragmentoAtivado = 0.0;
 
 FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
@@ -45,8 +46,18 @@ void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     if (!novo) return; // Falha de alocação
 
     novo->fragmento = novoFragmento;
-    novo->next = fragmentosColetados;
-    fragmentosColetados = novo;
+    novo->next = NULL;
+
+    if(fragmentosColetados == NULL){
+        fragmentosColetados = novo;
+    }
+    else{
+        NodeFragmento *atual = fragmentosColetados;
+        while (atual->next != NULL) {
+            atual = atual->next;
+        }
+        atual->next = novo;
+    }
 }
 
 
@@ -91,21 +102,24 @@ bool check_colisao_fragmento(Rectangle playerHitbox){
 
     // colisão com fragmento
     if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
-        DrawText("(F) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
+        DrawText("(I) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
         
-        if (IsKeyPressed(KEY_F)) { // agora só no momento do clique
+        if (IsKeyPressed(KEY_I)) { // agora só no momento do clique
             if (!fragmentoObrigatorioAtual.foiColetado) {
                 fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
                 fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
                 adicionar_fragmento(fragmentoObrigatorioAtual);
                 printar_fragmentos();
             }
-            fragmentoFoiAtivado = !fragmentoFoiAtivado;
+            fragmentoFoiAtivado = true;
+            tempoFragmentoAtivado = GetTime();
             return true;
         }
     }
+     if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+        fragmentoFoiAtivado = false;
+    }
     return false;
-
 }
 
 

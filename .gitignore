@@ -18,3 +18,4 @@ sint7
 .vscode
 .env
 venv
+*.cache

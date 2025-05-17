@@ -51,8 +51,8 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
     
 
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
-        DrawText("(F) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
-        if (IsKeyPressed(KEY_F)) {
+        DrawText("(I) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
+        if (IsKeyPressed(KEY_I)) {
             if (!puzzleAtual.foiSolucionado) {
                 init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
             }

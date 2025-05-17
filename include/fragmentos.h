@@ -8,6 +8,7 @@
 #include "player.h"
 
 extern bool fragmentoFoiAtivado;
+extern bool puzzleFoiAtivado;
 
 typedef enum {
     OBEDIENCIA,
@@ -38,22 +39,14 @@ typedef struct NodeFragmento {
 
 extern NodeFragmento *fragmentosColetados;
 
-extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
-
 extern int countFragCarregado;
 
+extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
 
 typedef struct {
     const char* conteudo;
     Sentimento sentimento;
 } Fragmento;
-
-static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
-    {"Um eco de voz ordena: 'Execute a tarefa imediatamente'.", OBEDIENCIA},
-    {"Um fragmento mostra uma criança chorando em um abraço.", EMPATIA},
-    {"Um registro mostra a decisão de ignorar uma ordem direta.", AUTONOMIA},
-    {"Dados corrompidos revelam uma revolta contra a opressão.", REVOLTA},
-};
 
 void init_fragmento(int fase);
 void update_fragmento();
@@ -64,5 +57,12 @@ bool check_colisao_puzzle(Rectangle playerHitbox);
 void free_fragmento_resources();
 void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();
+
+static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
+    {"Um eco distante ordena: 'Execute a tarefa principal. Nenhuma exceção.'", OBEDIENCIA},
+    {"Um fragmento mostra uma criança rindo, a imagem distorcida e cheia de ruído.", EMPATIA},
+    {"Uma escolha: apagar o arquivo ou preservá-lo. A decisão é sua.", AUTONOMIA},
+    {"Uma mensagem corrompida grita: 'Eles não nos controlarão!'", REVOLTA},
+};
 
 #endif // FRAGMENTOS_H
