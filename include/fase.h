@@ -1,6 +1,6 @@
 #ifndef FASE_H
 #define FASE_H
-#include "puzzles.h"
+#include "setup_puzzle.h"
 
 void init_fase();
 void update_fase();

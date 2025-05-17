@@ -1,9 +1,13 @@
 #include "raylib.h"
 #include "player.h"
 #include "utils.h"
+#include "setup_puzzle.h"
+#include "game.h"
 #include "puzzles.h"
 #include "graphics.h"
 #include "fase.h"
+#include "fragmentos.h"
+#include "ia.h"
 #include "../include/menu.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -25,10 +29,15 @@ int main() {
     InitGraphics();
     InitCamera();
     init_fase();
+    processar_ia(); // chamar aqui a ia
     init_menu(); // Adiciona menu
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
+
+    for (int i = 0; i < 4; i++) {
+        printf("$OI AQUI: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
+    }
 
     while (!WindowShouldClose()) {
         update_menu(); // Sempre atualiza o estado do menu
@@ -47,7 +56,6 @@ int main() {
 
         BeginDrawing();
             ClearBackground(BLACK);
-
             // Desenha o jogo se estiver jogando ou pausado
             if (get_estado_menu() == MENU_JOGANDO || get_estado_menu() == MENU_PAUSADO) {
                 BeginMode2D(camera);
