@@ -2,8 +2,9 @@
 #include "player.h"
 #include "utils.h"
 #include "setup_puzzle.h"
-#include "game.h"
 #include "puzzles.h"
+#include "decode_puzzle.h"
+#include "game.h"
 #include "graphics.h"
 #include "fase.h"
 #include "fragmentos.h"
@@ -70,6 +71,7 @@ int main() {
             char interacao = check_colisoes();
             atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
+            puzzle_decode();
 
             int btnX = 50;
             int btnY = 50;
