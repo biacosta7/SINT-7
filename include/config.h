@@ -10,6 +10,6 @@
 #define SECTOR_WIDTH 900
 #define SECTOR_HEIGHT 512
 
-extern Font cartograph;
+extern Font vcr;
 
 #endif // CONFIG_H

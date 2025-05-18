@@ -26,7 +26,7 @@ int main() {
     Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
     PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
     
-    cartograph = LoadFont("assets/CartographMonoCF-Regular.ttf");
+    vcr = LoadFont("assets/VCR.ttf");
 
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
@@ -257,7 +257,7 @@ int main() {
     UnloadTexture(botaoTexture);
     UnloadTexture(inventarioTexture);
     free_player_resources();
-    UnloadFont(cartograph);
+    UnloadFont(vcr);
     free_fragmento_resources();
     CloseWindow();
     return 0;

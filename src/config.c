@@ -1,3 +1,3 @@
 #include "config.h"
 
-Font cartograph; // definição da variável global
+Font vcr; // definição da variável global

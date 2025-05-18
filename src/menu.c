@@ -29,7 +29,7 @@ static const char* historiaSINT7 =
 void init_menu() {
     // Carrega texturas do menu principal
     backgroundTexture = LoadTexture("assets/inicio.jpg");
-    fonte = LoadFontEx("assets/arguments/font.ttf", 32, 0, 250); // Ajuste o caminho se necessário
+    fonte = LoadFontEx("assets/VCR.ttf", 32, 0, 250); // Ajuste o caminho se necessário
 
     // Configura botões do menu principal
     int btnWidth = 200;
@@ -118,9 +118,9 @@ void update_menu() {
 
 void draw_menu() {
     
-    if (cartograph.texture.id == 0) {
+    if (vcr.texture.id == 0) {
         printf("Erro: Fonte não carregada.\n");
-        cartograph = LoadFont("assets/CartographMonoCF-Regular.ttf");
+        vcr = LoadFont("assets/VCR.ttf");
     }
 
     switch (estadoAtual) {
@@ -167,7 +167,7 @@ void draw_menu() {
             // Desenha texto da história com rolagem
             Vector2 textPos = {50, GetScreenHeight() - telaLore.scrollOffset};
             DrawTextEx(
-                cartograph,
+                vcr,
                 telaLore.textoHistoria,
                 textPos,
                 24,
