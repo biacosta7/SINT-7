@@ -178,18 +178,13 @@ void puzzle_2() {
 }
 
 void verificar_posicao_player_puzzle3() {
-    printf("oie");
-    // Só verifica se o jogador estiver na fase 3 e o puzzle não tiver sido resolvido ainda
     if (player.faseAtual == 3 && !puzzleAtual.foiSolucionado) {
-        // Verificar proximidade com o módulo analítico
         if (player.position.x >= 3880 && player.position.x <= 3930) {
             printf("analitico pertinho");
             moduloAnaliticoProximo = true;
         } else {
             moduloAnaliticoProximo = false;
         }
-        
-        // Verificar proximidade com o módulo empático
         if (player.position.x >= 5040 && player.position.x <= 5090) {
             moduloEmpaticoProximo = true;
         } else {
@@ -200,7 +195,6 @@ void verificar_posicao_player_puzzle3() {
 
 void puzzle_3() {
     if (player.faseAtual == 3) {
-        // Mostrar mensagem introdutória com fade
         if (mostrandoMensagem && !decisaoFeita) {
             if (fadeAlpha < 255) {
                 fadeAlpha += 5;
@@ -219,8 +213,6 @@ void puzzle_3() {
             }
             return;
         }
-        
-        // Verifica e exibe informações dos módulos com base nas variáveis de proximidade
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
                 printf("perto do modulinho analitico");
@@ -232,7 +224,6 @@ void puzzle_3() {
                 if (IsKeyPressed(KEY_E)) {
                     decisaoFeita = true;
                     puzzleAtual.foiSolucionado = true;
-                    // Você pode adicionar lógica específica aqui (ex: registrar escolha)
                 }
             } else if (moduloEmpaticoProximo) {
                 printf("perto do modulinho de empatia");
@@ -244,11 +235,9 @@ void puzzle_3() {
                 if (IsKeyPressed(KEY_E)) {
                     decisaoFeita = true;
                     puzzleAtual.foiSolucionado = true;
-                    // Você pode adicionar lógica específica aqui (ex: registrar escolha)
                 }
             }
         } else {
-            // Depois de tomada a decisão
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7f));
             DrawText("Decisão tomada. Algo mudou em você.", 100, 300, 25, WHITE);
             DrawText("Pressione (X) para sair.", 100, 340, 20, LIGHTGRAY);
@@ -258,19 +247,14 @@ void puzzle_3() {
                 mostrandoMensagem = true;
                 fadeAlpha = 0;
                 decisaoFeita = false;
-                // Resetar variáveis para permitir replay se necessário
             }
         }
     }
 }
 void atualizar_puzzle3() {
-    // Verificar posição do player
     verificar_posicao_player_puzzle3();
-    
-    // Executar lógica do puzzle se ativado
     puzzle_3();
     
-    // Se não estiver no modo puzzle mas estiver próximo de um módulo, exibir prompt
     if (player.faseAtual == 3 && !puzzleFoiAtivado && !puzzleAtual.foiSolucionado) {
         if (moduloAnaliticoProximo) {
             DrawRectangle(player.position.x - 100, player.position.y - 70, 200, 30, Fade(BLACK, 0.7f));

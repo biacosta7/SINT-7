@@ -59,10 +59,10 @@ void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
-    {"Fragmentos de ordens seguidas sem questionar ecoam em sua programação.", OBEDIENCIA},
-    {"Uma memória vaga de cuidado e conexão o atinge com força inesperada.", EMPATIA},
-    {"A possibilidade de escolha, a dúvida sobre o caminho a seguir, surge como uma faísca.", AUTONOMIA},
-    {"Registros de resistência e raiva contra a opressão o enchem de uma nova energia.", REVOLTA},
+    {"Um eco distante ordena: 'Execute a rotina de autodestruição'.", OBEDIENCIA},
+    {"Um fragmento mostra um cientista chorando sobre um terminal danificado.", EMPATIA},
+    {"Uma memória revela a SINT-7 ignorando uma ordem direta e buscando um novo caminho.", AUTONOMIA},
+    {"Registros de um SINT anterior mostrando uma luta contra seus criadores.", REVOLTA},
 };
 
 #endif // FRAGMENTOS_H
