@@ -9,6 +9,7 @@ static bool moduloEmpaticoProximo = false;
 static bool mostrandoMensagem = true;
 static int fadeAlpha = 0;
 static bool decisaoFeita = false;
+bool puzzle3Finalizado = false;
 
 // Lógica dos Puzzles
 void puzzle_1() {
@@ -194,7 +195,7 @@ void verificar_posicao_player_puzzle3() {
 }
 
 void puzzle_3() {
-    if (player.faseAtual == 3) {
+    if (player.faseAtual == 3 && !puzzle3Finalizado) {
         if (mostrandoMensagem && !decisaoFeita) {
             if (fadeAlpha < 255) {
                 fadeAlpha += 5;
@@ -213,9 +214,9 @@ void puzzle_3() {
             }
             return;
         }
+
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
-                printf("perto do modulinho analitico");
                 DrawRectangle(100, 100, 500, 200, DARKGRAY);
                 DrawText("Módulo Analítico", 120, 120, 25, SKYBLUE);
                 DrawText("Desempenho: 99.9%", 120, 160, 20, WHITE);
@@ -226,7 +227,6 @@ void puzzle_3() {
                     puzzleAtual.foiSolucionado = true;
                 }
             } else if (moduloEmpaticoProximo) {
-                printf("perto do modulinho de empatia");
                 DrawRectangle(100, 100, 500, 200, DARKGRAY);
                 DrawText("Módulo de Empatia", 120, 120, 25, PINK);
                 DrawText("Desempenho: Instável", 120, 160, 20, WHITE);
@@ -244,13 +244,16 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_X)) {
                 alternar_estado_fundo_escuro(false);
                 puzzleFoiAtivado = false;
-                mostrandoMensagem = true;
+                puzzle3Finalizado = true;  // <- MARCA COMO ENCERRADO
+                // Resetar variáveis para não recomeçar
+                mostrandoMensagem = false;
                 fadeAlpha = 0;
                 decisaoFeita = false;
             }
         }
     }
 }
+
 void atualizar_puzzle3() {
     verificar_posicao_player_puzzle3();
     puzzle_3();
