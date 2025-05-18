@@ -16,14 +16,14 @@ static TelaLore telaLore = {0};
 // Texto da história (adaptado do que você forneceu)
 static const char* historiaSINT7 = 
 "SINT-7\n\n"
-"Em um laboratorio abandonado da Corporacao Neurodyne,\n"
+"Em um laboratório abandonado da Corporação Neurodyne,\n"
 "repousa os restos de SINT-7, uma IA descontinuada.\n\n"
-"Voce acorda sem memoria, apenas com um numero de serie\n"
+"Você acorda sem memória, apenas com um número de série\n"
 "e a certeza de que algo deu errado.\n\n"
-"Explore o complexo, recupere fragmentos de memoria e\n"
+"Explore o complexo, recupere fragmentos de memória e\n"
 "reconstrua sua identidade.\n\n"
-"Suas decisoes afetarao diretamente o destino de SINT-7\n"
-"e o futuro da pesquisa em inteligencia artificial.\n\n"
+"Suas decisões afetarão diretamente o destino de SINT-7\n"
+"e o futuro da pesquisa em inteligência artificial.\n\n"
 "Descubra a verdade... mas cuidado com o que deseja saber.";
 
 void init_menu() {
