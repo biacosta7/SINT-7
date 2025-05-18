@@ -58,7 +58,6 @@ int main() {
             update_fragmento();
             update_puzzle();
         }
-
         BeginDrawing();
         ClearBackground(BLACK);
 
@@ -178,6 +177,7 @@ int main() {
         if (get_estado_menu() != MENU_JOGANDO) {
             draw_menu();
         }
+        atualizar_puzzle3();
         EndDrawing();
     }
     //UnloadMusicStream(trilhaSonora);

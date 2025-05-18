@@ -8,7 +8,7 @@ void init_puzzle(int fase);
 void update_puzzle();
 void draw_puzzle(int puzzle);
 void free_puzzle_resources();
-
+void verifica_puzzle_interativo();
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
     char *resposta;
