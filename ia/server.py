@@ -155,20 +155,20 @@ typedef struct {{
 }} Fragmento;
 
 void init_fragmento(int fase);
+void init_frag_opcionais();
 void update_fragmento();
-void draw_fragmento(int fragmento);
 
-bool check_colisao_fragmento(Rectangle playerHitbox);
-bool check_colisao_puzzle(Rectangle playerHitbox);
-void free_fragmento_resources();
+void draw_fragmento(int fragmento);
+void draw_fragmento_opcional(int fragmento);
+void draw_fragmentos();
+
 void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();
-void init_frag_opcionais();
-void liberar_fragmentos_opcionais();
-bool check_colisao_fragmento_opcional(Rectangle playerHitbox);
-void draw_fragmento_opcional(int fragmento);
 
-void draw_fragmentos();
+void checar_colisoes_fragmentos(Rectangle playerHitbox);
+
+void free_fragmento_resources();
+void liberar_fragmentos_opcionais();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {{
 """

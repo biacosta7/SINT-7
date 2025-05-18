@@ -45,6 +45,9 @@ void update_player() {
         if (!player.fasesDesbloqueadas[1] && player.position.x > 1430) {
             player.position.x = 1430;
         }
+        if (!player.fasesDesbloqueadas[2] && player.position.x > 3410) {
+            cameraX = 3410 - SCREEN_WIDTH / 2;
+        }  
     }
     else if (IsKeyDown(KEY_LEFT)){
         player.state = WALK;

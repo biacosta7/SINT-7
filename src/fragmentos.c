@@ -112,76 +112,56 @@ void printar_fragmentos() {
 }
 
 // Colisões
-bool check_colisao_fragmento(Rectangle playerHitbox){
+void checar_colisoes_fragmentos(Rectangle playerHitbox) {
+    float scale = 3.0f;
 
-    // HITBOX DO FRAGMENTO
-    Rectangle fragmentoHitbox = {
-        fragmentoObrigatorioAtual.x,
-        fragmentoObrigatorioAtual.y,
-        32, //width
-        120 //height
-    };
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        FragmentoMemoria *frag = &fragmentosObrigatorios[i];
 
-    //para ver onde ta a caixa de colisao:
-    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
-    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
+        Rectangle hitbox = {
+            frag->x,
+            frag->y,
+            32, //width
+            120 //height
+        };
 
-    // colisão com fragmento
-    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
-        DrawText("(I) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
-        
-        if (IsKeyPressed(KEY_I)) { // agora só no momento do clique
-            if (!fragmentoObrigatorioAtual.foiColetado) {
-                fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
-                fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
-                adicionar_fragmento(fragmentoObrigatorioAtual);
+        // Desenhar hitbox para debug
+        DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, YELLOW);
+
+        if (CheckCollisionRecs(playerHitbox, hitbox)) {
+            DrawText("(I) para interagir", frag->x - 80, frag->y - 30, 20, GREEN);
+            if (IsKeyPressed(KEY_I)) {
+                frag->foiColetado = true;
+                adicionar_fragmento(*frag);
                 printar_fragmentos();
             }
-            fragmentoFoiAtivado = true;
-            tempoFragmentoAtivado = GetTime();
-            return true;
         }
-    }
-     if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
-        fragmentoFoiAtivado = false;
-    }
-    return false;
-}
-
-bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
-
-    // HITBOX DO FRAGMENTO
-    Rectangle fragmentoHitbox = {
-        fragmentoOpcionalAtual.x,
-        fragmentoOpcionalAtual.y,
-        32, //width
-        120 //height
-    };
-
-    //para ver onde ta a caixa de colisao:
-    DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
-    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
-
-    // colisão com fragmento
-    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
-        DrawTextoInteracaoComFundo(fragmentoOpcionalAtual.x + 10, fragmentoOpcionalAtual.y - 30);
         
-        if (IsKeyPressed(KEY_I)) { // agora só no momento do clique
-            if (!fragmentoOpcionalAtual.foiColetado) {
-                fragmentosOpcionais[player.faseAtual - 1].foiColetado = true;
-                fragmentoOpcionalAtual = fragmentosOpcionais[player.faseAtual - 1];
-                adicionar_fragmento(fragmentoOpcionalAtual);
+    }
+
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        FragmentoMemoria *frag = &fragmentosOpcionais[i];
+
+        Rectangle hitbox = {
+            frag->x,
+            frag->y,
+            32, //width
+            120 //height
+        };
+
+        // Desenhar hitbox para debug
+        DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, ORANGE);
+
+        if (CheckCollisionRecs(playerHitbox, hitbox)) {
+            DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
+            if (IsKeyPressed(KEY_I)) {
+                frag->foiColetado = true;
+                adicionar_fragmento(*frag);
                 printar_fragmentos();
             }
-            fragmentoOpcionalFoiAtivado = true;
-            tempoFragmentoOpcionalAtivado = GetTime();
-            return true;
         }
+        
     }
-     if (fragmentoOpcionalFoiAtivado && (GetTime() - tempoFragmentoOpcionalAtivado >= 5.0)) {
-        fragmentoOpcionalFoiAtivado = false;
-    }
-    return false;
 }
 
 

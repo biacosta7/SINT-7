@@ -8,6 +8,7 @@ void init_puzzle(int fase);
 void update_puzzle();
 void draw_puzzle(int puzzle);
 void free_puzzle_resources();
+bool check_colisao_puzzle(Rectangle playerHitbox);
 
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
