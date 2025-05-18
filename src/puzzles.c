@@ -221,12 +221,13 @@ void puzzle_3() {
             }
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, (float)fadeAlpha / 255));
             if (fadeAlpha >= 255) {
-                DrawText("Os recursos são limitados.", 80, 150, 30, WHITE);
-                DrawText("Apenas um pode ser salvo.", 80, 190, 30, WHITE);
-                DrawText("Um era razão pura — preciso, lógico.", 80, 250, 24, GRAY);
-                DrawText("O outro... falhava. Mas fazia-nos sorrir.", 80, 280, 24, GRAY);
-                DrawText("Pense bem.", 80, 330, 30, WHITE);
-                DrawText("Pressione (X) para continuar.", 80, 390, 20, LIGHTGRAY);
+                DrawText("Adiante, a escolha aguarda.", 80, 50, 30, WHITE);
+                DrawText("Dois silêncios pedem por voz.", 80, 90, 30, WHITE);
+                DrawText("A lógica brilha com precisão fria.", 80, 150, 24, GRAY);
+                DrawText("A outra... falhava. Mas era calor.", 80, 180, 24, GRAY);
+                DrawText("Você só pode acender um deles.", 80, 230, 30, WHITE);
+                DrawText("E toda escolha carrega um eco.", 80, 270, 30, WHITE);
+                DrawText("Pressione (X) para continuar.", 80, 320, 20, LIGHTGRAY);
                 if (IsKeyPressed(KEY_X)) {
                     mostrandoMensagem = false;
                 }
@@ -237,26 +238,34 @@ void puzzle_3() {
         // Decisão ainda não feita
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
-                DrawRectangle(100, 100, 500, 200, DARKGRAY);
-                DrawText("Módulo Analítico", 120, 120, 25, SKYBLUE);
-                DrawText("Desempenho: 99.9%", 120, 160, 20, WHITE);
-                DrawText("Prioridade: Eficiência, cálculo e lógica.", 120, 190, 20, WHITE);
-                DrawText("(E) para reativar", 120, 230, 20, GREEN);
-                if (IsKeyPressed(KEY_E)) {
-                    decisaoFeita = true;
-                    puzzleAtual.foiSolucionado = true;
-                }
-            } else if (moduloEmpaticoProximo) {
-                DrawRectangle(100, 100, 500, 200, DARKGRAY);
-                DrawText("Módulo de Empatia", 120, 120, 25, PINK);
-                DrawText("Desempenho: Instável", 120, 160, 20, WHITE);
-                DrawText("Mas era... humano, acolhedor.", 120, 190, 20, WHITE);
-                DrawText("(E) para reativar", 120, 230, 20, GREEN);
-                if (IsKeyPressed(KEY_E)) {
-                    decisaoFeita = true;
-                    puzzleAtual.foiSolucionado = true;
-                }
+            DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY); // Caixa com bordas arredondadas
+            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, SKYBLUE); // Borda em destaque
+
+            DrawText("MÓDULO ANALÍTICO", 120, 115, 26, SKYBLUE);
+            DrawText("Desempenho: 99.9%", 120, 155, 22, RAYWHITE);
+            DrawText("Prioridade: Eficiência, cálculo e lógica.", 120, 185, 20, WHITE);
+            DrawText("(E) para reativar", 120, 225, 20, GREEN);
+
+            if (IsKeyPressed(KEY_E)) {
+                decisaoFeita = true;
+                puzzleAtual.foiSolucionado = true;
             }
+
+        } else if (moduloEmpaticoProximo) {
+            DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY);
+            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, PINK);
+
+            DrawText("MÓDULO DE EMPATIA", 120, 115, 26, PINK);
+            DrawText("Desempenho: Instável", 120, 155, 22, RAYWHITE);
+            DrawText("Mas era... humano, acolhedor.", 120, 185, 20, WHITE);
+            DrawText("(E) para reativar", 120, 225, 20, GREEN);
+
+            if (IsKeyPressed(KEY_E)) {
+                decisaoFeita = true;
+                puzzleAtual.foiSolucionado = true;
+            }
+        }
+
         } else {
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7f));
             DrawText("Decisão tomada. Algo mudou em você.", 100, 300, 25, WHITE);
