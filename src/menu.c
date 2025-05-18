@@ -115,6 +115,21 @@ void update_menu() {
         estadoAtual = MENU_JOGANDO;
     }
 }
+void DrawTextWithSpacing(Font font, const char* text, Vector2 position, float fontSize, float spacing, Color color) {
+    Vector2 pos = position;
+
+    for (int i = 0; text[i] != '\0'; i++) {
+        char c[2] = { text[i], '\0' };  // caractere atual como string
+
+        if (text[i] == '\n') {
+            pos.x = position.x;          // volta ao início da linha
+            pos.y += fontSize * 1.2f;   // pula para próxima linha (ajuste o fator se quiser)
+        } else {
+            DrawTextEx(font, c, pos, fontSize, 0, color);
+            pos.x += MeasureTextEx(font, c, fontSize, 0).x + spacing;  // avança + espaçamento extra
+        }
+    }
+}
 
 void draw_menu() {
     switch (estadoAtual) {
@@ -160,14 +175,7 @@ void draw_menu() {
 
             // Desenha texto da história com rolagem
             Vector2 textPos = {50, GetScreenHeight() - telaLore.scrollOffset};
-            DrawTextEx(
-                telaLore.fonte,
-                telaLore.textoHistoria,
-                textPos,
-                24,
-                0,
-                WHITE
-            );
+            DrawTextWithSpacing(telaLore.fonte, telaLore.textoHistoria, textPos, 24, 3.0f, WHITE);
 
             // Instrução para pular
             if (telaLore.podePular) {
