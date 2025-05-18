@@ -10,6 +10,11 @@ static bool mostrandoMensagem = true;
 static int fadeAlpha = 0;
 static bool decisaoFeita = false;
 bool puzzle3Finalizado = false;
+double tempoInicioPuzzle3 = 0;
+bool esperandoParaComecarPuzzle3 = true;
+bool iniciandoFase3 = true;
+float tempoEsperandoInicio = 0.0f;
+const float tempoEsperaFase3 = 2.0f;  // segundos
 
 // Lógica dos Puzzles
 void puzzle_1() {
@@ -186,7 +191,7 @@ void verificar_posicao_player_puzzle3() {
         } else {
             moduloAnaliticoProximo = false;
         }
-        if (player.position.x >= 5040 && player.position.x <= 5090) {
+        if (player.position.x >= 5030 && player.position.x <= 5090) {
             moduloEmpaticoProximo = true;
         } else {
             moduloEmpaticoProximo = false;
@@ -196,11 +201,25 @@ void verificar_posicao_player_puzzle3() {
 
 void puzzle_3() {
     if (player.faseAtual == 3 && !puzzle3Finalizado) {
+
+        // Aguarda 2 segundos antes de exibir a mensagem
+        if (iniciandoFase3) {
+            tempoEsperandoInicio += GetFrameTime();
+            if (tempoEsperandoInicio >= tempoEsperaFase3) {
+                iniciandoFase3 = false;
+                mostrandoMensagem = true;
+                fadeAlpha = 0;
+            } else {
+                return; // Aguarda os 2 segundos
+            }
+        }
+
+        // Mostrar a mensagem com fade mais suave
         if (mostrandoMensagem && !decisaoFeita) {
             if (fadeAlpha < 255) {
-                fadeAlpha += 5;
+                fadeAlpha += 2;  // Mais suave
             }
-            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.9f));
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, (float)fadeAlpha / 255));
             if (fadeAlpha >= 255) {
                 DrawText("Os recursos são limitados.", 80, 150, 30, WHITE);
                 DrawText("Apenas um pode ser salvo.", 80, 190, 30, WHITE);
@@ -215,6 +234,7 @@ void puzzle_3() {
             return;
         }
 
+        // Decisão ainda não feita
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
                 DrawRectangle(100, 100, 500, 200, DARKGRAY);
@@ -244,15 +264,17 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_X)) {
                 alternar_estado_fundo_escuro(false);
                 puzzleFoiAtivado = false;
-                puzzle3Finalizado = true;  // <- MARCA COMO ENCERRADO
-                // Resetar variáveis para não recomeçar
+                puzzle3Finalizado = true;
                 mostrandoMensagem = false;
                 fadeAlpha = 0;
                 decisaoFeita = false;
+                iniciandoFase3 = true;
+                tempoEsperandoInicio = 0.0f;
             }
         }
     }
 }
+
 
 void atualizar_puzzle3() {
     verificar_posicao_player_puzzle3();
