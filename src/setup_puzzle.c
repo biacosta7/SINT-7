@@ -9,7 +9,7 @@
 bool puzzleFoiAtivado = false;
 int countPuzzleCarregado = 0;
 
-Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
+Puzzle puzzles[NUM_FRAGMENTOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
     { false, NULL, NULL, 2, 2900, 290 },
     { false, NULL, NULL, 3, 5140, 300 },
@@ -30,7 +30,7 @@ void init_puzzle(int fase){
 }
 
 void update_puzzle(){
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         if (puzzles[i].fase == player.faseAtual && i >= countPuzzleCarregado) {
             puzzles[i] = puzzles[i]; // mantém sincronizado, mas não seta puzzleAtual ainda
             countPuzzleCarregado++;
@@ -82,7 +82,7 @@ void draw_puzzle(int puzzle){
 }
 
 void free_puzzle_resources() {
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         UnloadTexture(puzzles[i].texture);
     }
 }

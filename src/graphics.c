@@ -81,3 +81,27 @@ void alternar_estado_fundo_escuro(bool aberto){
     }
     
 }
+
+void DrawTextoInteracaoComFundo(float textX, float textY) {
+    const char *texto = "(I) para interagir";
+    int fontSize = 20;
+    int padding = 4; // margem ao redor do texto
+
+    int textWidth = MeasureText(texto, fontSize);
+    int textHeight = fontSize;
+
+    // Cor de fundo (marca-texto)
+    Color bgColor = (Color){0, 0, 0, 150}; // preto translúcido
+
+    // Desenha o fundo
+    DrawRectangle(
+        textX - padding,
+        textY - padding,
+        textWidth + padding * 2,
+        textHeight + padding * 2,
+        bgColor
+    );
+
+    // Desenha o texto
+    DrawText(texto, textX, textY, fontSize, GREEN);
+}

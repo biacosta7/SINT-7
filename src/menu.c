@@ -57,7 +57,7 @@ void init_menu() {
         .background = LoadTexture("assets/bg-historia.png"), // Usando um bg existente
         .textoHistoria = historiaSINT7,
         .scrollOffset = 0,
-        .scrollSpeed = 20.0f,
+        .scrollSpeed = 25.0f,
         .podePular = false,
         .tempoExibicao = 0,
         .fonte = fonte
@@ -117,6 +117,12 @@ void update_menu() {
 }
 
 void draw_menu() {
+    
+    if (cartograph.texture.id == 0) {
+        printf("Erro: Fonte não carregada.\n");
+        cartograph = LoadFont("assets/CartographMonoCF-Regular.ttf");
+    }
+
     switch (estadoAtual) {
         case MENU_PRINCIPAL:
             // Desenha background
@@ -161,7 +167,7 @@ void draw_menu() {
             // Desenha texto da história com rolagem
             Vector2 textPos = {50, GetScreenHeight() - telaLore.scrollOffset};
             DrawTextEx(
-                telaLore.fonte,
+                cartograph,
                 telaLore.textoHistoria,
                 textPos,
                 24,

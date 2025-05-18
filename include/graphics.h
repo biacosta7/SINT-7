@@ -10,6 +10,7 @@ void DrawBackground();
 void atualizarMaiorFase();
 void atualizar_e_desenhar_fundo_escuro();
 void alternar_estado_fundo_escuro(bool aberto);
+void DrawTextoInteracaoComFundo(float textX, float textY);
 
 extern bool escurecendo;
 extern bool deveDesenharEscuro;

@@ -23,8 +23,10 @@ int scrollOffset = 0;
 
 int main() {
     InitAudioDevice(); 
-    //Music trilhaSonora = LoadMusicStream("assets/musica.ogg");
-    //PlayMusicStream(trilhaSonora); adicionar a trilha sonora e colocar ela no parenteses a cima
+    Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
+    PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
+    
+    cartograph = LoadFont("assets/CartographMonoCF-Regular.ttf");
 
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
@@ -46,7 +48,7 @@ int main() {
     }
 
     while (!WindowShouldClose()) {
-        //UpdateMusicStream(trilhaSonora);
+        UpdateMusicStream(trilhaSonora);
         update_menu();
 
         if (get_estado_menu() == MENU_JOGANDO) {
@@ -66,8 +68,8 @@ int main() {
         if (get_estado_menu() == MENU_JOGANDO || get_estado_menu() == MENU_PAUSADO) {
             BeginMode2D(camera);
             DrawBackground();
-            draw_player();
             draw_fragmento_trigger();
+            draw_fragmento_opcional_trigger();
             char interacao = check_colisoes();
             atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
@@ -173,9 +175,14 @@ int main() {
             if (fragmentoFoiAtivado) {
                 draw_fragmento(fragmentoObrigatorioAtual.fase);
             }
+            
+            if (fragmentoOpcionalFoiAtivado) {
+                draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
+            }
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             //puzzle_decode();
+            draw_player();
         }
 
         if (get_estado_menu() != MENU_JOGANDO) {
@@ -183,13 +190,15 @@ int main() {
         }
         EndDrawing();
     }
-    //UnloadMusicStream(trilhaSonora);
-    //CloseAudioDevice(); 
+    UnloadMusicStream(trilhaSonora);
+    CloseAudioDevice(); 
     unload_menu_textures();
     UnloadGraphics();
     UnloadTexture(botaoTexture);
     UnloadTexture(inventarioTexture);
     free_player_resources();
+    UnloadFont(cartograph);
+    free_fragmento_resources();
     CloseWindow();
     return 0;
 }

@@ -13,10 +13,10 @@ char check_colisoes(){
     };
     bool fragmento = check_colisao_fragmento(playerHitbox);
     bool puzzle = check_colisao_puzzle(playerHitbox);
-    //bool fragmento_opcional = check_colisao_fragmento_opcional(playerHitbox);
+    bool fragmento_opcional = check_colisao_fragmento_opcional(playerHitbox);
 
     if (fragmento) return 'f';
     else if (puzzle) return 'p';
-    //else if(fragmento_opcional) return 'o';
+    else if(fragmento_opcional) return 'o';
     return 'z';
 }

@@ -24,6 +24,6 @@ extern bool puzzleFoiAtivado;
 
 extern int countPuzzleCarregado;
 
-Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS];
+Puzzle puzzles[NUM_FRAGMENTOS];
 
 #endif // SETUP_PUZZLE_H

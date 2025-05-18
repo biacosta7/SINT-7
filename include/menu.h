@@ -2,6 +2,7 @@
 #define MENU_H
 
 #include "raylib.h"
+#include "config.h"
 
 typedef enum {
     MENU_PRINCIPAL,
