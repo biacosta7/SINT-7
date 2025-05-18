@@ -42,12 +42,13 @@ void update_player() {
         player.position.x += 2;
         player.direction = 1;
 
-        if (!player.fasesDesbloqueadas[1] && player.position.x > 1430) {
-            player.position.x = 1430;
+        if (!player.fasesDesbloqueadas[1] && player.position.x > 1500) {
+            player.position.x = 1500;
         }
-        if (!player.fasesDesbloqueadas[2] && player.position.x > 3410) {
-            cameraX = 3410 - SCREEN_WIDTH / 2;
-        }  
+        if (!player.fasesDesbloqueadas[2] && player.position.x > 3400) {
+            player.position.x = 3400;
+        }
+
     }
     else if (IsKeyDown(KEY_LEFT)){
         player.state = WALK;

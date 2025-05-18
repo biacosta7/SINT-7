@@ -14,7 +14,6 @@ void atualizar_e_desenhar_fundo_escuro();
 void alternar_estado_fundo_escuro(bool aberto);
 void DrawTextoInteracaoComFundo(float textX, float textY);
 void QuebrarTextoPorLargura(const char *textoOriginal, char *textoFormatado, int larguraMax, int tamanhoFonte);
-void RequestExtraBackground(int bgIndex);
 void DrawAllBackgrounds();
 
 extern bool escurecendo;

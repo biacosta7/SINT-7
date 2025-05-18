@@ -126,7 +126,7 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
         };
 
         // Desenhar hitbox para debug
-        DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, YELLOW);
+        //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, YELLOW);
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawText("(I) para interagir", frag->x - 80, frag->y - 30, 20, GREEN);
@@ -150,7 +150,7 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
         };
 
         // Desenhar hitbox para debug
-        DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, ORANGE);
+        //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, ORANGE);
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);

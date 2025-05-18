@@ -235,11 +235,6 @@ int main() {
                 draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
             }
 
-            if(player.faseAtual == 1) {
-                // digamos que você queira desenhar o bg de índice 5 logo após os 2 padrões da fase atual
-                RequestExtraBackground(8);
-            }
-
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             //puzzle_decode();
 
