@@ -6,6 +6,7 @@
 #include "config.h"
 #include "setup_puzzle.h"
 #include "player.h"
+#include "string.h"
 
 bool escurecendo = false;
 bool clareando = false;
@@ -104,4 +105,57 @@ void DrawTextoInteracaoComFundo(float textX, float textY) {
 
     // Desenha o texto
     DrawText(texto, textX, textY, fontSize, GREEN);
+}
+
+
+void QuebrarTextoPorLargura(const char *textoOriginal, char *textoFormatado, int larguraMax, int tamanhoFonte) {
+    textoFormatado[0] = '\0'; // limpa o buffer
+    const char *inicio = textoOriginal;
+    char linha[512] = "";
+    char palavra[128] = "";
+
+    while (*inicio != '\0') {
+        int i = 0;
+
+        // Copia uma palavra (até espaço ou fim)
+        while (*inicio != '\0' && *inicio != ' ' && *inicio != '\n') {
+            palavra[i++] = *inicio++;
+        }
+        palavra[i] = '\0';
+
+        // Se encontrou espaço, pula
+        if (*inicio == ' ') {
+            inicio++;
+        }
+
+        // Se encontrou quebra de linha explícita, adiciona a linha atual e quebra
+        if (*inicio == '\n') {
+            strcat(linha, "\n");
+            strcat(textoFormatado, linha);
+            linha[0] = '\0';
+            inicio++;
+            continue;
+        }
+
+        // Cria nova linha temporária com a palavra
+        char linhaTeste[512];
+        strcpy(linhaTeste, linha);
+        if (strlen(linha) > 0) strcat(linhaTeste, " ");
+        strcat(linhaTeste, palavra);
+
+        // Mede largura
+        int largura = MeasureText(linhaTeste, tamanhoFonte);
+        if (largura > larguraMax) {
+            // Adiciona a linha anterior e começa nova
+            strcat(textoFormatado, linha);
+            strcat(textoFormatado, "\n");
+            strcpy(linha, palavra);
+        } else {
+            if (strlen(linha) > 0) strcat(linha, " ");
+            strcat(linha, palavra);
+        }
+    }
+
+    // Adiciona a última linha
+    strcat(textoFormatado, linha);
 }

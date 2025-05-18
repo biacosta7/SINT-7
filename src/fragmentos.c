@@ -56,7 +56,42 @@ void update_fragmento() {
                 fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
 
                 //opcionais
-                fragmentosOpcionais[i].texture = LoadTexture("assets/fragmentos/background-frag/bg-opc.png"); // bg constante p todos opcionais
+                fragmentosOpcionais[i].texture = LoadTexture("assets/fragmentos/background-frag/bg-opc.png"); // // Escala do fundo
+                int scaleI = 5;
+                int margem = 30; // margem interna para o texto
+
+                // Centraliza a textura na tela
+                int inventX = (SCREEN_WIDTH - fragmentosOpcionais[i].texture.width * scaleI) / 2;
+                int inventY = (SCREEN_HEIGHT - fragmentosOpcionais[i].texture.height * scaleI) / 2;
+
+                // Desenha a textura
+                DrawTextureEx(fragmentosOpcionais[i].texture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
+
+                // Define limites para o texto
+                int larguraDisponivel = fragmentosOpcionais[i].texture.width * scaleI - 2 * margem;
+                int textoX = inventX + margem + 10;
+                int textoY = inventY + margem;
+                int linhaAltura = 25;
+
+                char textoFormatado[1024];
+                QuebrarTextoPorLargura(fragmentoOpcionalAtual.conteudo, textoFormatado, larguraDisponivel, 20);
+
+                // Desenha o texto dentro da área da textura
+                BeginScissorMode(inventX + margem, inventY + margem,
+                                larguraDisponivel, fragmentosOpcionais[i].texture.height * scaleI - 2 * margem);
+
+                char *linha = strtok(textoFormatado, "\n");
+                while (linha != NULL) {
+                    DrawText(linha, textoX, textoY, 20, WHITE);
+                    printf("linha: %s\n", linha);
+                    textoY += linhaAltura;
+                    linha = strtok(NULL, "\n");
+                }
+
+                EndScissorMode();
+
+
+
 
                 char trigger_path_opc[64];
                 sprintf(trigger_path_opc, "assets/fragmentos/trigger-frag/opcionais/%03d.png", player.faseAtual);
