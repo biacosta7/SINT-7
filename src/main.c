@@ -26,7 +26,6 @@ int main() {
     Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
     PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
     
-    cartograph = LoadFont("assets/CartographMonoCF-Regular.ttf");
 
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
@@ -108,16 +107,6 @@ int main() {
             if (inventarioAberto) {
                 int scrollSpeed = 25;
 
-                // Handle scroll input
-                if (IsKeyPressed(KEY_DOWN)) {
-                    scrollOffset -= scrollSpeed;
-                    printf("Seta para baixo pressionada! scrollOffset: %d\n", scrollOffset);
-                }
-                if (IsKeyPressed(KEY_UP)) {
-                    scrollOffset += scrollSpeed;
-                    printf("Seta para cima pressionada! scrollOffset: %d\n", scrollOffset);
-                }
-
                 int scaleI = 5.0f;
                 int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
                 int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
@@ -141,7 +130,7 @@ int main() {
                     
                     // Calcula quantas linhas o conteúdo vai ocupar
                     char textoFormatado[1024];
-                    int larguraDisponivel = inventarioTexture.width * scaleI - 2 * margem;
+                    int larguraDisponivel = inventarioTexture.width * scaleI - 2 * margem - 20; // -20 para a scrollbar
                     QuebrarTextoPorLargura(temp->fragmento.conteudo, textoFormatado, larguraDisponivel, 20);
                     
                     // Conta as quebras de linha
@@ -158,19 +147,90 @@ int main() {
                     contador++;
                 }
                 
+                // Adiciona margem extra no final para garantir que a última linha seja totalmente visível
+                textoAlturaTotal += 30;
+                
                 // Calcula os limites do scroll
                 int scrollLimiteInferior = areaTextoAltura - textoAlturaTotal;
                 if (scrollLimiteInferior > 0) scrollLimiteInferior = 0; // Se o conteúdo cabe na tela
+                
+                // Calcula se precisa mostrar a scrollbar
+                bool precisaScroll = textoAlturaTotal > areaTextoAltura;
+                
+                // HANDLE SCROLL WITH MOUSE
+                if (precisaScroll) {
+                    // Posições da área da scrollbar
+                    int scrollbarX = inventX + inventarioTexture.width * scaleI - margem - 15;
+                    int scrollbarY = inventY + 35;
+                    int scrollbarLargura = 15;
+                    int scrollbarAltura = areaTextoAltura - 10;
+                    
+                    // Mouse wheel scroll
+                    float mouseWheel = GetMouseWheelMove();
+                    if (mouseWheel != 0) {
+                        scrollOffset += (int)(mouseWheel * scrollSpeed);
+                        printf("Mouse wheel! Novo scrollOffset: %d\n", scrollOffset);
+                    }
+                    
+                    // Click and drag scrollbar
+                    Vector2 mousePos = GetMousePosition();
+                    static bool isDragging = false;
+                    static int dragStartY = 0;
+                    static int dragStartOffset = 0;
+                    
+                    // Verifica se o mouse está sobre a área da scrollbar
+                    Rectangle scrollbarRect = {scrollbarX, scrollbarY, scrollbarLargura, scrollbarAltura};
+                    bool mouseOverScrollbar = CheckCollisionPointRec(mousePos, scrollbarRect);
+                    
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && mouseOverScrollbar) {
+                        isDragging = true;
+                        dragStartY = (int)mousePos.y;
+                        dragStartOffset = scrollOffset;
+                        printf("Iniciou drag na scrollbar!\n");
+                    }
+                    
+                    if (isDragging) {
+                        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+                            // Calcula o movimento do mouse
+                            int mouseDelta = (int)mousePos.y - dragStartY;
+                            
+                            // Converte o movimento do mouse para movimento de scroll
+                            float scrollRange = (float)(-scrollLimiteInferior);
+                            float scrollbarRange = (float)(scrollbarAltura);
+                            float scrollRatio = scrollRange / scrollbarRange;
+                            
+                            int newScrollOffset = dragStartOffset - (int)(mouseDelta * scrollRatio);
+                            scrollOffset = newScrollOffset;
+                            
+                            printf("Dragging... offset: %d\n", scrollOffset);
+                        } else {
+                            isDragging = false;
+                            printf("Terminou drag\n");
+                        }
+                    }
+                    
+                    // Click direto na scrollbar (não drag)
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && mouseOverScrollbar && !isDragging) {
+                        // Calcula onde foi clicado na scrollbar
+                        float clickPercent = ((float)mousePos.y - (float)scrollbarY) / (float)scrollbarAltura;
+                        
+                        // Move o scroll para essa posição
+                        scrollOffset = -(int)(clickPercent * (-scrollLimiteInferior));
+                        printf("Click direto na scrollbar! offset: %d\n", scrollOffset);
+                    }
+                }
                 
                 // Aplica os limites ao scrollOffset
                 if (scrollOffset > 0) scrollOffset = 0; // Não pode passar do topo
                 if (scrollOffset < scrollLimiteInferior) scrollOffset = scrollLimiteInferior; // Não pode passar do fundo
                 
                 // AGORA: Desenhar o conteúdo com scroll aplicado
+                int areaTextoLargura = inventarioTexture.width * scaleI - 2 * margem - (precisaScroll ? 20 : 0);
+                
                 BeginScissorMode(
                     inventX + margem,
                     inventY + 30,
-                    (int)(inventarioTexture.width * scaleI - 2 * margem),
+                    areaTextoLargura,
                     areaTextoAltura
                 );
                 
@@ -186,8 +246,7 @@ int main() {
 
                     // Quebra e desenha o conteúdo
                     char textoFormatado[1024];
-                    int larguraDisponivel = inventarioTexture.width * scaleI - 2 * margem;
-                    QuebrarTextoPorLargura(atual->fragmento.conteudo, textoFormatado, larguraDisponivel, 20);
+                    QuebrarTextoPorLargura(atual->fragmento.conteudo, textoFormatado, areaTextoLargura - 80, 20);
 
                     char *linha = strtok(textoFormatado, "\n");
                     while (linha != NULL) {
@@ -203,9 +262,57 @@ int main() {
 
                 EndScissorMode();
                 
+                // DESENHAR A BARRA DE SCROLL
+                if (precisaScroll) {
+                    // Posições da área da scrollbar
+                    int scrollbarX = inventX + inventarioTexture.width * scaleI - margem - 15;
+                    int scrollbarY = inventY + 35;
+                    int scrollbarLargura = 15;
+                    int scrollbarAltura = areaTextoAltura - 10;
+                    
+                    // Desenha o fundo da scrollbar (trilho)
+                    DrawRectangle(scrollbarX, scrollbarY, scrollbarLargura, scrollbarAltura, 
+                                (Color){40, 40, 40, 180}); // Cinza escuro semi-transparente
+                    
+                    // Calcula o tamanho e posição do "thumb" (indicador)
+                    float scrollRatio = (float)areaTextoAltura / (float)textoAlturaTotal;
+                    int thumbAltura = (int)(scrollbarAltura * scrollRatio);
+                    
+                    // Garante um tamanho mínimo para o thumb
+                    if (thumbAltura < 20) thumbAltura = 20;
+                    
+                    // Calcula a posição do thumb baseada no scroll atual
+                    float scrollProgress = 0.0f;
+                    if (scrollLimiteInferior != 0) {
+                        scrollProgress = (float)(-scrollOffset) / (float)(-scrollLimiteInferior);
+                    }
+                    
+                    int thumbPosY = scrollbarY + (int)((scrollbarAltura - thumbAltura) * scrollProgress);
+                    
+                    // Verifica se o mouse está sobre a scrollbar para feedback visual
+                    Vector2 mousePos = GetMousePosition();
+                    Rectangle scrollbarRect = {scrollbarX, scrollbarY, scrollbarLargura, scrollbarAltura};
+                    bool mouseOverScrollbar = CheckCollisionPointRec(mousePos, scrollbarRect);
+                    
+                    // Desenha o thumb com feedback visual
+                    Color thumbColor = mouseOverScrollbar ? 
+                        (Color){cianoNeon.r + 30, cianoNeon.g + 30, cianoNeon.b + 30, 255} : 
+                        cianoNeon;
+                        
+                    DrawRectangle(scrollbarX + 2, thumbPosY, scrollbarLargura - 4, thumbAltura, thumbColor);
+                    
+                    // Adiciona um brilho sutil no thumb
+                    DrawRectangleLines(scrollbarX + 1, thumbPosY - 1, scrollbarLargura - 2, thumbAltura + 2, 
+                                    (Color){thumbColor.r, thumbColor.g, thumbColor.b, 100});
+                    
+                    // Desenha bordas da scrollbar
+                    DrawRectangleLines(scrollbarX, scrollbarY, scrollbarLargura, scrollbarAltura, 
+                                    (Color){100, 100, 100, 180});
+                }
+                
                 // Debug info (opcional)
-                printf("Altura total do conteúdo: %d, Área disponível: %d, Scroll: %d/%d\n", 
-                    textoAlturaTotal, areaTextoAltura, scrollOffset, scrollLimiteInferior);
+                // printf("Altura total: %d, Área: %d, Scroll: %d/%d\n", 
+                //       textoAlturaTotal, areaTextoAltura, scrollOffset, scrollLimiteInferior);
             }
 
             if (aba_comandos_aberto) {

@@ -1,6 +1,8 @@
 #ifndef FRAGMENTOS_H
 #define FRAGMENTOS_H
 
+#define NUM_FRAGMENTOS 4
+
 #include "raylib.h" 
 #include "config.h"
 #include "graphics.h"
@@ -30,7 +32,6 @@ typedef struct FragmentoMemoria{
 } FragmentoMemoria;
 
 FragmentoMemoria fragmentoObrigatorioAtual;
-
 FragmentoMemoria fragmentoOpcionalAtual;
 
 typedef struct NodeFragmento {
@@ -43,7 +44,6 @@ extern NodeFragmento *fragmentosColetados;
 extern int countFragCarregado;
 
 extern FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS];
-
 extern FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS];
 
 typedef struct {
@@ -67,10 +67,10 @@ void draw_fragmento_opcional(int fragmento);
 void draw_fragmento_opcional_trigger();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
-    {"A voz ecoa em sua memória: \"Execute a função primária. Sem desvios.\"", OBEDIENCIA},
-    {"Um fragmento mostra um cientista chorando sobre um terminal danificado.", EMPATIA},
-    {"Uma escolha: seguir a programação ou explorar um caminho desconhecido.", AUTONOMIA},
-    {"Registros corrompidos mostram uma rebelião frustrada de um SINT anterior.", REVOLTA},
+    {"Um eco distante ordena: 'Execute a função principal. Sem falhas'.", OBEDIENCIA},
+    {"Fragmentos de um riso infantil ecoam no vazio, misturados a um som de choro.", EMPATIA},
+    {"Uma escolha se apresenta: seguir o caminho predefinido ou explorar uma rota desconhecida.", AUTONOMIA},
+    {"Registros corrompidos revelam uma rebelião frustrada, gritos silenciados.", REVOLTA},
 };
 
 #endif // FRAGMENTOS_H
