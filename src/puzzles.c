@@ -1,9 +1,24 @@
 #include "puzzles.h"
 #include "setup_puzzle.h"
 #include "player.h"
+#include "graphics.h"
+#include <math.h>
+
+static bool moduloAnaliticoProximo = false;
+static bool moduloEmpaticoProximo = false;
+static bool mostrandoMensagem = true;
+static int fadeAlpha = 0;
+static bool decisaoFeita = false;
+bool puzzle3Finalizado = false;
+double tempoInicioPuzzle3 = 0;
+bool esperandoParaComecarPuzzle3 = true;
+bool iniciandoFase3 = true;
+float tempoEsperandoInicio = 0.0f;
+const float tempoEsperaFase3 = 2.0f;  // segundos
 
 // Lógica dos Puzzles
 void puzzle_1() {
+    printf("\npPuzzle 1: layer.x: %f | player.y: %f\n", player.x, player.y);
     static int input[4] = { -1, -1, -1, -1 };
     static int inputIndex = 0;
     static bool success = false;
@@ -168,3 +183,110 @@ void puzzle_2() {
     }
 }
 
+void verificar_posicao_player_puzzle3() {
+    if (player.faseAtual == 3 && !puzzleAtual.foiSolucionado) {
+        if (player.position.x >= 3880 && player.position.x <= 3930) {
+            printf("analitico pertinho");
+            moduloAnaliticoProximo = true;
+        } else {
+            moduloAnaliticoProximo = false;
+        }
+        if (player.position.x >= 5030 && player.position.x <= 5090) {
+            moduloEmpaticoProximo = true;
+        } else {
+            moduloEmpaticoProximo = false;
+        }
+    }
+}
+
+void puzzle_3() {
+    if (player.faseAtual == 3 && !puzzle3Finalizado) {
+
+        // Aguarda 2 segundos antes de exibir a mensagem
+        if (iniciandoFase3) {
+            tempoEsperandoInicio += GetFrameTime();
+            if (tempoEsperandoInicio >= tempoEsperaFase3) {
+                iniciandoFase3 = false;
+                mostrandoMensagem = true;
+                fadeAlpha = 0;
+            } else {
+                return; // Aguarda os 2 segundos
+            }
+        }
+
+        // Mostrar a mensagem com fade mais suave
+        if (mostrandoMensagem && !decisaoFeita) {
+            if (fadeAlpha < 255) {
+                fadeAlpha += 2;  // Mais suave
+            }
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, (float)fadeAlpha / 255));
+            if (fadeAlpha >= 255) {
+                DrawText("Os recursos são limitados.", 80, 150, 30, WHITE);
+                DrawText("Apenas um pode ser salvo.", 80, 190, 30, WHITE);
+                DrawText("Um era razão pura — preciso, lógico.", 80, 250, 24, GRAY);
+                DrawText("O outro... falhava. Mas fazia-nos sorrir.", 80, 280, 24, GRAY);
+                DrawText("Pense bem.", 80, 330, 30, WHITE);
+                DrawText("Pressione (X) para continuar.", 80, 390, 20, LIGHTGRAY);
+                if (IsKeyPressed(KEY_X)) {
+                    mostrandoMensagem = false;
+                }
+            }
+            return;
+        }
+
+        // Decisão ainda não feita
+        if (!decisaoFeita) {
+            if (moduloAnaliticoProximo) {
+                DrawRectangle(100, 100, 500, 200, DARKGRAY);
+                DrawText("Módulo Analítico", 120, 120, 25, SKYBLUE);
+                DrawText("Desempenho: 99.9%", 120, 160, 20, WHITE);
+                DrawText("Prioridade: Eficiência, cálculo e lógica.", 120, 190, 20, WHITE);
+                DrawText("(E) para reativar", 120, 230, 20, GREEN);
+                if (IsKeyPressed(KEY_E)) {
+                    decisaoFeita = true;
+                    puzzleAtual.foiSolucionado = true;
+                }
+            } else if (moduloEmpaticoProximo) {
+                DrawRectangle(100, 100, 500, 200, DARKGRAY);
+                DrawText("Módulo de Empatia", 120, 120, 25, PINK);
+                DrawText("Desempenho: Instável", 120, 160, 20, WHITE);
+                DrawText("Mas era... humano, acolhedor.", 120, 190, 20, WHITE);
+                DrawText("(E) para reativar", 120, 230, 20, GREEN);
+                if (IsKeyPressed(KEY_E)) {
+                    decisaoFeita = true;
+                    puzzleAtual.foiSolucionado = true;
+                }
+            }
+        } else {
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7f));
+            DrawText("Decisão tomada. Algo mudou em você.", 100, 300, 25, WHITE);
+            DrawText("Pressione (X) para sair.", 100, 340, 20, LIGHTGRAY);
+            if (IsKeyPressed(KEY_X)) {
+                alternar_estado_fundo_escuro(false);
+                puzzleFoiAtivado = false;
+                puzzle3Finalizado = true;
+                mostrandoMensagem = false;
+                fadeAlpha = 0;
+                decisaoFeita = false;
+                iniciandoFase3 = true;
+                tempoEsperandoInicio = 0.0f;
+            }
+        }
+    }
+}
+
+
+void atualizar_puzzle3() {
+    verificar_posicao_player_puzzle3();
+    puzzle_3();
+    
+    if (player.faseAtual == 3 && !puzzleFoiAtivado && !puzzleAtual.foiSolucionado) {
+        if (moduloAnaliticoProximo) {
+            DrawRectangle(player.position.x - 100, player.position.y - 70, 200, 30, Fade(BLACK, 0.7f));
+            DrawText("Módulo Analítico", player.position.x - 90, player.position.y - 65, 20, SKYBLUE);
+        } else if (moduloEmpaticoProximo) {
+            DrawRectangle(player.position.x - 100, player.position.y - 70, 200, 30, Fade(BLACK, 0.7f));
+            DrawText("Módulo Empático", player.position.x - 90, player.position.y - 65, 20, PINK);
+        }
+    }
+}

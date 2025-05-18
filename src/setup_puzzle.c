@@ -12,7 +12,7 @@ int countPuzzleCarregado = 0;
 Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
     { false, NULL, NULL, 2, 2900, 290 },
-    { false, NULL, NULL, 3, 5140, 300 },
+    { false, NULL, NULL, 3, 4700, 300 },
     { false, NULL, NULL, 4, 0, 0 },
     // TO-DO: adicionar o resto dos puzzles e texture
 };
@@ -25,7 +25,6 @@ void init_puzzle(int fase){
     } else if (fase == 2) {
         puzzleAtual.texture = LoadTexture("assets/puzzles/circuito.png");
     }
-
     puzzleFoiAtivado = false; 
 }
 
@@ -79,10 +78,34 @@ void draw_puzzle(int puzzle){
         alternar_estado_fundo_escuro(true);
         puzzle_2();
     }
+    else if(puzzleAtual.fase == 3){
+        alternar_estado_fundo_escuro(true);
+        puzzle_3();
+    }
 }
 
 void free_puzzle_resources() {
     for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
         UnloadTexture(puzzles[i].texture);
+    }
+}
+void verifica_puzzle_interativo() {
+    if (player.faseAtual == 3 && !puzzleFoiAtivado) {
+        if (player.position.x >= 3850 && player.position.x <= 3950) {
+            DrawText("Módulo Analítico - pressione [E] para ativar", 100, 100, 20, WHITE);
+            if (IsKeyPressed(KEY_E)) {
+                init_puzzle(3);
+                puzzleFoiAtivado = true;
+            }
+        }
+
+        // Verifica se o jogador está perto do módulo de Empatia
+        if (player.position.x >= 5010 && player.position.x <= 5110) {
+            DrawText("Módulo de Empatia - pressione [E] para ativar", 100, 130, 20, WHITE);
+            if (IsKeyPressed(KEY_E)) {
+                init_puzzle(3);
+                puzzleFoiAtivado = true;
+            }
+        }
     }
 }
