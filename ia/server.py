@@ -157,7 +157,7 @@ typedef struct {{
 void init_fragmento(int fase);
 void update_fragmento();
 void draw_fragmento(int fragmento);
-void draw_fragmento_trigger();
+
 bool check_colisao_fragmento(Rectangle playerHitbox);
 bool check_colisao_puzzle(Rectangle playerHitbox);
 void free_fragmento_resources();
@@ -167,7 +167,8 @@ void init_frag_opcionais();
 void liberar_fragmentos_opcionais();
 bool check_colisao_fragmento_opcional(Rectangle playerHitbox);
 void draw_fragmento_opcional(int fragmento);
-void draw_fragmento_opcional_trigger();
+
+void draw_fragmentos();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {{
 """

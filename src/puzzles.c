@@ -167,4 +167,3 @@ void puzzle_2() {
         DrawText("Pressione A-H para conectar saídas", 220 + offsetX, 430, 20, GRAY);
     }
 }
-

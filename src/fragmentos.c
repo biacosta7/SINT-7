@@ -56,13 +56,7 @@ void update_fragmento() {
                 fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
 
                 //opcionais
-                fragmentosOpcionais[i].texture = LoadTexture("assets/fragmentos/background-frag/bg-opc.png"); // // Escala do fundo
-
-                EndScissorMode();
-
-
-
-
+                fragmentosOpcionais[i].texture = LoadTexture("assets/fragmentos/background-frag/bg-opc.png");
                 char trigger_path_opc[64];
                 sprintf(trigger_path_opc, "assets/fragmentos/trigger-frag/opcionais/%03d.png", player.faseAtual);
                 fragmentosOpcionais[i].trigger = LoadTexture(trigger_path_opc);
@@ -191,6 +185,20 @@ bool check_colisao_fragmento_opcional(Rectangle playerHitbox){
 }
 
 
+void draw_fragmentos() {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        Vector2 position = {fragmentosObrigatorios[i].x, fragmentosObrigatorios[i].y};
+        Vector2 positionOpc = {fragmentosOpcionais[i].x, fragmentosOpcionais[i].y};
+
+        float scale = 3.0f;
+
+        DrawTextureEx(fragmentosObrigatorios[i].trigger, position, 0.0f, scale, WHITE);
+        DrawTextureEx(fragmentosOpcionais[i].trigger, positionOpc, 0.0f, scale, WHITE);
+        
+    }
+}
+
+
 void draw_fragmento(int fragmento){
     float scale = 1.0f;
     float textureWidth = 513 * scale; 
@@ -283,17 +291,6 @@ void draw_fragmento_opcional(int fragmento){
     count++;  // se quiser incrementar o count a cada chamada
 }
 
-void draw_fragmento_trigger(){
-    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
-    float scale = 3.0f;
-    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
-}
-
-void draw_fragmento_opcional_trigger(){
-    Vector2 position = {fragmentoOpcionalAtual.x, fragmentoOpcionalAtual.y};
-    float scale = 3.0f;
-    DrawTextureEx(fragmentoOpcionalAtual.trigger, position, 0.0f, scale, WHITE);
-}
 
 void free_fragmento_resources() {
     NodeFragmento *atual = fragmentosColetados;

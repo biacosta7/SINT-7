@@ -68,8 +68,7 @@ int main() {
         if (get_estado_menu() == MENU_JOGANDO || get_estado_menu() == MENU_PAUSADO) {
             BeginMode2D(camera);
                 DrawBackground();
-                draw_fragmento_trigger();
-                draw_fragmento_opcional_trigger();
+                draw_fragmentos();
                 char interacao = check_colisoes();
                 atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
@@ -97,6 +96,7 @@ int main() {
                 if (mouse.x >= btnInventarioPos.x && mouse.x <= btnInventarioPos.x + scaledWidth &&
                     mouse.y >= btnInventarioPos.y && mouse.y <= btnInventarioPos.y + scaledHeight) {
                     inventarioAberto = !inventarioAberto;
+                    alternar_estado_fundo_escuro(inventarioAberto);
                     printf("Botão Inventário clicado!\n");
                 } else if (mouse.x >= btnComandosPos.x && mouse.x <= btnComandosPos.x + scaledWidth &&
                            mouse.y >= btnComandosPos.y && mouse.y <= btnComandosPos.y + scaledHeight) {
@@ -258,7 +258,6 @@ int main() {
     UnloadTexture(inventarioTexture);
     free_player_resources();
     UnloadFont(vcr);
-    free_fragmento_resources();
     CloseWindow();
     return 0;
 }
