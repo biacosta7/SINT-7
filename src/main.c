@@ -67,7 +67,7 @@ int main() {
 
         if (get_estado_menu() == MENU_JOGANDO || get_estado_menu() == MENU_PAUSADO) {
             BeginMode2D(camera);
-                DrawBackground();
+                DrawAllBackgrounds();
                 draw_fragmentos();
                 char interacao = check_colisoes();
                 atualizar_e_desenhar_fundo_escuro();
@@ -233,6 +233,11 @@ int main() {
             
             if (fragmentoOpcionalFoiAtivado) {
                 draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
+            }
+
+            if(player.faseAtual == 1) {
+                // digamos que você queira desenhar o bg de índice 5 logo após os 2 padrões da fase atual
+                RequestExtraBackground(8);
             }
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);

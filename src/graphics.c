@@ -13,10 +13,10 @@ bool clareando = false;
 float escurecimentoAlpha = 0.0f;
 bool deveDesenharEscuro = false;
 
-Texture2D bgSectors[SECTOR_COUNT];
+Texture2D bgSectors[BG_COUNT];
 
 void InitGraphics() {
-    for (int i = 0; i < SECTOR_COUNT; i++) {
+    for (int i = 0; i < BG_COUNT; i++) {
         char path[64];
         sprintf(path, "assets/setores/bg%d.png", i);
         
@@ -27,26 +27,15 @@ void InitGraphics() {
     }
 }
 
-int maiorFaseAlcancada = 1; // começa na fase 1
-
-void atualizarMaiorFase() {
-    if (player.faseAtual > maiorFaseAlcancada) {
-        maiorFaseAlcancada = player.faseAtual;
-    }
-}
-
-void DrawBackground() {
-    atualizarMaiorFase();
-
-    int maxIndex = (maiorFaseAlcancada * 2); // cada fase tem 2 bgs
-
-    for (int i = 0; i < maxIndex && i < SECTOR_COUNT; i++) {
+void DrawAllBackgrounds() {
+    for (int i = 0; i < BG_COUNT; i++) {
         DrawTexture(bgSectors[i], i * SECTOR_WIDTH, 0, WHITE);
     }
 }
 
+
 void UnloadGraphics() {
-    for (int i = 0; i < SECTOR_COUNT; i++) {
+    for (int i = 0; i < BG_COUNT; i++) {
         UnloadTexture(bgSectors[i]);
     }
     free_fragmento_resources();
