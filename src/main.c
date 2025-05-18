@@ -71,7 +71,7 @@ int main() {
             char interacao = check_colisoes();
             atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
-            puzzle_decode();
+            
 
             int btnX = 50;
             int btnY = 50;
@@ -175,6 +175,7 @@ int main() {
             }
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
+            //puzzle_decode();
         }
 
         if (get_estado_menu() != MENU_JOGANDO) {

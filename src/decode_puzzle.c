@@ -37,7 +37,8 @@ void puzzle_decode() {
     static TypewriterText msg2 = {"WARNING: Ameaça detectada", 0.05f, 0, 0, false};
     static TypewriterText msg3 = {"Necessita código de autenticação. Completar decodificação...", 0.03f, 0, 0, false};
 
-    int offsetX = 70;
+    int offsetX = 140;
+    int offsetXBorad = 70;
     int panelWidth = 600; // largura aproximada do puzzle
 
     if (!initialized) {
@@ -58,7 +59,7 @@ void puzzle_decode() {
         initialized = true;
     }
 
-    DrawTexture(board, 0, 0, WHITE);
+    DrawTexture(board, offsetXBorad, 0, WHITE);
 
     float dt = GetFrameTime();
 
