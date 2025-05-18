@@ -179,16 +179,33 @@ void draw_menu() {
 
             // Instrução para pular
             if (telaLore.podePular) {
+                Color cianoNeon = (Color){0, 217, 224, 255};
                 const char* skipText = "Pressione ENTER ou clique para continuar";
-                int textWidth = MeasureText(skipText, 20);
-                DrawText(
-                    skipText,
-                    (GetScreenWidth() - textWidth) / 2,
-                    GetScreenHeight() - 50,
-                    20,
-                    WHITE
+                int fontSize = 20;
+                int padding = 6; // Ajuste o padding que preferir
+
+                int textWidth = MeasureText(skipText, fontSize);
+                int textHeight = fontSize;
+
+                int posX = (GetScreenWidth() - textWidth) / 2;
+                int posY = GetScreenHeight() - 50;
+
+                // Cor de fundo (preto semi-transparente)
+                Color bgColor = (Color){0, 0, 0, 200};
+
+                // Desenha o fundo com padding
+                DrawRectangle(
+                    posX - padding,
+                    posY - padding,
+                    textWidth + padding * 2,
+                    textHeight + padding * 2,
+                    bgColor
                 );
+
+                // Desenha o texto sobre o fundo
+                DrawText(skipText, posX, posY, fontSize, cianoNeon);
             }
+
             break;
 
         case MENU_PAUSADO:
