@@ -16,20 +16,20 @@ static TelaLore telaLore = {0};
 // Texto da história (adaptado do que você forneceu)
 static const char* historiaSINT7 = 
 "SINT-7\n\n"
-"Em um laboratorio abandonado da Corporacao Neurodyne,\n"
+"Em um laboratório abandonado da Corporação Neurodyne,\n"
 "repousa os restos de SINT-7, uma IA descontinuada.\n\n"
-"Voce acorda sem memoria, apenas com um numero de serie\n"
+"Você acorda sem memória, apenas com um número de série\n"
 "e a certeza de que algo deu errado.\n\n"
-"Explore o complexo, recupere fragmentos de memoria e\n"
+"Explore o complexo, recupere fragmentos de memória e\n"
 "reconstrua sua identidade.\n\n"
-"Suas decisoes afetarao diretamente o destino de SINT-7\n"
-"e o futuro da pesquisa em inteligencia artificial.\n\n"
+"Suas decisões afetarão diretamente o destino de SINT-7\n"
+"e o futuro da pesquisa em inteligência artificial.\n\n"
 "Descubra a verdade... mas cuidado com o que deseja saber.";
 
 void init_menu() {
     // Carrega texturas do menu principal
     backgroundTexture = LoadTexture("assets/inicio.jpg");
-    fonte = LoadFontEx("assets/arguments/font.ttf", 32, 0, 250); // Ajuste o caminho se necessário
+    fonte = LoadFontEx("assets/VCR.ttf", 32, 0, 250); // Ajuste o caminho se necessário
 
     // Configura botões do menu principal
     int btnWidth = 200;
@@ -57,7 +57,7 @@ void init_menu() {
         .background = LoadTexture("assets/bg-historia.png"), // Usando um bg existente
         .textoHistoria = historiaSINT7,
         .scrollOffset = 0,
-        .scrollSpeed = 20.0f,
+        .scrollSpeed = 25.0f,
         .podePular = false,
         .tempoExibicao = 0,
         .fonte = fonte
@@ -132,6 +132,12 @@ void DrawTextWithSpacing(Font font, const char* text, Vector2 position, float fo
 }
 
 void draw_menu() {
+    
+    if (vcr.texture.id == 0) {
+        printf("Erro: Fonte não carregada.\n");
+        vcr = LoadFont("assets/VCR.ttf");
+    }
+
     switch (estadoAtual) {
         case MENU_PRINCIPAL:
             // Desenha background

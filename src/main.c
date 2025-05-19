@@ -23,8 +23,10 @@ int scrollOffset = 0;
 
 int main() {
     InitAudioDevice(); 
-    //Music trilhaSonora = LoadMusicStream("assets/musica.ogg");
-    //PlayMusicStream(trilhaSonora); adicionar a trilha sonora e colocar ela no parenteses a cima
+    Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
+    PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
+    
+    vcr = LoadFont("assets/VCR.ttf");
 
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
@@ -37,6 +39,7 @@ int main() {
     InitCamera();
     init_fase();
     init_menu();
+    carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
@@ -46,7 +49,7 @@ int main() {
     }
 
     while (!WindowShouldClose()) {
-        //UpdateMusicStream(trilhaSonora);
+        UpdateMusicStream(trilhaSonora);
         update_menu();
 
         if (get_estado_menu() == MENU_JOGANDO) {
@@ -64,13 +67,12 @@ int main() {
 
         if (get_estado_menu() == MENU_JOGANDO || get_estado_menu() == MENU_PAUSADO) {
             BeginMode2D(camera);
-            DrawBackground();
-            draw_player();
-            draw_fragmento_trigger();
-            char interacao = check_colisoes();
-            atualizar_e_desenhar_fundo_escuro();
+                DrawAllBackgrounds();
+                draw_fragmentos();
+                drawBlocos();
+                char interacao = check_colisoes();
+                atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
-            
 
             int btnX = 50;
             int btnY = 50;
@@ -95,6 +97,7 @@ int main() {
                 if (mouse.x >= btnInventarioPos.x && mouse.x <= btnInventarioPos.x + scaledWidth &&
                     mouse.y >= btnInventarioPos.y && mouse.y <= btnInventarioPos.y + scaledHeight) {
                     inventarioAberto = !inventarioAberto;
+                    alternar_estado_fundo_escuro(inventarioAberto);
                     printf("Botão Inventário clicado!\n");
                 } else if (mouse.x >= btnComandosPos.x && mouse.x <= btnComandosPos.x + scaledWidth &&
                            mouse.y >= btnComandosPos.y && mouse.y <= btnComandosPos.y + scaledHeight) {
@@ -104,49 +107,106 @@ int main() {
             }
 
             if (inventarioAberto) {
-                int scrollSpeed = 20;
-                if (IsKeyDown(KEY_DOWN)) scrollOffset -= scrollSpeed;
-                if (IsKeyDown(KEY_UP)) scrollOffset += scrollSpeed;
-                scrollOffset += GetMouseWheelMove() * scrollSpeed;
-                if (scrollOffset > 0) scrollOffset = 0;
+                int scrollSpeed = 25;
+
+                // Handle scroll input
+                if (IsKeyPressed(KEY_DOWN)) {
+                    scrollOffset -= scrollSpeed;
+                    printf("Seta para baixo pressionada! scrollOffset: %d\n", scrollOffset);
+                }
+                if (IsKeyPressed(KEY_UP)) {
+                    scrollOffset += scrollSpeed;
+                    printf("Seta para cima pressionada! scrollOffset: %d\n", scrollOffset);
+                }
 
                 int scaleI = 5.0f;
                 int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
                 int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
 
+                // Desenha a textura do inventário
                 DrawTextureEx(inventarioTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
 
+                // Calcula dimensões da área de texto
+                int margem = 30;
+                int areaTextoAltura = inventarioTexture.height * scaleI - 60; // altura da scissor area
+                
+                // PRIMEIRO: Calcular altura total do conteúdo sem desenhar
+                int textoAlturaTotal = 0;
+                int linhaAltura = 25;
+                NodeFragmento *temp = fragmentosColetados;
+                int contador = 1;
+                
+                while (temp != NULL) {
+                    // Header do fragmento
+                    textoAlturaTotal += linhaAltura;
+                    
+                    // Calcula quantas linhas o conteúdo vai ocupar
+                    char textoFormatado[1024];
+                    int larguraDisponivel = inventarioTexture.width * scaleI - 2 * margem;
+                    QuebrarTextoPorLargura(temp->fragmento.conteudo, textoFormatado, larguraDisponivel, 20);
+                    
+                    // Conta as quebras de linha
+                    char *copia = strdup(textoFormatado); // Cria uma cópia para não afetar o strtok original
+                    char *linha = strtok(copia, "\n");
+                    while (linha != NULL) {
+                        textoAlturaTotal += linhaAltura;
+                        linha = strtok(NULL, "\n");
+                    }
+                    free(copia);
+                    
+                    textoAlturaTotal += 10; // Espaço entre fragmentos
+                    temp = temp->next;
+                    contador++;
+                }
+                
+                // Calcula os limites do scroll
+                int scrollLimiteInferior = areaTextoAltura - textoAlturaTotal;
+                if (scrollLimiteInferior > 0) scrollLimiteInferior = 0; // Se o conteúdo cabe na tela
+                
+                // Aplica os limites ao scrollOffset
+                if (scrollOffset > 0) scrollOffset = 0; // Não pode passar do topo
+                if (scrollOffset < scrollLimiteInferior) scrollOffset = scrollLimiteInferior; // Não pode passar do fundo
+                
+                // AGORA: Desenhar o conteúdo com scroll aplicado
+                BeginScissorMode(
+                    inventX + margem,
+                    inventY + 30,
+                    (int)(inventarioTexture.width * scaleI - 2 * margem),
+                    areaTextoAltura
+                );
+                
                 int i = 1;
                 int textoX = inventX + 40;
-                int textoY = inventY + 50 + scrollOffset;
-                int linhaAltura = 25;
-                int textoAlturaTotal = 0;
+                int textoY = inventY + 50 + scrollOffset; // Aplica o offset
                 NodeFragmento *atual = fragmentosColetados;
-
-                BeginScissorMode(inventX, inventY + 30, inventarioTexture.width * scaleI, inventarioTexture.height * scaleI);
+                
                 while (atual != NULL) {
-                    textoAlturaTotal += linhaAltura;
+                    // Desenha o header do fragmento
                     DrawText(TextFormat("FM-00%d:", i), textoX, textoY, 20, cianoNeon);
                     textoY += linhaAltura;
 
-                    char buffer[512];
-                    strcpy(buffer, atual->fragmento.conteudo);
-                    char *linha = strtok(buffer, "\n");
+                    // Quebra e desenha o conteúdo
+                    char textoFormatado[1024];
+                    int larguraDisponivel = inventarioTexture.width * scaleI - 2 * margem;
+                    QuebrarTextoPorLargura(atual->fragmento.conteudo, textoFormatado, larguraDisponivel, 20);
+
+                    char *linha = strtok(textoFormatado, "\n");
                     while (linha != NULL) {
                         DrawText(linha, textoX + 10, textoY, 20, WHITE);
                         textoY += linhaAltura;
                         linha = strtok(NULL, "\n");
                     }
-                    textoY += 10;
+
+                    textoY += 10; // Espaço entre fragmentos
                     atual = atual->next;
                     i++;
                 }
-                int inventarioAltura = inventarioTexture.height * scaleI;
-                int scrollLimiteInferior = inventarioAltura - textoAlturaTotal - 50;
-                if (scrollOffset < scrollLimiteInferior){
-                    scrollOffset = scrollLimiteInferior;
-                }
+
                 EndScissorMode();
+                
+                // Debug info (opcional)
+                printf("Altura total do conteúdo: %d, Área disponível: %d, Scroll: %d/%d\n", 
+                    textoAlturaTotal, areaTextoAltura, scrollOffset, scrollLimiteInferior);
             }
 
             if (aba_comandos_aberto) {
@@ -157,7 +217,6 @@ int main() {
                 int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
                 int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
                 DrawTextureEx(inventarioTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
-
             }
 
             if (puzzleFoiAtivado) {
@@ -172,9 +231,18 @@ int main() {
             if (fragmentoFoiAtivado) {
                 draw_fragmento(fragmentoObrigatorioAtual.fase);
             }
+            
+            if (fragmentoOpcionalFoiAtivado) {
+                draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
+            }
 
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             //puzzle_decode();
+
+            BeginMode2D(camera);
+                draw_player();
+            EndMode2D();
+            
         }
 
         if (get_estado_menu() != MENU_JOGANDO) {
@@ -183,13 +251,14 @@ int main() {
         atualizar_puzzle3();
         EndDrawing();
     }
-    //UnloadMusicStream(trilhaSonora);
-    //CloseAudioDevice(); 
+    UnloadMusicStream(trilhaSonora);
+    CloseAudioDevice(); 
     unload_menu_textures();
     UnloadGraphics();
     UnloadTexture(botaoTexture);
     UnloadTexture(inventarioTexture);
     free_player_resources();
+    UnloadFont(vcr);
     CloseWindow();
     return 0;
 }

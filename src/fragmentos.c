@@ -1,36 +1,68 @@
 #include "fragmentos.h"
+#include <string.h>
 
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
+bool fragmentoOpcionalFoiAtivado = false;
 int countFragCarregado = 0;
 double tempoFragmentoAtivado = 0.0;
+double tempoFragmentoOpcionalAtivado = 0.0;
 
-FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS] = {
+FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = { //triggers
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
-    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2030, 330 },
-    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4140, 330 },
+    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2880, 330 },
+    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4270, 330 },
     { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
 
-//TO-DO: pegar onde a camera tá e colocar o conteudo do fragmento no top centro
+// aqui são so as coordenadas triggers
+FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS] = {
+    { .x = 670.0f,  .y = 290.0f },
+    { .x = 3290.0f, .y = 330.0f },
+    { .x = 4700.0f, .y = 330.0f },
+    { .x = 5000.0f, .y = 360.0f }, 
+};
+
+// 2208 Bloco 2 – Conexão
+
+
+void init_frag_opcionais() {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        fragmentosOpcionais[i].conteudo = strdup(fragmentos[i].conteudo);
+        fragmentosOpcionais[i].sentimento = fragmentos[i].sentimento;
+        fragmentosOpcionais[i].foiColetado = false;
+        fragmentosOpcionais[i].ehObrigatorio = false;
+        fragmentosOpcionais[i].fase = i;
+    }
+}
+
 void init_fragmento(int fase){
     fragmentoObrigatorioAtual = fragmentosObrigatorios[fase-1];
+    init_frag_opcionais();
+    fragmentoOpcionalAtual = fragmentosOpcionais[fase-1];
 }
 
 void update_fragmento() {
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         if (fragmentosObrigatorios[i].fase == player.faseAtual) {
             fragmentoObrigatorioAtual = fragmentosObrigatorios[i];
+            fragmentoOpcionalAtual = fragmentosOpcionais[i];
 
             if(i>=countFragCarregado){
                 char path[64];
-                sprintf(path, "assets/fragmentos/background-frag/%03d.png", player.faseAtual);
+                sprintf(path, "assets/fragmentos/background-frag/obrigatorios/%03d.png", player.faseAtual);
                 fragmentosObrigatorios[i].texture = LoadTexture(path);
 
                 char trigger_path[64];
-                sprintf(trigger_path, "assets/fragmentos/trigger-frag/%03d.png", player.faseAtual);
+                sprintf(trigger_path, "assets/fragmentos/trigger-frag/obrigatorios/%03d.png", player.faseAtual);
                 fragmentosObrigatorios[i].trigger = LoadTexture(trigger_path);
+
+                //opcionais
+                fragmentosOpcionais[i].texture = LoadTexture("assets/fragmentos/background-frag/bg-opc.png");
+                char trigger_path_opc[64];
+                sprintf(trigger_path_opc, "assets/fragmentos/trigger-frag/opcionais/%03d.png", player.faseAtual);
+                fragmentosOpcionais[i].trigger = LoadTexture(trigger_path_opc);
 
                 countFragCarregado++;
             }
@@ -39,7 +71,6 @@ void update_fragmento() {
         }
     }
 }
-
 
 void adicionar_fragmento(FragmentoMemoria novoFragmento) {
     NodeFragmento *novo = (NodeFragmento *)malloc(sizeof(NodeFragmento));
@@ -59,7 +90,6 @@ void adicionar_fragmento(FragmentoMemoria novoFragmento) {
         atual->next = novo;
     }
 }
-
 
 void printar_fragmentos() {
     NodeFragmento *atual = fragmentosColetados;
@@ -84,44 +114,73 @@ void printar_fragmentos() {
     }
 }
 
+void checar_colisoes_fragmentos(Rectangle playerHitbox) {
+    float scale = 3.0f;
 
-// Colisões
-bool check_colisao_fragmento(Rectangle playerHitbox){
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        FragmentoMemoria *frag = &fragmentosObrigatorios[i];
 
-    // HITBOX DO FRAGMENTO
-    Rectangle fragmentoHitbox = {
-        fragmentoObrigatorioAtual.x,
-        fragmentoObrigatorioAtual.y,
-        32, //width
-        120 //height
-    };
+        Rectangle hitbox = {
+            frag->x,
+            frag->y,
+            32, 
+            120 
+        };
 
-    //para ver onde ta a caixa de colisao:
-    //DrawRectangle(fragmentoHitbox.x, fragmentoHitbox.y, fragmentoHitbox.width, fragmentoHitbox.height, YELLOW);
-    // DrawRectangle(playerHitbox.x, playerHitbox.y, playerHitbox.width, playerHitbox.height, GREEN);
 
-    // colisão com fragmento
-    if (CheckCollisionRecs(playerHitbox, fragmentoHitbox)) {
-        DrawText("(I) para interagir", fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30, 20, GREEN);
-        
-        if (IsKeyPressed(KEY_I)) { // agora só no momento do clique
-            if (!fragmentoObrigatorioAtual.foiColetado) {
-                fragmentosObrigatorios[player.faseAtual - 1].foiColetado = true;
-                fragmentoObrigatorioAtual = fragmentosObrigatorios[player.faseAtual - 1];
-                adicionar_fragmento(fragmentoObrigatorioAtual);
+        if (CheckCollisionRecs(playerHitbox, hitbox)) {
+            DrawText("(I) para interagir", frag->x - 80, frag->y - 30, 20, GREEN);
+            if (IsKeyPressed(KEY_I)) {
+                frag->foiColetado = true;
+                adicionar_fragmento(*frag);
+                draw_fragmento(fragmentoObrigatorioAtual.fase);
                 printar_fragmentos();
+                fragmentoFoiAtivado = true;
+                tempoFragmentoAtivado = GetTime();
             }
-            fragmentoFoiAtivado = true;
-            tempoFragmentoAtivado = GetTime();
-            return true;
         }
     }
-     if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        FragmentoMemoria *frag = &fragmentosOpcionais[i];
+
+        Rectangle hitbox = {
+            frag->x,
+            frag->y,
+            32,
+            120
+        };
+
+
+        if (CheckCollisionRecs(playerHitbox, hitbox)) {
+            DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
+            if (IsKeyPressed(KEY_I)) {
+                frag->foiColetado = true;
+                adicionar_fragmento(*frag);
+                printar_fragmentos();
+                draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
+                fragmentoFoiAtivado = true;
+                tempoFragmentoAtivado = GetTime();
+            }
+        }
+    }
+    if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
         fragmentoFoiAtivado = false;
     }
-    return false;
 }
 
+void draw_fragmentos() {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        Vector2 position = {fragmentosObrigatorios[i].x, fragmentosObrigatorios[i].y};
+        Vector2 positionOpc = {fragmentosOpcionais[i].x, fragmentosOpcionais[i].y};
+
+        float scale = 3.0f;
+
+        DrawTextureEx(fragmentosObrigatorios[i].trigger, position, 0.0f, scale, WHITE);
+        DrawTextureEx(fragmentosOpcionais[i].trigger, positionOpc, 0.0f, scale, WHITE);
+        
+    }
+}
 
 void draw_fragmento(int fragmento){
     float scale = 1.0f;
@@ -132,14 +191,89 @@ void draw_fragmento(int fragmento){
         20
     };
     DrawTextureEx(fragmentoObrigatorioAtual.texture, position, 0.0f, scale, WHITE);
+    
+    DrawTextoInteracaoComFundo(fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30);
 
 }
 
-void draw_fragmento_trigger(){
-    Vector2 position = {fragmentoObrigatorioAtual.x, fragmentoObrigatorioAtual.y};
-    float scale = 3.0f;
-    DrawTextureEx(fragmentoObrigatorioAtual.trigger, position, 0.0f, scale, WHITE);
+void draw_fragmento_opcional(int fragmento){
+    float scale = 1.0f;
+    float textureWidth = 513 * scale; 
+    float textureHeight = fragmentoOpcionalAtual.texture.height * scale;
+    static int count = 0;
+
+    // Verifica se a fonte custom está carregada
+    if (vcr.texture.id == 0) {
+        printf("Erro: Fonte não carregada.\n");
+        vcr = LoadFont("assets/VCR.ttf");
+    }
+
+    Color cianoNeon = (Color){0, 217, 224, 255};
+
+    Vector2 position = {
+        SCREEN_WIDTH/2 - textureWidth/2,
+        20
+    };
+
+    int fontSize = 16;
+    float spacing = 1.2f; // espaçamento entre linhas
+
+    // Buffer para texto quebrado
+    static char textoFormatado[1024];
+
+    // Quebra o texto dentro da largura da textura (menos margem)
+    QuebrarTextoPorLargura(
+        fragmentoOpcionalAtual.conteudo,
+        textoFormatado,
+        (int)textureWidth - 20,
+        fontSize
+    );
+
+    // Desenha a textura
+    DrawTextureEx(fragmentoOpcionalAtual.texture, position, 0.0f, scale, WHITE);
+
+    // Título
+    char titulo[64];
+    sprintf(titulo, "Fragmento de Memória 90%d", count);
+
+    // Posição do título (acima do texto, dentro da textura horizontalmente)
+    Vector2 tituloPos = {
+        position.x + 30,
+        position.y + textureHeight + 10
+    };
+
+    // Desenha o título em ciano neon com a fonte custom e escala 1
+    DrawTextEx(
+        vcr,      // fonte custom
+        titulo,
+        tituloPos,
+        fontSize,
+        spacing,
+        cianoNeon
+    );
+
+    // Medir altura do título para posicionar o texto logo abaixo
+    int tituloHeight = MeasureTextEx(vcr, titulo, fontSize, spacing).y;
+
+    // Posição do texto (logo abaixo do título)
+    Vector2 textoPos = {
+        position.x + 30,
+        tituloPos.y + tituloHeight + 5
+    };
+
+    // Desenha o texto formatado em branco com a fonte custom
+    DrawTextEx(
+        vcr,
+        textoFormatado,
+        textoPos,
+        fontSize,
+        spacing,
+        WHITE
+    );
+
+    count++;  // se quiser incrementar o count a cada chamada
 }
+
 
 void free_fragmento_resources() {
     NodeFragmento *atual = fragmentosColetados;
@@ -150,11 +284,19 @@ void free_fragmento_resources() {
     }
     fragmentosColetados = NULL;
 
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         UnloadTexture(fragmentosObrigatorios[i].texture);
         UnloadTexture(fragmentosObrigatorios[i].trigger);
+        UnloadTexture(fragmentosOpcionais[i].texture);
+        UnloadTexture(fragmentosOpcionais[i].trigger);
     }
 }
 
 
-
+void liberar_fragmentos_opcionais() {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
+        if (fragmentosOpcionais[i].conteudo != NULL) {
+            free(fragmentosOpcionais[i].conteudo);
+        }
+    }
+}

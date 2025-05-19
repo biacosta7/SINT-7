@@ -48,7 +48,7 @@ try:
     # Prompt do jogo
     prompt = """
 Você é um roteirista de jogos. Abaixo está a história do jogo. 
-Extraia de 3 a 5 fragmentos emocionais curtos (1-2 frases no máximo).
+Extraia 4 fragmentos emocionais curtos (de ate 120 caracteres).
 
 Para cada fragmento, classifique com um dos seguintes sentimentos:
 - OBEDIENCIA
@@ -56,7 +56,7 @@ Para cada fragmento, classifique com um dos seguintes sentimentos:
 - AUTONOMIA
 - REVOLTA
 
-Responda **apenas** com um JSON de array:
+Responda apenas com um JSON de array:
 [
   {
     "conteudo": "...",
@@ -64,6 +64,7 @@ Responda **apenas** com um JSON de array:
   },
   ...
 ]
+Um exemplo de conteúdo pra você se inspirar para os próximos: “SINT-4 desativou os sistemas de segurança para proteger uma criança. Por isso foi destruído.”
 
 História:
 """ + open("ia/historia.json", encoding="utf-8").read()
@@ -108,10 +109,11 @@ História:
 
 #include "raylib.h" 
 #include "config.h"
+#include "graphics.h"
 #include "player.h"
 
 extern bool fragmentoFoiAtivado;
-extern bool puzzleFoiAtivado;
+extern bool fragmentoOpcionalFoiAtivado;
 
 typedef enum {{
     OBEDIENCIA,
@@ -134,6 +136,7 @@ typedef struct FragmentoMemoria{{
 }} FragmentoMemoria;
 
 FragmentoMemoria fragmentoObrigatorioAtual;
+FragmentoMemoria fragmentoOpcionalAtual;
 
 typedef struct NodeFragmento {{
     FragmentoMemoria fragmento;
@@ -144,7 +147,8 @@ extern NodeFragmento *fragmentosColetados;
 
 extern int countFragCarregado;
 
-extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
+extern FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS];
+extern FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS];
 
 typedef struct {{
     const char* conteudo;
@@ -152,14 +156,20 @@ typedef struct {{
 }} Fragmento;
 
 void init_fragmento(int fase);
+void init_frag_opcionais();
 void update_fragmento();
+
 void draw_fragmento(int fragmento);
-void draw_fragmento_trigger();
-bool check_colisao_fragmento(Rectangle playerHitbox);
-bool check_colisao_puzzle(Rectangle playerHitbox);
-void free_fragmento_resources();
+void draw_fragmento_opcional(int fragmento);
+void draw_fragmentos();
+
 void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();
+
+void checar_colisoes_fragmentos(Rectangle playerHitbox);
+
+void free_fragmento_resources();
+void liberar_fragmentos_opcionais();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {{
 """

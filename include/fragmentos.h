@@ -1,14 +1,13 @@
 #ifndef FRAGMENTOS_H
 #define FRAGMENTOS_H
 
-#define NUM_FRAGMENTOS 4
-
 #include "raylib.h" 
 #include "config.h"
+#include "graphics.h"
 #include "player.h"
 
 extern bool fragmentoFoiAtivado;
-extern bool puzzleFoiAtivado;
+extern bool fragmentoOpcionalFoiAtivado;
 
 typedef enum {
     OBEDIENCIA,
@@ -32,6 +31,8 @@ typedef struct FragmentoMemoria{
 
 FragmentoMemoria fragmentoObrigatorioAtual;
 
+FragmentoMemoria fragmentoOpcionalAtual;
+
 typedef struct NodeFragmento {
     FragmentoMemoria fragmento;
     struct NodeFragmento *next;
@@ -41,7 +42,9 @@ extern NodeFragmento *fragmentosColetados;
 
 extern int countFragCarregado;
 
-extern FragmentoMemoria fragmentosObrigatorios[TOTAL_FRAGMENTOS_OBRIGATORIOS];
+extern FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS];
+
+extern FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS];
 
 typedef struct {
     const char* conteudo;
@@ -49,14 +52,20 @@ typedef struct {
 } Fragmento;
 
 void init_fragmento(int fase);
+void init_frag_opcionais();
 void update_fragmento();
+
 void draw_fragmento(int fragmento);
-void draw_fragmento_trigger();
-bool check_colisao_fragmento(Rectangle playerHitbox);
-bool check_colisao_puzzle(Rectangle playerHitbox);
-void free_fragmento_resources();
+void draw_fragmento_opcional(int fragmento);
+void draw_fragmentos();
+
 void adicionar_fragmento(FragmentoMemoria frag);
 void printar_fragmentos();
+
+void checar_colisoes_fragmentos(Rectangle playerHitbox);
+
+void free_fragmento_resources();
+void liberar_fragmentos_opcionais();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
     {"Fragmentos de memória mostram ordens seguidas cegamente.", OBEDIENCIA},

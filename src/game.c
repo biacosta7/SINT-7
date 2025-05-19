@@ -11,12 +11,9 @@ char check_colisoes(){
         16 * 5,  // mesmo scale do draw_player
         16 * 5
     };
-    bool fragmento = check_colisao_fragmento(playerHitbox);
     bool puzzle = check_colisao_puzzle(playerHitbox);
-    //bool fragmento_opcional = check_colisao_fragmento_opcional(playerHitbox);
+    checar_colisoes_fragmentos(playerHitbox);
 
-    if (fragmento) return 'f';
-    else if (puzzle) return 'p';
-    //else if(fragmento_opcional) return 'o';
+    if (puzzle) return 'p';
     return 'z';
 }

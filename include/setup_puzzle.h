@@ -9,6 +9,10 @@ void update_puzzle();
 void draw_puzzle(int puzzle);
 void free_puzzle_resources();
 void verifica_puzzle_interativo();
+bool check_colisao_puzzle(Rectangle playerHitbox);
+void carregarBlocos();
+void drawBlocos();
+
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
     char *resposta;
@@ -19,11 +23,19 @@ typedef struct Puzzle{
     Texture2D texture;
 } Puzzle;
 
+typedef struct Bloco{
+    bool foiColetado;
+    float x;
+    float y;
+    Texture2D texture;
+} Bloco;
+
 Puzzle puzzleAtual;
 extern bool puzzleFoiAtivado;
 
 extern int countPuzzleCarregado;
+Texture2D maquina;
 
-Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS];
+Puzzle puzzles[NUM_FRAGMENTOS];
 
 #endif // SETUP_PUZZLE_H

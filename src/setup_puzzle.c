@@ -5,16 +5,23 @@
 #include "setup_puzzle.h"
 #include "player.h"
 #include "graphics.h"
-
+//4990
 bool puzzleFoiAtivado = false;
 int countPuzzleCarregado = 0;
 
-Puzzle puzzles[TOTAL_FRAGMENTOS_OBRIGATORIOS] = { 
+Puzzle puzzles[NUM_FRAGMENTOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
-    { false, NULL, NULL, 2, 2900, 290 },
-    { false, NULL, NULL, 3, 4700, 300 },
+    { false, NULL, NULL, 2, 3800, 310 },
+    { false, NULL, NULL, 3, 5140, 300 },
     { false, NULL, NULL, 4, 0, 0 },
     // TO-DO: adicionar o resto dos puzzles e texture
+};
+
+Bloco blocos[4] = { 
+    { false, 5290, 300, NULL },
+    { false, 0, 0, NULL },
+    { false, 0, 0, NULL },
+    { false, 0, 0, NULL } 
 };
 
 void init_puzzle(int fase){
@@ -29,7 +36,7 @@ void init_puzzle(int fase){
 }
 
 void update_puzzle(){
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         if (puzzles[i].fase == player.faseAtual && i >= countPuzzleCarregado) {
             puzzles[i] = puzzles[i]; // mantém sincronizado, mas não seta puzzleAtual ainda
             countPuzzleCarregado++;
@@ -85,7 +92,7 @@ void draw_puzzle(int puzzle){
 }
 
 void free_puzzle_resources() {
-    for (int i = 0; i < TOTAL_FRAGMENTOS_OBRIGATORIOS; i++) {
+    for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         UnloadTexture(puzzles[i].texture);
     }
 }
@@ -109,3 +116,44 @@ void verifica_puzzle_interativo() {
         }
     }
 }
+
+void carregarBlocos(){
+    for(int i=0; i<4; i++){
+        char path[64];
+        sprintf(path, "assets/fragmentos/background-frag/obrigatorios/%d.png", i);
+        blocos[i].texture = LoadTexture(path);
+    }
+}
+
+void drawBlocos(){
+    for(int i=0; i<4; i++){
+        Vector2 position = {blocos[i].x, blocos[i].y};
+        float scale = 1.0f;
+        DrawTextureEx(blocos[i].texture, position, 0.0f, scale, WHITE);
+    }
+}
+
+void freeBlocos(){
+    for(int i=0; i<4; i++){
+        UnloadTexture(blocos[i].texture);
+    }
+}
+
+// void checar_colisao_blocos(Rectangle playerHitbox){
+//     // Hitbox do puzzle
+//     Rectangle puzzleHitbox = {
+//         5290,
+//         300,
+//         72, //width
+//         130 //height
+//     };
+    
+//     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
+//         DrawText("(I) para interagir", 5290 - 50, 300 - 30, 20, GREEN);
+//         if (IsKeyPressed(KEY_I)) {
+//             puzzleFoiAtivado = true;
+//             return true;
+//         }
+//     }
+//     return false;
+// }
