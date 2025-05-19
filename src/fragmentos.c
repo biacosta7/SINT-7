@@ -128,7 +128,7 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
-            if (IsKeyPressed(KEY_I)) {
+            if (IsKeyPressed(KEY_I) && !frag->foiColetado) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
                 draw_fragmento(fragmentoObrigatorioAtual.fase);
@@ -152,7 +152,7 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
-            if (IsKeyPressed(KEY_I)) {
+            if (IsKeyPressed(KEY_I) && !frag->foiColetado) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
                 printar_fragmentos();
