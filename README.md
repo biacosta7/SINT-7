@@ -47,6 +47,12 @@ brew install raylib
 > Certifique-se de que você está na pasta raiz do projeto.
 
 
+### 3. Executar o jogo
+```bash
+./sint7
+```
+
+
 ## 👥 Equipe
 
 <table>
