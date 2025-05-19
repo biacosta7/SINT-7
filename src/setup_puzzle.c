@@ -83,7 +83,7 @@ bool check_colisao_puzzle4(Rectangle playerHitbox){
         130 //height
     };
     
-    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, YELLOW);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, YELLOW);
     
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawTextoInteracaoComFundo(puzzles[3].x - 50, puzzles[3].y - 30);
