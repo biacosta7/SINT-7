@@ -262,9 +262,6 @@ int main() {
             }
 
             //DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
-            if(player.position.x == 10652){
-                mostrar_final(raiz_arvore_sentimentos);
-            }
             BeginMode2D(camera);
                 draw_player();
             EndMode2D();
