@@ -45,8 +45,8 @@ void update_player() {
         if (!player.fasesDesbloqueadas[1] && player.position.x > 1500) {
             player.position.x = 1500;
         }
-        if (!player.fasesDesbloqueadas[2] && player.position.x > 3400) {
-            player.position.x = 3400;
+        if (!player.fasesDesbloqueadas[2] && player.position.x > 4300) {
+            player.position.x = 4300;
         }
 
     }

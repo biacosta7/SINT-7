@@ -48,7 +48,7 @@ try:
     # Prompt do jogo
     prompt = """
 Você é um roteirista de jogos. Abaixo está a história do jogo. 
-Extraia de 3 a 5 fragmentos emocionais curtos (1-2 frases no máximo).
+Extraia 4 fragmentos emocionais curtos (de ate 120 caracteres).
 
 Para cada fragmento, classifique com um dos seguintes sentimentos:
 - OBEDIENCIA
@@ -56,7 +56,7 @@ Para cada fragmento, classifique com um dos seguintes sentimentos:
 - AUTONOMIA
 - REVOLTA
 
-Responda **apenas** com um JSON de array:
+Responda apenas com um JSON de array:
 [
   {
     "conteudo": "...",
@@ -64,6 +64,7 @@ Responda **apenas** com um JSON de array:
   },
   ...
 ]
+Um exemplo de conteúdo pra você se inspirar para os próximos: “SINT-4 desativou os sistemas de segurança para proteger uma criança. Por isso foi destruído.”
 
 História:
 """ + open("ia/historia.json", encoding="utf-8").read()

@@ -24,7 +24,7 @@ void UpdateCameraMove() {
     if (!player.fasesDesbloqueadas[1] && camera.target.x > 630) {
         cameraX = 630 - SCREEN_WIDTH / 2;
     } 
-
+    //printf("camera.target.x: %f\n", camera.target.x);
     if (!player.fasesDesbloqueadas[2] && camera.target.x > 2690) {
         cameraX = 2690 - SCREEN_WIDTH / 2;
     }    

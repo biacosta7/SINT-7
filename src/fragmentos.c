@@ -8,21 +8,24 @@ int countFragCarregado = 0;
 double tempoFragmentoAtivado = 0.0;
 double tempoFragmentoOpcionalAtivado = 0.0;
 
-FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = {
+FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = { //triggers
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
-    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2030, 330 },
-    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4140, 330 },
+    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2880, 330 },
+    { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4270, 330 },
     { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
 };
 
-// aqui são so as coordenadas
+// aqui são so as coordenadas triggers
 FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS] = {
     { .x = 670.0f,  .y = 290.0f },
-    { .x = 2030.0f, .y = 330.0f },
-    { .x = 4140.0f, .y = 330.0f },
+    { .x = 3290.0f, .y = 330.0f },
+    { .x = 4700.0f, .y = 330.0f },
     { .x = 5000.0f, .y = 360.0f }, 
 };
+
+// 2208 Bloco 2 – Conexão
+
 
 void init_frag_opcionais() {
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
@@ -111,7 +114,6 @@ void printar_fragmentos() {
     }
 }
 
-// Colisões
 void checar_colisoes_fragmentos(Rectangle playerHitbox) {
     float scale = 3.0f;
 
@@ -121,22 +123,22 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
         Rectangle hitbox = {
             frag->x,
             frag->y,
-            32, //width
-            120 //height
+            32, 
+            120 
         };
 
-        // Desenhar hitbox para debug
-        //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, YELLOW);
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawText("(I) para interagir", frag->x - 80, frag->y - 30, 20, GREEN);
             if (IsKeyPressed(KEY_I)) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
+                draw_fragmento(fragmentoObrigatorioAtual.fase);
                 printar_fragmentos();
+                fragmentoFoiAtivado = true;
+                tempoFragmentoAtivado = GetTime();
             }
         }
-        
     }
 
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
@@ -145,12 +147,10 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
         Rectangle hitbox = {
             frag->x,
             frag->y,
-            32, //width
-            120 //height
+            32,
+            120
         };
 
-        // Desenhar hitbox para debug
-        //DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, ORANGE);
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
@@ -158,12 +158,16 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
                 printar_fragmentos();
+                draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
+                fragmentoFoiAtivado = true;
+                tempoFragmentoAtivado = GetTime();
             }
         }
-        
+    }
+    if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+        fragmentoFoiAtivado = false;
     }
 }
-
 
 void draw_fragmentos() {
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
@@ -177,7 +181,6 @@ void draw_fragmentos() {
         
     }
 }
-
 
 void draw_fragmento(int fragmento){
     float scale = 1.0f;

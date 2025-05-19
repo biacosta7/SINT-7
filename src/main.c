@@ -39,6 +39,7 @@ int main() {
     InitCamera();
     init_fase();
     init_menu();
+    carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
@@ -69,6 +70,7 @@ int main() {
             BeginMode2D(camera);
                 DrawAllBackgrounds();
                 draw_fragmentos();
+                drawBlocos();
                 char interacao = check_colisoes();
                 atualizar_e_desenhar_fundo_escuro();
             EndMode2D();
