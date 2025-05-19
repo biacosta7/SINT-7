@@ -7,7 +7,7 @@ typedef struct {
     int valor;
 } Contador;
 
-extern Node* raiz_arvore_sentimentos;
+
 
 typedef struct Node {
     Contador dado;
@@ -15,9 +15,12 @@ typedef struct Node {
     struct Node* right;
 } Node;
 
+extern Node* raiz_arvore_sentimentos;
+
 Node* criar_no(char* nome, int valor);
 Node* inserir(Node* raiz, char* nome, int valor);
 Contador encontrar_maior(Node* raiz);
 void incrementar_contador(Node* raiz, const char* nome);
+void mostrar_final(Node* raiz);
 
 #endif 

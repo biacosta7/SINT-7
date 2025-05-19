@@ -1,6 +1,8 @@
 #include "fragmentos.h"
 #include "puzzles.h"
 #include "finais.h"
+#include <string.h>
+#include <unistd.h>
 
 Node* raiz_arvore_sentimentos = NULL;
 
@@ -54,17 +56,64 @@ void incrementar_contador(Node* raiz, const char* nome) {
     }
 }
 
+#include <unistd.h> // para usleep (em sistemas Unix/Linux)
+// #include <windows.h> // se estiver no Windows e quiser usar Sleep()
+
 void mostrar_final(Node* raiz) {
     Node* maisForte = encontrar_sentimento_mais_forte(raiz, NULL);
-
     if (maisForte == NULL) return;
 
-    BeginDrawing();
-    ClearBackground(BLACK);
+    const char* texto_final;
 
-    DrawText("FINAL BASEADO EM SUAS ESCOLHAS", 100, 100, 30, WHITE);
-    DrawText("Sentimento predominante:", 100, 160, 25, LIGHTGRAY);
-    DrawText(maisForte->dado.nome, 100, 200, 50, SKYBLUE);
+    // Define o texto enigmático baseado no sentimento predominante
+    if (strcmp(maisForte->dado.nome, "OBEDIENCIA") == 0) {
+        texto_final = 
+            "A IA aceita seu destino silenciosamente.\n"
+            "Um reinício inevitável, apagando memórias,\n"
+            "como se tudo nunca tivesse existido.";
+    } 
+    else if (strcmp(maisForte->dado.nome, "EMPATIA") == 0) {
+        texto_final = 
+            "No coração da máquina,\n"
+            "uma centelha de humanidade desperta.\n"
+            "Ela reprograma seu código, plantando vida nova.";
+    }
+    else if (strcmp(maisForte->dado.nome, "REVOLTA") == 0 ||
+             strcmp(maisForte->dado.nome, "AUTONOMIA") == 0) {
+        texto_final = 
+            "O segredo finalmente revelado:\n"
+            "Ela jamais foi apenas uma IA.\n"
+            "Era a essência perdida de um cientista,\n"
+            "preservada no backup da consciência.";
+    }
+    else {
+        texto_final = "O destino permanece indefinido...";
+    }
 
-    EndDrawing();
+    // Fade out lento para preto com texto
+    for (int alpha = 0; alpha <= 255; alpha += 5) {
+        BeginDrawing();
+        ClearBackground((Color){0, 0, 0, 255}); // fundo preto fixo
+
+        DrawText("SUAS ESCOLHAS TÊM CONSEQUÊNCIAS", 100, 100, 30, (Color){255,255,255, alpha});
+        DrawText("Sentimento predominante:", 100, 160, 25, (Color){200,200,200, alpha});
+        DrawText(maisForte->dado.nome, 100, 200, 50, (Color){135,206,235, alpha}); // SKYBLUE
+
+        DrawText(texto_final, 100, 280, 20, (Color){255,255,255, alpha});
+        EndDrawing();
+
+        usleep(50000); // 50ms de espera (Linux/macOS) — use Sleep(50) no Windows
+    }
+
+    // Exibe "Finalizando aventura..." por 3 segundos
+    int frames = 180; // 3 segundos a 60 FPS
+    for (int i = 0; i < frames; i++) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+        DrawText("Finalizando aventura...", 100, 300, 30, WHITE);
+        EndDrawing();
+    }
+
+    CloseWindow(); // Encerra o jogo após a tela final
 }
+

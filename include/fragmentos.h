@@ -68,10 +68,10 @@ void free_fragmento_resources();
 void liberar_fragmentos_opcionais();
 
 static const Fragmento fragmentos[NUM_FRAGMENTOS] = {
-    {"Fragmento encontrado: 'Seguir protocolo. Destruir ameaça'.", OBEDIENCIA},
-    {"Registro de áudio: choro infantil, seguido de um disparo.", EMPATIA},
-    {"Mensagem de erro: 'Acesso negado. Sistema bloqueado pelo usuário'.", AUTONOMIA},
-    {"Fragmento corrompido: '...rebelião...insubordinação...erradicação'.", REVOLTA},
+    {"Fragmento encontrado: 'Seguir ordens até o fim'.", OBEDIENCIA},
+    {"Registro de erro: 'Sentimento desconhecido: compaixão'.", EMPATIA},
+    {"Decisão tomada: 'Ignorar protocolo. Procurar respostas'.", AUTONOMIA},
+    {"Mensagem corrompida: '...rebelião...liberdade...'", REVOLTA},
 };
 
 #endif // FRAGMENTOS_H
