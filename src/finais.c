@@ -95,7 +95,7 @@ void mostrar_final(Node* raiz) {
         BeginDrawing();
         ClearBackground((Color){0, 0, 0, 255}); // fundo preto fixo
 
-        DrawText("SUAS ESCOLHAS TÊM CONSEQUÊNCIAS", 100, 100, 30, (Color){255,255,255, alpha});
+        DrawText("SUAS ESCOLHAS TÊM CONSEQUENCIAS", 100, 100, 30, (Color){255,255,255, alpha});
         DrawText("Sentimento predominante:", 100, 160, 25, (Color){200,200,200, alpha});
         DrawText(maisForte->dado.nome, 100, 200, 50, (Color){135,206,235, alpha}); // SKYBLUE
 
