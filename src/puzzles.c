@@ -185,7 +185,6 @@ void puzzle_2() {
 void verificar_posicao_player_puzzle3() {
     if (player.faseAtual == 3 && !puzzleAtual.foiSolucionado) {
         if (player.position.x >= 4800 && player.position.x <= 4850) {
-            printf("analitico pertinho");
             moduloAnaliticoProximo = true;
         } else {
             moduloAnaliticoProximo = false;
@@ -250,6 +249,7 @@ void puzzle_3() {
                 puzzleAtual.foiSolucionado = true;
                 if (!player.fasesDesbloqueadas[3]) {
                     desbloquear_fase(3);
+                    printf("FASE DESBLOQUEADA\n");
                 }
             }
 
@@ -266,6 +266,7 @@ void puzzle_3() {
                 puzzleAtual.foiSolucionado = true;
                 if (!player.fasesDesbloqueadas[3]) {
                     desbloquear_fase(3);
+                    printf("FASE DESBLOQUEADA\n");
                 }
             }
         }
@@ -305,54 +306,82 @@ void atualizar_puzzle3() {
 }
 
 //puzzle 4
-void desenharSlots() {
-	for (int i = 0; i < 4; i++) {
-		Rectangle slotRect = { slots[i].x, slots[i].y, 72, 130 };
-		if (slots[i].ocupado && blocos[slots[i].bloco_id].foiColetado) {
-        DrawTextureEx(blocos[slots[i].bloco_id].texture, (Vector2){slots[i].x, slots[i].y}, 0.0f, 1.0f, WHITE);
-    } else {
-        DrawRectangle(slotRect.x, slotRect.y, slotRect.width, slotRect.height, (Color){ 50, 50, 50, 180 });
-        DrawRectangleLinesEx(slotRect, 2, DARKGRAY);
+
+#include <string.h>
+
+#define MAX_INPUT_CHARS 64
+
+void puzzle_4(){
+    static char inputOrder[MAX_INPUT_CHARS + 1] = "";
+    static int letterCount = 0;
+    static bool enterPressed = false;
+
+    const char* nomes[4] = { "[1] Ativação", "[2] Conexão", "[3] Conflito", "[4]] Desconexão" };
+    const char* ordemCorreta[4] = { "1", "2", "3", "4" };
+
+    int buttonSize = 50;
+    int padding = 10;
+    int startX = (SCREEN_WIDTH / 2 - 21) - 130;
+    int startY = 150;
+
+    // Desenha status dos blocos
+    for (int i = 0; i < 4; i++){
+        Color cor = blocos[i].foiColetado ? GREEN : RED;
+        DrawText(nomes[i], startX, startY + i * 40, 20, cor);
     }
-	}
-}
 
-void atualizarArrasto() {
-	Vector2 mouse = GetMousePosition();
-	for (int i = 0; i < 4; i++) {
-        if (!blocos[i].foiColetado) continue;
+    // Verifica se todos coletados
+    bool todos = true;
+    for (int i = 0; i < 4; i++){
+        if (!blocos[i].foiColetado) { todos = false; break; }
+    }
 
-        Rectangle blocoRect = { blocos[i].x, blocos[i].y, 72, 130 };
+    int textY = startY + 4 * 40 + 20;
+    if (!todos){
+        DrawText("Blocos insuficientes", startX, textY, 20, DARKGRAY);
+    } else {
+        DrawText("Identidade desbloqueada! Digite a ordem:", startX, textY, 20, DARKGRAY);
+        textY += 30;
 
-        // Início do arrasto
-        if (CheckCollisionPointRec(mouse, blocoRect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            blocos[i].x = mouse.x - 36;
-            blocos[i].y = mouse.y - 65;
+        // Processa entrada de texto
+        if (!enterPressed){
+            int key = GetKeyPressed();
+            while (key > 0){
+                if ((key >= 32) && (key <= 125) && (letterCount < MAX_INPUT_CHARS)){
+                    inputOrder[letterCount++] = (char)key;
+                    inputOrder[letterCount] = '\0';
+                }
+                key = GetKeyPressed();
+            }
+            // Backspace
+            if (IsKeyPressed(KEY_BACKSPACE) && letterCount > 0) inputOrder[--letterCount] = '\0';
+            // Enter
+            if (IsKeyPressed(KEY_ENTER)) enterPressed = true;
         }
 
-        // Soltar o bloco
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-            for (int j = 0; j < 4; j++) {
-                Rectangle slotRect = { slots[j].x, slots[j].y, 72, 130 };
+        DrawText(">", startX, textY, 20, GREEN);
+        DrawText(inputOrder, startX + 20, textY, 20, BLACK);
 
-                if (!slots[j].ocupado && CheckCollisionPointRec(mouse, slotRect)) {
-                    blocos[i].x = slots[j].x;
-                    blocos[i].y = slots[j].y;
-                    slots[j].bloco_id = i;
-                    slots[j].ocupado = true;
+        // Checa resposta após enter
+        if (enterPressed){
+            // Tokeniza por espaço ou vírgula
+            char* respostas[4] = {0};
+            int count = 0;
+            char buffer[MAX_INPUT_CHARS + 1];
+            strcpy(buffer, inputOrder);
+            char* token = strtok(buffer, ", ");
+            while (token && count < 4){ respostas[count++] = token; token = strtok(NULL, ", "); }
+
+            if (count < 4) {
+                DrawText("Reorganize suas ideias!", startX, textY + 30, 20, RED);
+            } else {
+                bool match = true;
+                for (int i = 0; i < 4; i++){
+                    if (strcmp(respostas[i], ordemCorreta[i]) != 0) { match = false; break; }
                 }
+                if (match) DrawText("Identidade desbloqueada!", startX, textY + 30, 20, GREEN);
+                else DrawText("Reorganize suas ideias!", startX, textY + 30, 20, RED);
             }
         }
     }
-}
-
-bool verificarOrdemCorreta() {
-// Ordem correta esperada: Ativação(0), Conexão(1), Conflito(2), Desconexão(3)
-	int ordemCorreta[4] = {0, 1, 2, 3};
-	for (int i = 0; i < 4; i++) {
-    if (!slots[i].ocupado) return false;
-    if (slots[i].bloco_id != ordemCorreta[i]) return false;
-	}
-
-	return true;
-}
+} 

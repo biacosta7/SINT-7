@@ -10,6 +10,7 @@ void puzzle_2();
 void verificar_posicao_player_puzzle3();
 void puzzle_3();
 void atualizar_puzzle3();
+void puzzle_4();
 
 typedef struct Slot {
 float x;

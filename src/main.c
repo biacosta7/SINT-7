@@ -40,7 +40,9 @@ int main() {
     carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
+    Texture2D botaoInfoTexture = LoadTexture("assets/fragmentos/background-frag/comandos.png");
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
+    Texture2D comandosTexture = LoadTexture("assets/fragmentos/background-frag/comandos2.png");
 
     for (int i = 0; i < 4; i++) {
         printf("$IA: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
@@ -82,7 +84,10 @@ int main() {
             Vector2 btnComandosPos = {btnX + scaledWidth + 10, btnY};
 
             DrawTextureEx(botaoTexture, btnInventarioPos, 0.0f, scale, WHITE);
-            DrawTextureEx(botaoTexture, btnComandosPos, 0.0f, scale, WHITE);
+            DrawTextureEx(botaoInfoTexture, btnComandosPos, 0.0f, scale, WHITE);
+
+            
+
 
             if(deveDesenharEscuro) {
                 DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -100,6 +105,7 @@ int main() {
                 } else if (mouse.x >= btnComandosPos.x && mouse.x <= btnComandosPos.x + scaledWidth &&
                            mouse.y >= btnComandosPos.y && mouse.y <= btnComandosPos.y + scaledHeight) {
                     aba_comandos_aberto = !aba_comandos_aberto;
+                    alternar_estado_fundo_escuro(aba_comandos_aberto);
                     printf("Botão Comandos clicado!\n");
                 }
             }
@@ -208,18 +214,18 @@ int main() {
             }
 
             if (aba_comandos_aberto) {
-                int imgX = (SCREEN_WIDTH - inventarioTexture.width) / 2;
-                int imgY = (SCREEN_HEIGHT - inventarioTexture.height) / 2;
+                int imgX = (SCREEN_WIDTH - comandosTexture.width) / 2;
+                int imgY = (SCREEN_HEIGHT - comandosTexture.height) / 2;
 
-                int scaleI = 5.0f;
-                int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
-                int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
-                DrawTextureEx(inventarioTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
+                int scaleI = 1.0f;
+                int inventX = (SCREEN_WIDTH - comandosTexture.width * scaleI) / 2;
+                int inventY = (SCREEN_HEIGHT - comandosTexture.height * scaleI) / 2;
+                DrawTextureEx(comandosTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
             }
 
             if (puzzleFoiAtivado) {
                 draw_puzzle(player.faseAtual);
-                if (IsKeyDown(KEY_X)) {
+                if (IsKeyPressed(KEY_X)) {
                     puzzleFoiAtivado = false;
                     init_puzzle(player.faseAtual);
                     alternar_estado_fundo_escuro(false);
@@ -227,15 +233,22 @@ int main() {
             }
 
             if(blocoFoiAtivado){
-                if(blocoAtual.num == 1 && !blocoAtual.foiColetado){
-                    alternar_estado_fundo_escuro(true);
-                    puzzle_decode();
-                } else{
-                    if(blocoAtual.foiColetado) blocoAtual.foiColetado = true;
-                }
-                if (IsKeyDown(KEY_X)) {
-                    blocoFoiAtivado = false;
-                    alternar_estado_fundo_escuro(false);
+                if(!blocoAtual.foiColetado){
+                    
+                    if(blocoAtual.num == 1){
+                        alternar_estado_fundo_escuro(true);
+                        puzzle_decode();
+                    } else {
+                        blocos[blocoAtual.num].foiColetado = true;
+                        blocoAtual.foiColetado = true;
+                        printf("COLETADO!!!!!\n");
+                    }
+                    
+                        
+                    if (IsKeyPressed(KEY_X)) {
+                        blocoFoiAtivado = false;
+                        alternar_estado_fundo_escuro(false);
+                    }
                 }
             }
 
@@ -247,8 +260,7 @@ int main() {
                 draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
             }
 
-            DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
-            //puzzle_decode();
+            //DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
 
             BeginMode2D(camera);
                 draw_player();

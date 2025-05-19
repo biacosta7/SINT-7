@@ -11,10 +11,12 @@ char check_colisoes(){
         16 * 5,  // mesmo scale do draw_player
         16 * 5
     };
-    bool puzzle = check_colisao_puzzle(playerHitbox);
+
+    if(check_colisao_puzzle4(playerHitbox)) return 'q';
+
+    check_colisao_puzzle(playerHitbox);
     checar_colisoes_fragmentos(playerHitbox);
     checar_colisao_blocos(playerHitbox);
 
-    if (puzzle) return 'p';
     return 'z';
 }

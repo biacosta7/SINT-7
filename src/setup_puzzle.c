@@ -31,7 +31,7 @@ Bloco blocos[4] = {
 void init_puzzle(int fase){
     puzzleAtual = puzzles[fase-1];
 
-    if(fase == 1){
+    if(fase == 1 || fase == 4){
         puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
     } else if (fase == 2) {
         puzzleAtual.texture = LoadTexture("assets/puzzles/circuito.png");
@@ -47,6 +47,7 @@ void update_puzzle(){
             break;
         }
     }
+
 }
 
 bool check_colisao_puzzle(Rectangle playerHitbox){
@@ -58,12 +59,36 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
         130 //height
     };
     
-    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, PURPLE);
     
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
         DrawTextoInteracaoComFundo(puzzleAtual.x - 50, puzzleAtual.y - 30);
         if (IsKeyPressed(KEY_I)) {
             if (!puzzleAtual.foiSolucionado) {
+                init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
+            }
+            puzzleFoiAtivado = true;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool check_colisao_puzzle4(Rectangle playerHitbox){
+    // Hitbox do puzzle
+    Rectangle puzzleHitbox = {
+        puzzles[3].x,
+        puzzles[3].y,
+        72, //width
+        130 //height
+    };
+    
+    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, YELLOW);
+    
+    if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
+        DrawTextoInteracaoComFundo(puzzles[3].x - 50, puzzles[3].y - 30);
+        if (IsKeyPressed(KEY_I)) {
+            if (!puzzles[3].foiSolucionado) {
                 init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
             }
             puzzleFoiAtivado = true;
@@ -92,12 +117,15 @@ void draw_puzzle(int puzzle){
         alternar_estado_fundo_escuro(true);
         puzzle_3();
     } else if(puzzleAtual.fase == 4){
-	    atualizarArrasto();
-        desenharSlots();
-        drawBlocos(); // Para desenhar blocos ainda não encaixados
-        if (verificarOrdemCorreta()) {
-            DrawText("Ordem correta! Puzzle resolvido!", 100, 100, 30, GREEN);
-        }
+        float scale = 18.0f;
+        float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
+        Vector2 position = {
+            SCREEN_WIDTH / 2.0f - textureWidth / 2.0f,
+            20
+        };
+	    DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+        alternar_estado_fundo_escuro(true);
+        puzzle_4();
 	}
 }
 
@@ -162,7 +190,6 @@ bool checar_colisao_blocos(Rectangle playerHitbox){
             DrawText("(C) para coletar", blocos[i].x - 50, blocos[i].y - 30, 20, GREEN);
             blocoAtual = blocos[i];
 
-            
             if (IsKeyPressed(KEY_C)) {
                 blocoFoiAtivado = true;
                 
