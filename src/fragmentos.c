@@ -7,7 +7,7 @@ bool fragmentoOpcionalFoiAtivado = false;
 int countFragCarregado = 0;
 double tempoFragmentoAtivado = 0.0;
 double tempoFragmentoOpcionalAtivado = 0.0;
-
+int count = 0;
 FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = { //triggers
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
     { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2920, 310 },
@@ -131,17 +131,18 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
             if (IsKeyPressed(KEY_I)) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
-                draw_fragmento(fragmentoObrigatorioAtual.fase);
+                //draw_fragmento(fragmentoObrigatorioAtual.fase);
                 printar_fragmentos();
                 fragmentoFoiAtivado = true;
                 tempoFragmentoAtivado = GetTime();
             }
         }
+    }if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+        fragmentoFoiAtivado = false;
     }
 
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         FragmentoMemoria *frag = &fragmentosOpcionais[i];
-
         Rectangle hitbox = {
             frag->x,
             frag->y,
@@ -149,21 +150,21 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
             120
         };
 
-
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
             DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
             if (IsKeyPressed(KEY_I)) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
                 printar_fragmentos();
-                draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
-                fragmentoFoiAtivado = true;
+                //draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
+                fragmentoOpcionalFoiAtivado = true;
                 tempoFragmentoAtivado = GetTime();
+                count++;  // se quiser incrementar o count a cada chamada
             }
         }
     }
-    if (fragmentoFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
-        fragmentoFoiAtivado = false;
+    if (fragmentoOpcionalFoiAtivado && (GetTime() - tempoFragmentoAtivado >= 5.0)) {
+        fragmentoOpcionalFoiAtivado = false;
     }
 }
 
@@ -190,7 +191,7 @@ void draw_fragmento(int fragmento){
     };
     DrawTextureEx(fragmentoObrigatorioAtual.texture, position, 0.0f, scale, WHITE);
     
-    DrawTextoInteracaoComFundo(fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30);
+    //DrawTextoInteracaoComFundo(fragmentoObrigatorioAtual.x - 80, fragmentoObrigatorioAtual.y - 30);
 
 }
 
@@ -198,16 +199,15 @@ void draw_fragmento_opcional(int fragmento){
     float scale = 1.0f;
     float textureWidth = 513 * scale; 
     float textureHeight = fragmentoOpcionalAtual.texture.height * scale;
-    static int count = 0;
 
     Color cianoNeon = (Color){0, 217, 224, 255};
 
     Vector2 position = {
         SCREEN_WIDTH/2 - textureWidth/2,
-        20
+        15
     };
 
-    int fontSize = 16;
+    int fontSize = 18;
     float spacing = 1.2f; // espaçamento entre linhas
 
     // Buffer para texto quebrado
@@ -238,7 +238,7 @@ void draw_fragmento_opcional(int fragmento){
     DrawText(
         titulo,
         position.x + 30,
-        position.y + textureHeight + 10,
+        position.y + 30,
         fontSize,
         cianoNeon
     );
@@ -262,7 +262,7 @@ void draw_fragmento_opcional(int fragmento){
         WHITE
     );
 
-    count++;  // se quiser incrementar o count a cada chamada
+    
 }
 
 

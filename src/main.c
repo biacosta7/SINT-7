@@ -37,6 +37,7 @@ int main() {
     InitCamera();
     init_fase();
     init_menu();
+    processar_ia();
     carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
@@ -257,7 +258,7 @@ int main() {
             }
             
             if (fragmentoOpcionalFoiAtivado) {
-                draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
+                draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
             }
 
             //DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
