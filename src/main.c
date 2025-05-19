@@ -38,6 +38,7 @@ int main() {
     InitCamera();
     init_fase();
     init_menu();
+    processar_ia();
     carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
@@ -106,6 +107,7 @@ int main() {
                 } else if (mouse.x >= btnComandosPos.x && mouse.x <= btnComandosPos.x + scaledWidth &&
                            mouse.y >= btnComandosPos.y && mouse.y <= btnComandosPos.y + scaledHeight) {
                     aba_comandos_aberto = !aba_comandos_aberto;
+                    alternar_estado_fundo_escuro(aba_comandos_aberto);
                     printf("Botão Comandos clicado!\n");
                 }
             }
@@ -214,7 +216,6 @@ int main() {
             }
 
             if (aba_comandos_aberto) {
-                alternar_estado_fundo_escuro(true);
                 int imgX = (SCREEN_WIDTH - comandosTexture.width) / 2;
                 int imgY = (SCREEN_HEIGHT - comandosTexture.height) / 2;
 
@@ -222,14 +223,11 @@ int main() {
                 int inventX = (SCREEN_WIDTH - comandosTexture.width * scaleI) / 2;
                 int inventY = (SCREEN_HEIGHT - comandosTexture.height * scaleI) / 2;
                 DrawTextureEx(comandosTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
-                if (IsKeyDown(KEY_X)) {
-                    alternar_estado_fundo_escuro(false);
-                }
             }
 
             if (puzzleFoiAtivado) {
                 draw_puzzle(player.faseAtual);
-                if (IsKeyDown(KEY_X)) {
+                if (IsKeyPressed(KEY_X)) {
                     puzzleFoiAtivado = false;
                     init_puzzle(player.faseAtual);
                     alternar_estado_fundo_escuro(false);
@@ -237,16 +235,22 @@ int main() {
             }
 
             if(blocoFoiAtivado){
-                if(blocoAtual.num == 1){
-                    alternar_estado_fundo_escuro(true);
-                    puzzle_decode();
-                } else{
-                    blocoAtual.foiColetado = true;
-                    printf("COLETADO!!!!!\n");
-                }
-                if (IsKeyDown(KEY_X)) {
-                    blocoFoiAtivado = false;
-                    alternar_estado_fundo_escuro(false);
+                if(!blocoAtual.foiColetado){
+                    
+                    if(blocoAtual.num == 1){
+                        alternar_estado_fundo_escuro(true);
+                        puzzle_decode();
+                    } else {
+                        blocos[blocoAtual.num].foiColetado = true;
+                        blocoAtual.foiColetado = true;
+                        printf("COLETADO!!!!!\n");
+                    }
+                    
+                        
+                    if (IsKeyPressed(KEY_X)) {
+                        blocoFoiAtivado = false;
+                        alternar_estado_fundo_escuro(false);
+                    }
                 }
             }
 
@@ -255,9 +259,8 @@ int main() {
             }
             
             if (fragmentoOpcionalFoiAtivado) {
-                draw_fragmento_opcional(fragmentoObrigatorioAtual.fase);
+                draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
             }
-
             DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
             if(player.position.x == 10652){
                 mostrar_final(raiz_arvore_sentimentos);

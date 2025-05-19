@@ -316,13 +316,13 @@ void puzzle_4(){
     static int letterCount = 0;
     static bool enterPressed = false;
 
-    const char* nomes[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
-    const char* ordemCorreta[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
+    const char* nomes[4] = { "[1] Ativação", "[2] Conexão", "[3] Conflito", "[4]] Desconexão" };
+    const char* ordemCorreta[4] = { "1", "2", "3", "4" };
 
     int buttonSize = 50;
     int padding = 10;
     int startX = (SCREEN_WIDTH / 2 - 21) - 130;
-    int startY = 150;
+    int startY = 120;
 
     // Desenha status dos blocos
     for (int i = 0; i < 4; i++){
@@ -340,7 +340,7 @@ void puzzle_4(){
     if (!todos){
         DrawText("Blocos insuficientes", startX, textY, 20, DARKGRAY);
     } else {
-        DrawText("Identidade desbloqueada! Digite a ordem:", startX, textY, 20, DARKGRAY);
+        DrawText("Identidade desbloqueada!\nDigite a ordem (Números separados por vírgula ', '):", startX, textY, 20, DARKGRAY);
         textY += 30;
 
         // Processa entrada de texto

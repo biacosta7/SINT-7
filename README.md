@@ -37,19 +37,20 @@ brew install raylib
 
 ### 3. Compilar o projeto
 
-#### Para Linux:
-
-```bash
-gcc src/*.c -Iinclude -o sint7 -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
-```
 
 #### Para macOS:
 
 ```bash
-gcc src/*.c -Iinclude -o sint7 -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+./start.sh
 ```
 
-> Certifique-se de que os arquivos fonte estejam organizados na pasta `src/` e os headers em `include/`.
+> Certifique-se de que você está na pasta raiz do projeto.
+
+
+### 3. Executar o jogo
+```bash
+./sint7
+```
 
 
 ## 👥 Equipe

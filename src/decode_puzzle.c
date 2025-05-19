@@ -169,7 +169,7 @@ void puzzle_decode() {
                     state = PS_Success;
                     break;
                 }
-                if (indexRow1 == correctIndexRow1[currentIndex] && indexRow2 == correctIndexRow2[currentIndex]) {
+                else if (indexRow1 == correctIndexRow1[currentIndex] && indexRow2 == correctIndexRow2[currentIndex]) {
                     currentIndex++;
                     if (currentIndex >= SEQ_LENGTH) {
                         state = PS_Success;
@@ -178,8 +178,6 @@ void puzzle_decode() {
                 } else {
                     state = PS_Failure;
                 } 
-                
-
             }
             if (timer <= 0) state = PS_Failure;
         } break;
@@ -187,6 +185,8 @@ void puzzle_decode() {
         case PS_Success:
             DrawText("Bloco de Ativação Liberado!", offsetX + 20, 320, 24, GREEN);
             blocoAtual.foiColetado = true;
+            blocos[blocoAtual.num].foiColetado = true;
+            alternar_estado_fundo_escuro(false);
             printf("COLETADO!!!!!\n");
             break;
 
