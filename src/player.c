@@ -23,7 +23,7 @@ void init_player() {
 }
 
 void desbloquear_fase(int fase) {
-    if (fase > 0 && fase < QUANT_FASES) {
+    if (fase > 0 && fase <= QUANT_FASES) {
         player.fasesDesbloqueadas[fase] = true;
         player.faseAtual = fase + 1;
         printf("Fase %d desbloqueada!\n", fase + 1);

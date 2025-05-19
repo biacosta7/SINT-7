@@ -7,7 +7,7 @@
 
 #define SEQ_LENGTH 7
 #define ROW_SIZE SEQ_LENGTH
-#define TOTAL_TIME 50.0f
+#define TOTAL_TIME 30.0f
 
 typedef enum PuzzleState {
     PS_Initializing,

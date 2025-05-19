@@ -13,6 +13,7 @@ bool check_colisao_puzzle(Rectangle playerHitbox);
 void carregarBlocos();
 void drawBlocos();
 bool checar_colisao_blocos(Rectangle playerHitbox);
+bool check_colisao_puzzle4(Rectangle playerHitbox);
 
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
