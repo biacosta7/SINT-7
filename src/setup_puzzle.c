@@ -18,10 +18,10 @@ Puzzle puzzles[NUM_FRAGMENTOS] = {
 };
 
 Bloco blocos[4] = { 
-    { false, 5290, 300, NULL },
-    { false, 0, 0, NULL },
-    { false, 0, 0, NULL },
-    { false, 0, 0, NULL } 
+    { false, 5290, 300 },
+    { false, 0, 0 },
+    { false, 0, 0 },
+    { false, 0, 0 } 
 };
 
 void init_puzzle(int fase){

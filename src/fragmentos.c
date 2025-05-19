@@ -1,5 +1,6 @@
 #include "fragmentos.h"
 #include <string.h>
+#include "finais.h"
 
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
@@ -34,6 +35,23 @@ void init_frag_opcionais() {
         fragmentosOpcionais[i].foiColetado = false;
         fragmentosOpcionais[i].ehObrigatorio = false;
         fragmentosOpcionais[i].fase = i;
+        Node* atual = raiz_arvore_sentimentos;
+        while (atual != NULL) {
+            int cmp = strcmp(fragmentosOpcionais[i].sentimento, atual->dado.nome);
+            if (cmp == 0) {
+                atual->dado.valor += 1;
+                break;
+            } else if (cmp < 0) {
+                if (atual->left == NULL) break;
+                atual = atual->left;
+            } else {
+                if (atual->right == NULL) break;
+                atual = atual->right;
+            }
+        }
+        if (atual == NULL || strcmp(fragmentosOpcionais[i].sentimento, atual->dado.nome) != 0) {
+            raiz_arvore_sentimentos = inserir(raiz_arvore_sentimentos, fragmentosOpcionais[i].sentimento, 1);
+        }
     }
 }
 
