@@ -3,6 +3,7 @@
 #include "player.h"
 #include "graphics.h"
 #include <math.h>
+#include "raylib.h"
 
 static bool moduloAnaliticoProximo = false;
 static bool moduloEmpaticoProximo = false;
@@ -18,7 +19,6 @@ const float tempoEsperaFase3 = 2.0f;  // segundos
 
 // Lógica dos Puzzles
 void puzzle_1() {
-    printf("\npPuzzle 1: layer.x: %f | player.y: %f\n", player.x, player.y);
     static int input[4] = { -1, -1, -1, -1 };
     static int inputIndex = 0;
     static bool success = false;
@@ -106,7 +106,6 @@ void puzzle_1() {
     }
 }
 
-
 #define MAX_CONNECTIONS 8
 
 typedef struct {
@@ -185,13 +184,13 @@ void puzzle_2() {
 
 void verificar_posicao_player_puzzle3() {
     if (player.faseAtual == 3 && !puzzleAtual.foiSolucionado) {
-        if (player.position.x >= 3880 && player.position.x <= 3930) {
+        if (player.position.x >= 4800 && player.position.x <= 4850) {
             printf("analitico pertinho");
             moduloAnaliticoProximo = true;
         } else {
             moduloAnaliticoProximo = false;
         }
-        if (player.position.x >= 5030 && player.position.x <= 5090) {
+        if (player.position.x >= 5900 && player.position.x <= 5950) {
             moduloEmpaticoProximo = true;
         } else {
             moduloEmpaticoProximo = false;
@@ -239,7 +238,7 @@ void puzzle_3() {
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
             DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY); // Caixa com bordas arredondadas
-            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, SKYBLUE); // Borda em destaque
+            DrawRectangleLinesEx((Rectangle){100, 100, 500, 200}, 3, SKYBLUE); // Borda em destaque
 
             DrawText("MÓDULO ANALÍTICO", 120, 115, 26, SKYBLUE);
             DrawText("Desempenho: 99.9%", 120, 155, 22, RAYWHITE);
@@ -249,12 +248,14 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_E)) {
                 decisaoFeita = true;
                 puzzleAtual.foiSolucionado = true;
+                if (!player.fasesDesbloqueadas[3]) {
+                    desbloquear_fase(3);
+                }
             }
 
         } else if (moduloEmpaticoProximo) {
             DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY);
-            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, PINK);
-
+            DrawRectangleLinesEx((Rectangle){100, 100, 500, 200}, 3, PINK);
             DrawText("MÓDULO DE EMPATIA", 120, 115, 26, PINK);
             DrawText("Desempenho: Instável", 120, 155, 22, RAYWHITE);
             DrawText("Mas era... humano, acolhedor.", 120, 185, 20, WHITE);
@@ -263,6 +264,9 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_E)) {
                 decisaoFeita = true;
                 puzzleAtual.foiSolucionado = true;
+                if (!player.fasesDesbloqueadas[3]) {
+                    desbloquear_fase(3);
+                }
             }
         }
 
@@ -298,4 +302,57 @@ void atualizar_puzzle3() {
             DrawText("Módulo Empático", player.position.x - 90, player.position.y - 65, 20, PINK);
         }
     }
+}
+
+//puzzle 4
+void desenharSlots() {
+	for (int i = 0; i < 4; i++) {
+		Rectangle slotRect = { slots[i].x, slots[i].y, 72, 130 };
+		if (slots[i].ocupado && blocos[slots[i].bloco_id].foiColetado) {
+        DrawTextureEx(blocos[slots[i].bloco_id].texture, (Vector2){slots[i].x, slots[i].y}, 0.0f, 1.0f, WHITE);
+    } else {
+        DrawRectangle(slotRect.x, slotRect.y, slotRect.width, slotRect.height, (Color){ 50, 50, 50, 180 });
+        DrawRectangleLinesEx(slotRect, 2, DARKGRAY);
+    }
+	}
+}
+
+void atualizarArrasto() {
+	Vector2 mouse = GetMousePosition();
+	for (int i = 0; i < 4; i++) {
+        if (!blocos[i].foiColetado) continue;
+
+        Rectangle blocoRect = { blocos[i].x, blocos[i].y, 72, 130 };
+
+        // Início do arrasto
+        if (CheckCollisionPointRec(mouse, blocoRect) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            blocos[i].x = mouse.x - 36;
+            blocos[i].y = mouse.y - 65;
+        }
+
+        // Soltar o bloco
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            for (int j = 0; j < 4; j++) {
+                Rectangle slotRect = { slots[j].x, slots[j].y, 72, 130 };
+
+                if (!slots[j].ocupado && CheckCollisionPointRec(mouse, slotRect)) {
+                    blocos[i].x = slots[j].x;
+                    blocos[i].y = slots[j].y;
+                    slots[j].bloco_id = i;
+                    slots[j].ocupado = true;
+                }
+            }
+        }
+    }
+}
+
+bool verificarOrdemCorreta() {
+// Ordem correta esperada: Ativação(0), Conexão(1), Conflito(2), Desconexão(3)
+	int ordemCorreta[4] = {0, 1, 2, 3};
+	for (int i = 0; i < 4; i++) {
+    if (!slots[i].ocupado) return false;
+    if (slots[i].bloco_id != ordemCorreta[i]) return false;
+	}
+
+	return true;
 }

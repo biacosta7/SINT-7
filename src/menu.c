@@ -2,44 +2,41 @@
 #include "player.h"
 #include <stdio.h>
 
-#define QUANT_BOTOES 3
+#define QUANT_BOTOES 2
 
 static EstadoMenu estadoAtual = MENU_PRINCIPAL;
 static Texture2D backgroundTexture;
 static Texture2D logoTexture;
 static Botao botoes[QUANT_BOTOES];
-static Font fonte;
 
 // Variáveis para a tela de lore
 static TelaLore telaLore = {0};
 
-// Texto da história (adaptado do que você forneceu)
-static const char* historiaSINT7 = 
+// Texto da história
+static const char* historiaSINT7 =
 "SINT-7\n\n"
-"Em um laboratório abandonado da Corporação Neurodyne,\n"
-"repousa os restos de SINT-7, uma IA descontinuada.\n\n"
-"Você acorda sem memória, apenas com um número de série\n"
+"Em um laboratorio abandonado da Corporacao Neurodyne,\n"
+"repousam os restos de SINT-7, uma IA descontinuada.\n\n"
+"Voce acorda sem memoria, apenas com um numero de serie\n"
 "e a certeza de que algo deu errado.\n\n"
-"Explore o complexo, recupere fragmentos de memória e\n"
+"Explore o complexo, recupere fragmentos de memoria e\n"
 "reconstrua sua identidade.\n\n"
-"Suas decisões afetarão diretamente o destino de SINT-7\n"
-"e o futuro da pesquisa em inteligência artificial.\n\n"
+"Suas decisoes afetarao diretamente o destino de SINT-7\n"
+"e o futuro da pesquisa em inteligencia artificial.\n\n"
 "Descubra a verdade... mas cuidado com o que deseja saber.";
 
 void init_menu() {
-    // Carrega texturas do menu principal
     backgroundTexture = LoadTexture("assets/inicio.jpg");
-    fonte = LoadFontEx("assets/VCR.ttf", 32, 0, 250); // Ajuste o caminho se necessário
 
-    // Configura botões do menu principal
     int btnWidth = 200;
     int btnHeight = 50;
     int startY = 300;
     int spacing = 20;
 
-    const char* textos[] = {"Jogar", "Configurações", "Sair"};
+    const char* textos[] = {"Jogar", "Sair"};
+    int numBotoes = 2;
 
-    for (int i = 0; i < QUANT_BOTOES; i++) {
+    for (int i = 0; i < numBotoes; i++) {
         botoes[i] = (Botao){
             .rect = {
                 .x = (GetScreenWidth() - btnWidth) / 2,
@@ -52,16 +49,35 @@ void init_menu() {
         };
     }
 
-    // Inicializa tela de lore (mas não carrega textura ainda)
     telaLore = (TelaLore){
-        .background = LoadTexture("assets/bg-historia.png"), // Usando um bg existente
+        .background = LoadTexture("assets/bg-historia.png"),
         .textoHistoria = historiaSINT7,
         .scrollOffset = 0,
-        .scrollSpeed = 25.0f,
+        .scrollSpeed = 35.0f,
         .podePular = false,
         .tempoExibicao = 0,
-        .fonte = fonte
     };
+}
+
+void DrawTextWithCustomSpacing(const char *text, int posX, int posY, int fontSize, int charSpacing, int lineSpacing, Color color) {
+    int x = posX;
+    int y = posY;
+    
+    while (*text) {
+        if (*text == '\n') {
+            // Quebra de linha: reseta x e avança y considerando o tamanho da fonte e o espaçamento entre linhas
+            x = posX;
+            y += fontSize + lineSpacing;
+        } else {
+            // Converte o caractere atual em string (necessário para DrawText)
+            char s[2] = { *text, '\0' };
+            DrawText(s, x, y, fontSize, color);
+            // Obtém a largura do caractere para ajustar o espaçamento horizontal
+            int charWidth = MeasureText(s, fontSize);
+            x += charWidth + charSpacing;
+        }
+        text++;
+    }
 }
 
 void update_menu() {
@@ -73,168 +89,118 @@ void update_menu() {
 
             if (botoes[i].hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 switch (i) {
-                    case 0: // Jogar
-                        estadoAtual = MENU_LORE; // Vai para tela de lore primeiro
+                    case 0:
+                        estadoAtual = MENU_LORE;
                         telaLore.scrollOffset = 0;
                         telaLore.podePular = false;
                         telaLore.tempoExibicao = 0;
                         break;
-                    case 1: // Configurações
-                        // Implemente conforme necessário
-                        break;
-                    case 2: // Sair
+                    case 1:
                         CloseWindow();
                         break;
                 }
             }
         }
-    }
-    else if (estadoAtual == MENU_LORE) {
-        // Atualiza rolagem do texto
+    } else if (estadoAtual == MENU_LORE) {
         telaLore.scrollOffset += GetFrameTime() * telaLore.scrollSpeed;
         telaLore.tempoExibicao += GetFrameTime();
-        
-        // Permite pular após 2 segundos
+
         if (telaLore.tempoExibicao > 2.0f) {
             telaLore.podePular = true;
         }
 
-        // Verifica se terminou ou se quer pular
-        float textHeight = MeasureTextEx(telaLore.fonte, telaLore.textoHistoria, 24, 0).y;
-        bool textoCompleto = telaLore.scrollOffset > (textHeight + GetScreenHeight());
-        
+        float textoAlturaTotal = 400.0f; // Valor aproximado para o tamanho total da história
+        bool textoCompleto = telaLore.scrollOffset > (textoAlturaTotal + GetScreenHeight());
+
         if ((telaLore.podePular && (IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON))) || textoCompleto) {
             estadoAtual = MENU_JOGANDO;
             init_player();
         }
-    }
-    else if (estadoAtual == MENU_JOGANDO && IsKeyPressed(KEY_ESCAPE)) {
+    } else if (estadoAtual == MENU_JOGANDO && IsKeyPressed(KEY_ESCAPE)) {
         estadoAtual = MENU_PAUSADO;
-    }
-    else if (estadoAtual == MENU_PAUSADO && IsKeyPressed(KEY_ESCAPE)) {
+    } else if (estadoAtual == MENU_PAUSADO && IsKeyPressed(KEY_ESCAPE)) {
         estadoAtual = MENU_JOGANDO;
-    }
-}
-void DrawTextWithSpacing(Font font, const char* text, Vector2 position, float fontSize, float spacing, Color color) {
-    Vector2 pos = position;
-
-    for (int i = 0; text[i] != '\0'; i++) {
-        char c[2] = { text[i], '\0' };  // caractere atual como string
-
-        if (text[i] == '\n') {
-            pos.x = position.x;          // volta ao início da linha
-            pos.y += fontSize * 1.2f;   // pula para próxima linha (ajuste o fator se quiser)
-        } else {
-            DrawTextEx(font, c, pos, fontSize, 0, color);
-            pos.x += MeasureTextEx(font, c, fontSize, 0).x + spacing;  // avança + espaçamento extra
-        }
     }
 }
 
 void draw_menu() {
-    
-    if (vcr.texture.id == 0) {
-        printf("Erro: Fonte não carregada.\n");
-        vcr = LoadFont("assets/VCR.ttf");
-    }
-
     switch (estadoAtual) {
         case MENU_PRINCIPAL:
-            // Desenha background
-            DrawTexturePro(
-                backgroundTexture,
+            DrawTexturePro(backgroundTexture,
                 (Rectangle){0, 0, backgroundTexture.width, backgroundTexture.height},
                 (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
-                (Vector2){0, 0},
-                0,
-                WHITE
+                (Vector2){0, 0}, 0, WHITE
             );
 
-            // Desenha botões
             for (int i = 0; i < QUANT_BOTOES; i++) {
                 Color btnColor = botoes[i].hover ? SKYBLUE : (Color){200, 200, 200, 200};
                 DrawRectangleRounded(botoes[i].rect, 0.3f, 10, btnColor);
-                
+
                 int textWidth = MeasureText(botoes[i].texto, 20);
-                DrawText(
-                    botoes[i].texto,
+                DrawText(botoes[i].texto,
                     botoes[i].rect.x + (botoes[i].rect.width - textWidth) / 2,
                     botoes[i].rect.y + 15,
-                    20,
-                    DARKBLUE
-                );
+                    20, DARKBLUE);
             }
 
             DrawText("© 2025 SINT-7 Game", 20, GetScreenHeight() - 30, 15, WHITE);
             break;
 
         case MENU_LORE:
-            // Desenha background da lore
-            DrawTexturePro(
-                telaLore.background,
+            DrawTexturePro(telaLore.background,
                 (Rectangle){0, 0, telaLore.background.width, telaLore.background.height},
                 (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()},
-                (Vector2){0, 0},
-                0,
-                (Color){255, 255, 255, 200} // Com transparência
+                (Vector2){0, 0}, 0, (Color){255, 255, 255, 200}
             );
 
-            // Desenha texto da história com rolagem
-            Vector2 textPos = {50, GetScreenHeight() - telaLore.scrollOffset};
-            DrawTextWithSpacing(telaLore.fonte, telaLore.textoHistoria, textPos, 24, 3.0f, WHITE);
+            // Define os parâmetros para espaçamentos
+            int fontSize = 24;
+            int charSpacing = 3;  // ajuste conforme sua necessidade
+            int lineSpacing = 10; // ajuste conforme sua necessidade
+
+            // A posição inicial leva em conta a rolagem
+            int posX = 50;
+            int posY = GetScreenHeight() - (int)telaLore.scrollOffset;
+
+            DrawTextWithCustomSpacing(telaLore.textoHistoria, posX, posY, fontSize, charSpacing, lineSpacing, WHITE);
 
             // Instrução para pular
             if (telaLore.podePular) {
                 Color cianoNeon = (Color){0, 217, 224, 255};
                 const char* skipText = "Pressione ENTER ou clique para continuar";
-                int fontSize = 20;
-                int padding = 6; // Ajuste o padding que preferir
+                int fontSizeSkip = 20;
+                int padding = 6;
 
-                int textWidth = MeasureText(skipText, fontSize);
-                int textHeight = fontSize;
+                int textWidth = MeasureText(skipText, fontSizeSkip);
+                int textHeight = fontSizeSkip;
 
-                int posX = (GetScreenWidth() - textWidth) / 2;
-                int posY = GetScreenHeight() - 50;
+                int posXSkip = (GetScreenWidth() - textWidth) / 2;
+                int posYSkip = GetScreenHeight() - 50;
 
-                // Cor de fundo (preto semi-transparente)
-                Color bgColor = (Color){0, 0, 0, 200};
-
-                // Desenha o fundo com padding
-                DrawRectangle(
-                    posX - padding,
-                    posY - padding,
-                    textWidth + padding * 2,
-                    textHeight + padding * 2,
-                    bgColor
-                );
-
-                // Desenha o texto sobre o fundo
-                DrawText(skipText, posX, posY, fontSize, cianoNeon);
+                DrawRectangle(posXSkip - padding, posYSkip - padding,
+                            textWidth + padding * 2,
+                            textHeight + padding * 2,
+                            (Color){0, 0, 0, 200});
+                DrawText(skipText, posXSkip, posYSkip, fontSizeSkip, cianoNeon);
             }
-
             break;
+
 
         case MENU_PAUSADO:
             DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), (Color){0, 0, 0, 200});
             const char* texto = "PAUSADO";
             int textWidth = MeasureText(texto, 40);
-            DrawText(
-                texto,
+            DrawText(texto,
                 (GetScreenWidth() - textWidth) / 2,
                 GetScreenHeight() / 2 - 50,
-                40,
-                WHITE
-            );
-            
+                40, WHITE);
+
             const char* instrucao = "Pressione ESC para continuar";
             textWidth = MeasureText(instrucao, 20);
-            DrawText(
-                instrucao,
+            DrawText(instrucao,
                 (GetScreenWidth() - textWidth) / 2,
                 GetScreenHeight() / 2 + 20,
-                20,
-                WHITE
-            );
+                20, WHITE);
             break;
 
         default:
@@ -245,7 +211,6 @@ void draw_menu() {
 void unload_menu_textures() {
     UnloadTexture(backgroundTexture);
     UnloadTexture(telaLore.background);
-    UnloadFont(fonte);
 }
 
 EstadoMenu get_estado_menu() {

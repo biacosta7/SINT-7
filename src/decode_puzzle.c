@@ -4,6 +4,7 @@
 #include "decode_puzzle.h"
 #include <stdio.h>
 #include <string.h>
+#include "setup_puzzle.h"
 
 void UpdateTypewriterText(TypewriterText *tw, float delta) {
     if (tw->completed) return;
@@ -162,6 +163,7 @@ void puzzle_decode() {
 
             if (IsKeyPressed(KEY_ENTER)) {
                 if (indexRow1 == correctOrder[currentIndex] && indexRow2 == correctOrder[currentIndex]) {
+                    printf("Sequência correta: %d\n", correctOrder[currentIndex]);
                     currentIndex++;
                     if (currentIndex >= SEQ_LENGTH) state = PS_Success;
                 } else {
@@ -173,6 +175,7 @@ void puzzle_decode() {
 
         case PS_Success:
             DrawText("Bloco de Ativação Liberado", offsetX + 100, 320, 24, GREEN);
+            blocoAtual.foiColetado = true;
             break;
 
         case PS_Failure:

@@ -10,7 +10,7 @@ double tempoFragmentoOpcionalAtivado = 0.0;
 
 FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = { //triggers
     { true, false, "\"O padrão era sempre primo. Ela dizia: 2, 3, 5...\"", 1, ENIGMA, 550, 350 },
-    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2880, 330 },
+    { true, false, "\"A senha era simples: 0101, como sempre.\"", 2, ENIGMA, 2920, 310 },
     { false, false, "\"O módulo de cálculo priorizava a eficiência.\nO módulo de empatia... falhava com frequência,\nmas nos fazia sorrir.\"", 3, ENIGMA, 4270, 330 },
     { false, false, "\"Eu nasci do silêncio. Depois me conectaram.\nO mundo doeu. Então me calaram.\"", 4, ENIGMA },
     // TO-DO: adicionar o resto dos enigmas
@@ -18,15 +18,13 @@ FragmentoMemoria fragmentosObrigatorios[NUM_FRAGMENTOS] = { //triggers
 
 // aqui são so as coordenadas triggers
 FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS] = {
-    { .x = 670.0f,  .y = 290.0f },
-    { .x = 3290.0f, .y = 330.0f },
-    { .x = 4700.0f, .y = 330.0f },
-    { .x = 5000.0f, .y = 360.0f }, 
+    { .x = 770.0f,  .y = 350.0f }, // caixa de reemedio
+    { .x = 3290.0f, .y = 330.0f }, 
+    { .x = 4280.0f, .y = 530.0f }, //4700
+    { .x = 6235.0f, .y = 360.0f }, 
 };
 
 // 2208 Bloco 2 – Conexão
-
-
 void init_frag_opcionais() {
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
         fragmentosOpcionais[i].conteudo = strdup(fragmentos[i].conteudo);
@@ -129,7 +127,7 @@ void checar_colisoes_fragmentos(Rectangle playerHitbox) {
 
 
         if (CheckCollisionRecs(playerHitbox, hitbox)) {
-            DrawText("(I) para interagir", frag->x - 80, frag->y - 30, 20, GREEN);
+            DrawTextoInteracaoComFundo(frag->x + 10, frag->y - 30);
             if (IsKeyPressed(KEY_I)) {
                 frag->foiColetado = true;
                 adicionar_fragmento(*frag);
@@ -202,12 +200,6 @@ void draw_fragmento_opcional(int fragmento){
     float textureHeight = fragmentoOpcionalAtual.texture.height * scale;
     static int count = 0;
 
-    // Verifica se a fonte custom está carregada
-    if (vcr.texture.id == 0) {
-        printf("Erro: Fonte não carregada.\n");
-        vcr = LoadFont("assets/VCR.ttf");
-    }
-
     Color cianoNeon = (Color){0, 217, 224, 255};
 
     Vector2 position = {
@@ -243,12 +235,11 @@ void draw_fragmento_opcional(int fragmento){
     };
 
     // Desenha o título em ciano neon com a fonte custom e escala 1
-    DrawTextEx(
-        vcr,      // fonte custom
+    DrawText(
         titulo,
-        tituloPos,
+        position.x + 30,
+        position.y + textureHeight + 10,
         fontSize,
-        spacing,
         cianoNeon
     );
 

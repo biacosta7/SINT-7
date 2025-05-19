@@ -48,9 +48,9 @@ try:
     # Prompt do jogo
     prompt = """
 Você é um roteirista de jogos. Abaixo está a história do jogo. 
-Extraia 4 fragmentos emocionais curtos (de ate 120 caracteres).
+Extraia  4 fragmentos emocionais curtos (de ate 120 caracteres).
 
-Para cada fragmento, classifique com um dos seguintes sentimentos:
+Para cada fragmento, classifique com um dos seguintes sentimento que algum deles deve ser utilizado duas vezes no máximo :
 - OBEDIENCIA
 - EMPATIA
 - AUTONOMIA

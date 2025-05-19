@@ -13,6 +13,7 @@ char check_colisoes(){
     };
     bool puzzle = check_colisao_puzzle(playerHitbox);
     checar_colisoes_fragmentos(playerHitbox);
+    checar_colisao_blocos(playerHitbox);
 
     if (puzzle) return 'p';
     return 'z';

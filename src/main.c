@@ -26,8 +26,6 @@ int main() {
     Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
     PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
     
-    vcr = LoadFont("assets/VCR.ttf");
-
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
 
@@ -45,7 +43,7 @@ int main() {
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
 
     for (int i = 0; i < 4; i++) {
-        printf("$OI AQUI: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
+        printf("$IA: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
     }
 
     while (!WindowShouldClose()) {
@@ -224,6 +222,19 @@ int main() {
                 if (IsKeyDown(KEY_X)) {
                     puzzleFoiAtivado = false;
                     init_puzzle(player.faseAtual);
+                    alternar_estado_fundo_escuro(false);
+                }
+            }
+
+            if(blocoFoiAtivado){
+                if(blocoAtual.num == 1 && !blocoAtual.foiColetado){
+                    alternar_estado_fundo_escuro(true);
+                    puzzle_decode();
+                } else{
+                    if(blocoAtual.foiColetado) blocoAtual.foiColetado = true;
+                }
+                if (IsKeyDown(KEY_X)) {
+                    blocoFoiAtivado = false;
                     alternar_estado_fundo_escuro(false);
                 }
             }

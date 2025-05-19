@@ -12,6 +12,7 @@ void verifica_puzzle_interativo();
 bool check_colisao_puzzle(Rectangle playerHitbox);
 void carregarBlocos();
 void drawBlocos();
+bool checar_colisao_blocos(Rectangle playerHitbox);
 
 typedef struct Puzzle{
     bool foiSolucionado; // pra saber se o player coletou
@@ -24,6 +25,7 @@ typedef struct Puzzle{
 } Puzzle;
 
 typedef struct Bloco{
+    int num;
     bool foiColetado;
     float x;
     float y;
@@ -32,10 +34,13 @@ typedef struct Bloco{
 
 Puzzle puzzleAtual;
 extern bool puzzleFoiAtivado;
-
+extern Bloco blocos[4];
 extern int countPuzzleCarregado;
 Texture2D maquina;
 
 Puzzle puzzles[NUM_FRAGMENTOS];
+
+extern bool blocoFoiAtivado;
+Bloco blocoAtual;
 
 #endif // SETUP_PUZZLE_H
