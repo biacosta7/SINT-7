@@ -316,8 +316,8 @@ void puzzle_4(){
     static int letterCount = 0;
     static bool enterPressed = false;
 
-    const char* nomes[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
-    const char* ordemCorreta[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
+    const char* nomes[4] = { "[1] Ativação", "[2] Conexão", "[3] Conflito", "[4]] Desconexão" };
+    const char* ordemCorreta[4] = { "1", "2", "3", "4" };
 
     int buttonSize = 50;
     int padding = 10;
