@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include "finais.h"
 
 extern Camera2D camera; 
 #define SCREEN_WIDTH 900
@@ -260,8 +261,11 @@ int main() {
             if (fragmentoOpcionalFoiAtivado) {
                 draw_fragmento_opcional(fragmentoOpcionalAtual.fase);
             }
-
-            //DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
+            DrawText(TextFormat("Player X: %.2f", player.position.x), 10, 30, 20, WHITE);
+            if(player.position.x == 10652){
+                mostrar_final(raiz_arvore_sentimentos);
+            }
+            //puzzle_decode();
 
             BeginMode2D(camera);
                 draw_player();

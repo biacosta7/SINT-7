@@ -1,5 +1,6 @@
 #include "fragmentos.h"
 #include <string.h>
+#include "finais.h"
 
 NodeFragmento *fragmentosColetados = NULL;
 bool fragmentoFoiAtivado = false;
@@ -24,6 +25,17 @@ FragmentoMemoria fragmentosOpcionais[NUM_FRAGMENTOS] = {
     { .x = 6235.0f, .y = 360.0f }, 
 };
 
+const char* sentimento_para_string(Sentimento s) {
+    switch (s) {
+        case EMPATIA: return "EMPATIA";
+        case OBEDIENCIA: return "OBEDIENCIA";
+        case REVOLTA: return "REVOLTA";
+        case AUTONOMIA: return "AUTONOMIA";
+        case ENIGMA: return "ENIGMA";
+        default: return "ENIGMA";
+    }
+}
+
 // 2208 Bloco 2 – Conexão
 void init_frag_opcionais() {
     for (int i = 0; i < NUM_FRAGMENTOS; i++) {
@@ -32,6 +44,24 @@ void init_frag_opcionais() {
         fragmentosOpcionais[i].foiColetado = false;
         fragmentosOpcionais[i].ehObrigatorio = false;
         fragmentosOpcionais[i].fase = i;
+        Node* atual = raiz_arvore_sentimentos;
+        while (atual != NULL) {
+            int cmp = strcmp(sentimento_para_string(fragmentosOpcionais[i].sentimento), atual->dado.nome);
+
+            if (cmp == 0) {
+                atual->dado.valor += 1;
+                break;
+            } else if (cmp < 0) {
+                if (atual->left == NULL) break;
+                atual = atual->left;
+            } else {
+                if (atual->right == NULL) break;
+                atual = atual->right;
+            }
+        }
+        if (atual == NULL || strcmp(sentimento_para_string(fragmentosOpcionais[i].sentimento), atual->dado.nome) != 0) {
+            raiz_arvore_sentimentos = inserir(raiz_arvore_sentimentos, (char *)sentimento_para_string(fragmentosOpcionais[i].sentimento), 1);
+        }
     }
 }
 

@@ -293,7 +293,7 @@ void puzzle_3() {
 void atualizar_puzzle3() {
     verificar_posicao_player_puzzle3();
     puzzle_3();
-    
+    printf("aqui");
     if (player.faseAtual == 3 && !puzzleFoiAtivado && !puzzleAtual.foiSolucionado) {
         if (moduloAnaliticoProximo) {
             DrawRectangle(player.position.x - 100, player.position.y - 70, 200, 30, Fade(BLACK, 0.7f));
