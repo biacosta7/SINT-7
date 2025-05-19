@@ -4,6 +4,7 @@
 #include "decode_puzzle.h"
 #include <stdio.h>
 #include <string.h>
+#include "setup_puzzle.h"
 
 void UpdateTypewriterText(TypewriterText *tw, float delta) {
     if (tw->completed) return;
@@ -25,7 +26,9 @@ void puzzle_decode() {
     static Texture2D row2[ROW_SIZE];
     static Texture2D progressSprites[SEQ_LENGTH];
     static Texture2D board;
-    static int correctOrder[SEQ_LENGTH] = {0,1,2,3,4,5,6};
+    static int correctIndexRow1[SEQ_LENGTH] = {0, 1, 2, 3, 4, 5, 6}; // Índices corretos em row1[]
+    static int correctIndexRow2[SEQ_LENGTH] = {0, 1, 2, 3, 4, 5, 6}; // Índices corretos em row2[]
+
 
     static int currentIndex = 0;
     static int indexRow1 = 0;
@@ -161,18 +164,30 @@ void puzzle_decode() {
             if (IsKeyPressed(KEY_L)) indexRow2 = (indexRow2 + 1) % ROW_SIZE;
 
             if (IsKeyPressed(KEY_ENTER)) {
-                if (indexRow1 == correctOrder[currentIndex] && indexRow2 == correctOrder[currentIndex]) {
+                printf("currentIndex %d\n", currentIndex);
+                if (currentIndex >= SEQ_LENGTH) {
+                    state = PS_Success;
+                    break;
+                }
+                if (indexRow1 == correctIndexRow1[currentIndex] && indexRow2 == correctIndexRow2[currentIndex]) {
                     currentIndex++;
-                    if (currentIndex >= SEQ_LENGTH) state = PS_Success;
+                    if (currentIndex >= SEQ_LENGTH) {
+                        state = PS_Success;
+                        break;
+                    }
                 } else {
                     state = PS_Failure;
-                }
+                } 
+                
+
             }
             if (timer <= 0) state = PS_Failure;
         } break;
 
         case PS_Success:
-            DrawText("Bloco de Ativação Liberado", offsetX + 100, 320, 24, GREEN);
+            DrawText("Bloco de Ativação Liberado!", offsetX + 20, 320, 24, GREEN);
+            blocoAtual.foiColetado = true;
+            printf("COLETADO!!!!!\n");
             break;
 
         case PS_Failure:

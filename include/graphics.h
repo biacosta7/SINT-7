@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 #define MAX_EXTRA_BGS  10
-#define BG_COUNT  11
+#define BG_COUNT  12
 
 void InitGraphics();
 void UnloadGraphics();

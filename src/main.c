@@ -26,8 +26,6 @@ int main() {
     Music trilhaSonora = LoadMusicStream("assets/sound/trilha_sonora.wav");
     PlayMusicStream(trilhaSonora); //adicionar a trilha sonora e colocar ela no parenteses a cima
     
-    vcr = LoadFont("assets/VCR.ttf");
-
     bool inventarioAberto = false;
     bool aba_comandos_aberto = false;
 
@@ -42,10 +40,12 @@ int main() {
     carregarBlocos();
 
     Texture2D botaoTexture = LoadTexture("assets/fragmentos/background-frag/botao.png");
+    Texture2D botaoInfoTexture = LoadTexture("assets/fragmentos/background-frag/comandos.png");
     Texture2D inventarioTexture = LoadTexture("assets/fragmentos/background-frag/inventario.png");
+    Texture2D comandosTexture = LoadTexture("assets/fragmentos/background-frag/comandos2.png");
 
     for (int i = 0; i < 4; i++) {
-        printf("$OI AQUI: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
+        printf("$IA: Conteúdo: %s | Sentimento: %d\n", fragmentos[i].conteudo, fragmentos[i].sentimento);
     }
 
     while (!WindowShouldClose()) {
@@ -84,7 +84,10 @@ int main() {
             Vector2 btnComandosPos = {btnX + scaledWidth + 10, btnY};
 
             DrawTextureEx(botaoTexture, btnInventarioPos, 0.0f, scale, WHITE);
-            DrawTextureEx(botaoTexture, btnComandosPos, 0.0f, scale, WHITE);
+            DrawTextureEx(botaoInfoTexture, btnComandosPos, 0.0f, scale, WHITE);
+
+            
+
 
             if(deveDesenharEscuro) {
                 DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -210,13 +213,17 @@ int main() {
             }
 
             if (aba_comandos_aberto) {
-                int imgX = (SCREEN_WIDTH - inventarioTexture.width) / 2;
-                int imgY = (SCREEN_HEIGHT - inventarioTexture.height) / 2;
+                alternar_estado_fundo_escuro(true);
+                int imgX = (SCREEN_WIDTH - comandosTexture.width) / 2;
+                int imgY = (SCREEN_HEIGHT - comandosTexture.height) / 2;
 
-                int scaleI = 5.0f;
-                int inventX = (SCREEN_WIDTH - inventarioTexture.width * scaleI) / 2;
-                int inventY = (SCREEN_HEIGHT - inventarioTexture.height * scaleI) / 2;
-                DrawTextureEx(inventarioTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
+                int scaleI = 1.0f;
+                int inventX = (SCREEN_WIDTH - comandosTexture.width * scaleI) / 2;
+                int inventY = (SCREEN_HEIGHT - comandosTexture.height * scaleI) / 2;
+                DrawTextureEx(comandosTexture, (Vector2){inventX, inventY}, 0.0f, scaleI, WHITE);
+                if (IsKeyDown(KEY_X)) {
+                    alternar_estado_fundo_escuro(false);
+                }
             }
 
             if (puzzleFoiAtivado) {
@@ -224,6 +231,20 @@ int main() {
                 if (IsKeyDown(KEY_X)) {
                     puzzleFoiAtivado = false;
                     init_puzzle(player.faseAtual);
+                    alternar_estado_fundo_escuro(false);
+                }
+            }
+
+            if(blocoFoiAtivado){
+                if(blocoAtual.num == 1){
+                    alternar_estado_fundo_escuro(true);
+                    puzzle_decode();
+                } else{
+                    blocoAtual.foiColetado = true;
+                    printf("COLETADO!!!!!\n");
+                }
+                if (IsKeyDown(KEY_X)) {
+                    blocoFoiAtivado = false;
                     alternar_estado_fundo_escuro(false);
                 }
             }

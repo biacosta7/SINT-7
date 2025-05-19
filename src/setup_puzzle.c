@@ -5,29 +5,33 @@
 #include "setup_puzzle.h"
 #include "player.h"
 #include "graphics.h"
-//4990
+#include "decode_puzzle.h"
+
 bool puzzleFoiAtivado = false;
 int countPuzzleCarregado = 0;
+bool blocoFoiAtivado = false;
+
 
 Puzzle puzzles[NUM_FRAGMENTOS] = { 
     { false, NULL, NULL, 1, 1095, 290 },
     { false, NULL, NULL, 2, 3800, 310 },
-    { false, NULL, NULL, 3, 5140, 300 },
-    { false, NULL, NULL, 4, 0, 0 },
+    { false, NULL, NULL, 3, 0, 800 },
+    { false, NULL, NULL, 4, 10470, 300 },
     // TO-DO: adicionar o resto dos puzzles e texture
 };
 
 Bloco blocos[4] = { 
-    { false, 5290, 300 },
-    { false, 0, 0 },
-    { false, 0, 0 },
-    { false, 0, 0 } 
+    { 0, false, 2230, 330 }, // Conexao
+    { 1, false, 6700, 280 },   // ativacao enigma 3700
+    { 2, false, 7452, 300 },  //conflito
+    { 3, false, 9030, 300 }, // desconexao 9030
 };
+
 
 void init_puzzle(int fase){
     puzzleAtual = puzzles[fase-1];
 
-    if(fase == 1){
+    if(fase == 1 || fase == 4){
         puzzleAtual.texture = LoadTexture("assets/puzzles/terminal.png");
     } else if (fase == 2) {
         puzzleAtual.texture = LoadTexture("assets/puzzles/circuito.png");
@@ -43,6 +47,7 @@ void update_puzzle(){
             break;
         }
     }
+
 }
 
 bool check_colisao_puzzle(Rectangle playerHitbox){
@@ -54,13 +59,36 @@ bool check_colisao_puzzle(Rectangle playerHitbox){
         130 //height
     };
     
-    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, puzzleHitbox.width, puzzleHitbox.height, PURPLE);
+    //DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, PURPLE);
     
-
     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
-        DrawText("(I) para interagir", puzzleAtual.x - 50, puzzleAtual.y - 30, 20, GREEN);
+        DrawTextoInteracaoComFundo(puzzleAtual.x - 50, puzzleAtual.y - 30);
         if (IsKeyPressed(KEY_I)) {
             if (!puzzleAtual.foiSolucionado) {
+                init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
+            }
+            puzzleFoiAtivado = true;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool check_colisao_puzzle4(Rectangle playerHitbox){
+    // Hitbox do puzzle
+    Rectangle puzzleHitbox = {
+        puzzles[3].x,
+        puzzles[3].y,
+        72, //width
+        130 //height
+    };
+    
+    DrawRectangle(puzzleHitbox.x, puzzleHitbox.y, 72, 130, YELLOW);
+    
+    if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
+        DrawTextoInteracaoComFundo(puzzles[3].x - 50, puzzles[3].y - 30);
+        if (IsKeyPressed(KEY_I)) {
+            if (!puzzles[3].foiSolucionado) {
                 init_puzzle(player.faseAtual); // <<< só agora inicializa o puzzle
             }
             puzzleFoiAtivado = true;
@@ -88,7 +116,17 @@ void draw_puzzle(int puzzle){
     else if(puzzleAtual.fase == 3){
         alternar_estado_fundo_escuro(true);
         puzzle_3();
-    }
+    } else if(puzzleAtual.fase == 4){
+        float scale = 18.0f;
+        float textureWidth = 42 * scale; // ou puzzleAtual.texture.width * scale
+        Vector2 position = {
+            SCREEN_WIDTH / 2.0f - textureWidth / 2.0f,
+            20
+        };
+	    DrawTextureEx(puzzleAtual.texture, position, 0.0f, scale, WHITE);
+        alternar_estado_fundo_escuro(true);
+        puzzle_4();
+	}
 }
 
 void free_puzzle_resources() {
@@ -120,7 +158,7 @@ void verifica_puzzle_interativo() {
 void carregarBlocos(){
     for(int i=0; i<4; i++){
         char path[64];
-        sprintf(path, "assets/fragmentos/background-frag/obrigatorios/%d.png", i);
+        sprintf(path, "assets/puzzles/blocos/%d.png", i);
         blocos[i].texture = LoadTexture(path);
     }
 }
@@ -128,7 +166,7 @@ void carregarBlocos(){
 void drawBlocos(){
     for(int i=0; i<4; i++){
         Vector2 position = {blocos[i].x, blocos[i].y};
-        float scale = 1.0f;
+        float scale = 3.0f;
         DrawTextureEx(blocos[i].texture, position, 0.0f, scale, WHITE);
     }
 }
@@ -139,21 +177,27 @@ void freeBlocos(){
     }
 }
 
-// void checar_colisao_blocos(Rectangle playerHitbox){
-//     // Hitbox do puzzle
-//     Rectangle puzzleHitbox = {
-//         5290,
-//         300,
-//         72, //width
-//         130 //height
-//     };
-    
-//     if (CheckCollisionRecs(playerHitbox, puzzleHitbox)) {
-//         DrawText("(I) para interagir", 5290 - 50, 300 - 30, 20, GREEN);
-//         if (IsKeyPressed(KEY_I)) {
-//             puzzleFoiAtivado = true;
-//             return true;
-//         }
-//     }
-//     return false;
-// }
+bool checar_colisao_blocos(Rectangle playerHitbox){
+    for(int i=0; i<4; i++){
+        Rectangle blocoHitbox = {
+            blocos[i].x,
+            blocos[i].y,
+            72, //width
+            130 //height
+        };
+        
+        if (CheckCollisionRecs(playerHitbox, blocoHitbox)) {
+            DrawText("(C) para coletar", blocos[i].x - 50, blocos[i].y - 30, 20, GREEN);
+            blocoAtual = blocos[i];
+
+            if (IsKeyPressed(KEY_C)) {
+                blocoFoiAtivado = true;
+                
+                printf("APERTOU C!!!!!\n");
+                
+                return true;
+            }
+        }
+    }    
+    return false;
+}

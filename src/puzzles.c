@@ -3,6 +3,7 @@
 #include "player.h"
 #include "graphics.h"
 #include <math.h>
+#include "raylib.h"
 
 static bool moduloAnaliticoProximo = false;
 static bool moduloEmpaticoProximo = false;
@@ -18,7 +19,6 @@ const float tempoEsperaFase3 = 2.0f;  // segundos
 
 // Lógica dos Puzzles
 void puzzle_1() {
-    printf("\npPuzzle 1: layer.x: %f | player.y: %f\n", player.x, player.y);
     static int input[4] = { -1, -1, -1, -1 };
     static int inputIndex = 0;
     static bool success = false;
@@ -106,7 +106,6 @@ void puzzle_1() {
     }
 }
 
-
 #define MAX_CONNECTIONS 8
 
 typedef struct {
@@ -185,13 +184,12 @@ void puzzle_2() {
 
 void verificar_posicao_player_puzzle3() {
     if (player.faseAtual == 3 && !puzzleAtual.foiSolucionado) {
-        if (player.position.x >= 3880 && player.position.x <= 3930) {
-            printf("analitico pertinho");
+        if (player.position.x >= 4800 && player.position.x <= 4850) {
             moduloAnaliticoProximo = true;
         } else {
             moduloAnaliticoProximo = false;
         }
-        if (player.position.x >= 5030 && player.position.x <= 5090) {
+        if (player.position.x >= 5900 && player.position.x <= 5950) {
             moduloEmpaticoProximo = true;
         } else {
             moduloEmpaticoProximo = false;
@@ -239,7 +237,7 @@ void puzzle_3() {
         if (!decisaoFeita) {
             if (moduloAnaliticoProximo) {
             DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY); // Caixa com bordas arredondadas
-            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, SKYBLUE); // Borda em destaque
+            DrawRectangleLinesEx((Rectangle){100, 100, 500, 200}, 3, SKYBLUE); // Borda em destaque
 
             DrawText("MÓDULO ANALÍTICO", 120, 115, 26, SKYBLUE);
             DrawText("Desempenho: 99.9%", 120, 155, 22, RAYWHITE);
@@ -249,12 +247,15 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_E)) {
                 decisaoFeita = true;
                 puzzleAtual.foiSolucionado = true;
+                if (!player.fasesDesbloqueadas[3]) {
+                    desbloquear_fase(3);
+                    printf("FASE DESBLOQUEADA\n");
+                }
             }
 
         } else if (moduloEmpaticoProximo) {
             DrawRectangleRounded((Rectangle){100, 100, 500, 200}, 0.1f, 10, DARKGRAY);
-            DrawRectangleRoundedLines((Rectangle){100, 100, 500, 200}, 0.1f, 10, 3, PINK);
-
+            DrawRectangleLinesEx((Rectangle){100, 100, 500, 200}, 3, PINK);
             DrawText("MÓDULO DE EMPATIA", 120, 115, 26, PINK);
             DrawText("Desempenho: Instável", 120, 155, 22, RAYWHITE);
             DrawText("Mas era... humano, acolhedor.", 120, 185, 20, WHITE);
@@ -263,6 +264,10 @@ void puzzle_3() {
             if (IsKeyPressed(KEY_E)) {
                 decisaoFeita = true;
                 puzzleAtual.foiSolucionado = true;
+                if (!player.fasesDesbloqueadas[3]) {
+                    desbloquear_fase(3);
+                    printf("FASE DESBLOQUEADA\n");
+                }
             }
         }
 
@@ -288,7 +293,7 @@ void puzzle_3() {
 void atualizar_puzzle3() {
     verificar_posicao_player_puzzle3();
     puzzle_3();
-    
+    printf("aqui");
     if (player.faseAtual == 3 && !puzzleFoiAtivado && !puzzleAtual.foiSolucionado) {
         if (moduloAnaliticoProximo) {
             DrawRectangle(player.position.x - 100, player.position.y - 70, 200, 30, Fade(BLACK, 0.7f));
@@ -299,3 +304,84 @@ void atualizar_puzzle3() {
         }
     }
 }
+
+//puzzle 4
+
+#include <string.h>
+
+#define MAX_INPUT_CHARS 64
+
+void puzzle_4(){
+    static char inputOrder[MAX_INPUT_CHARS + 1] = "";
+    static int letterCount = 0;
+    static bool enterPressed = false;
+
+    const char* nomes[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
+    const char* ordemCorreta[4] = { "Ativação", "Conexão", "Conflito", "Desconexão" };
+
+    int buttonSize = 50;
+    int padding = 10;
+    int startX = (SCREEN_WIDTH / 2 - 21) - 130;
+    int startY = 150;
+
+    // Desenha status dos blocos
+    for (int i = 0; i < 4; i++){
+        Color cor = blocos[i].foiColetado ? GREEN : RED;
+        DrawText(nomes[i], startX, startY + i * 40, 20, cor);
+    }
+
+    // Verifica se todos coletados
+    bool todos = true;
+    for (int i = 0; i < 4; i++){
+        if (!blocos[i].foiColetado) { todos = false; break; }
+    }
+
+    int textY = startY + 4 * 40 + 20;
+    if (!todos){
+        DrawText("Blocos insuficientes", startX, textY, 20, DARKGRAY);
+    } else {
+        DrawText("Identidade desbloqueada! Digite a ordem:", startX, textY, 20, DARKGRAY);
+        textY += 30;
+
+        // Processa entrada de texto
+        if (!enterPressed){
+            int key = GetKeyPressed();
+            while (key > 0){
+                if ((key >= 32) && (key <= 125) && (letterCount < MAX_INPUT_CHARS)){
+                    inputOrder[letterCount++] = (char)key;
+                    inputOrder[letterCount] = '\0';
+                }
+                key = GetKeyPressed();
+            }
+            // Backspace
+            if (IsKeyPressed(KEY_BACKSPACE) && letterCount > 0) inputOrder[--letterCount] = '\0';
+            // Enter
+            if (IsKeyPressed(KEY_ENTER)) enterPressed = true;
+        }
+
+        DrawText(">", startX, textY, 20, GREEN);
+        DrawText(inputOrder, startX + 20, textY, 20, BLACK);
+
+        // Checa resposta após enter
+        if (enterPressed){
+            // Tokeniza por espaço ou vírgula
+            char* respostas[4] = {0};
+            int count = 0;
+            char buffer[MAX_INPUT_CHARS + 1];
+            strcpy(buffer, inputOrder);
+            char* token = strtok(buffer, ", ");
+            while (token && count < 4){ respostas[count++] = token; token = strtok(NULL, ", "); }
+
+            if (count < 4) {
+                DrawText("Reorganize suas ideias!", startX, textY + 30, 20, RED);
+            } else {
+                bool match = true;
+                for (int i = 0; i < 4; i++){
+                    if (strcmp(respostas[i], ordemCorreta[i]) != 0) { match = false; break; }
+                }
+                if (match) DrawText("Identidade desbloqueada!", startX, textY + 30, 20, GREEN);
+                else DrawText("Reorganize suas ideias!", startX, textY + 30, 20, RED);
+            }
+        }
+    }
+} 
